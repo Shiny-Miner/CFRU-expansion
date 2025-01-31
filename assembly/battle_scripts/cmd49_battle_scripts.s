@@ -6,8 +6,8 @@ cmd49_battle_scripts.s
 	handles most end of move/turn effects
 */
 
-.include "../asm_defines.s"
-.include "../battle_script_macros.s"
+.include "asm_defines.s"
+.include "battle_script_macros.s"
 
 .global BattleScript_CouldntFullyProtect
 .global BattleScript_PoisonTouch

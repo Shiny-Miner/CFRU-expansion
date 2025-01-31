@@ -39,6 +39,8 @@ if sys.platform.startswith('win'):
     GR = 'deps/grit.exe'
     WAV2AGB = 'deps/wav2agb.exe'
     MID2AGB = 'deps/mid2agb.exe'
+    GBAGFX = 'deps/gbagfx.exe'
+    PREPROC = 'deps/preproc.exe'
     OBJCOPY = PATH + PREFIX + 'objcopy'
 
 else:  # Linux, OSX, etc.
@@ -50,10 +52,14 @@ else:  # Linux, OSX, etc.
         WAV2AGB = 'deps/wav2agb.exe'
         MID2AGB = 'deps/mid2agb.exe'
         GR = "deps/grit.exe"
+        GBAGFX = 'deps/gbagfx.exe'
+        PREPROC = 'deps/preproc.exe'
     else:
-        WAV2AGB = 'wav2agb'
-        MID2AGB = 'mid2agb'
-        GR = "grit"
+        WAV2AGB = 'deps/wav2agb'
+        MID2AGB = 'deps/mid2agb'
+        GR = "deps/grit"
+        GBAGFX = 'deps/gbagfx'
+        PREPROC = 'deps/preproc'
 
     OBJCOPY = PREFIX + 'objcopy'
 
@@ -66,8 +72,9 @@ BUILD = './build'
 IMAGES = './Images'
 ASFLAGS = ['-mthumb', '-I', ASSEMBLY]
 LDFLAGS = ['BPRE.ld', '-T', 'linker.ld']
-CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
+CFLAGS = ['-x', 'c', '-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
           '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra', '-Os', '-fira-loop-pressure', '-fipa-pta']
+CHARMAP = 'charmap.txt'
 
 
 class Master:
@@ -102,7 +109,8 @@ class Master:
 def RunCommand(cmd: [str]):
     """Runs the command line command."""
     try:
-        subprocess.check_output(cmd)
+        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        return output.decode()
     except subprocess.CalledProcessError as e:
         try:
             print(e.output.decode(), file=sys.stderr)
@@ -141,6 +149,19 @@ def MakeOutputImageFile(assemblyFile: str) -> [str, bool]:
     objectFile = os.path.join(BUILD, 'IMG_' + m.hexdigest() + '.o')
 
     return CreateOutputFile(assemblyFile, objectFile)
+
+
+def MakePreprocessedFile(fileName: str, isAsm: bool) -> [str, bool]:
+    """Return a preprocessed filename for a given source file."""
+    ext = '.ps' if isAsm else '.pc'
+    # In case there's no extension, just assume that we should put the new extension at the end.
+    lastDotIdx = len(fileName)
+    # rindex throws an exception instead of just silently failing, for some reason.
+    try:
+        lastDotIdx = fileName.rindex('.')
+    except: pass
+    newFileName = fileName[:lastDotIdx] + ext
+    return CreateOutputFile(fileName, newFileName)
 
 
 def MakeOutputAudioFile(assemblyFile: str) -> [str, bool]:
@@ -202,13 +223,19 @@ def DoMiddleManAssembly(originalFile: str, assemblyFile: str, flagFile: str, fla
 
 def ProcessAssembly(assemblyFile: str) -> str:
     """Assemble."""
-    objectFile, regenerateObjectFile = MakeGeneralOutputFile(assemblyFile)
+    processedFile, reprocessFile = MakePreprocessedFile(assemblyFile, True)
+    if reprocessFile is True:
+        cmd = [PREPROC, assemblyFile, CHARMAP]
+        content = RunCommand(cmd)
+        with open(processedFile, 'w') as f:
+            f.write(content)
+    objectFile, regenerateObjectFile = MakeGeneralOutputFile(processedFile)
     if regenerateObjectFile is False:
         return objectFile  # No point in recompiling file
 
     try:
-        print('Assembling %s' % assemblyFile)
-        cmd = [AS] + ASFLAGS + ['-c', assemblyFile, '-o', objectFile]
+        print('Assembling %s' % processedFile)
+        cmd = [AS] + ASFLAGS + ['-c', processedFile, '-o', objectFile]
         RunCommand(cmd)
 
     except FileNotFoundError:
@@ -221,10 +248,16 @@ def ProcessAssembly(assemblyFile: str) -> str:
 
 def ProcessC(cFile: str) -> str:
     """Compile C."""
-    objectFile, regenerateObjectFile = MakeGeneralOutputFile(cFile)
+    processedFile, reprocessFile = MakePreprocessedFile(cFile, False)
+    if reprocessFile is True:
+        cmd = [PREPROC, cFile, CHARMAP]
+        content = RunCommand(cmd)
+        with open(processedFile, 'w') as f:
+            f.write(content)
+    objectFile, regenerateObjectFile = MakeGeneralOutputFile(processedFile)
     if regenerateObjectFile is False:
         return objectFile  # No point in recompiling file
-    return ProcessCToObjectFile(cFile, objectFile)
+    return ProcessCToObjectFile(processedFile, objectFile)
 
 
 def ProcessCToObjectFile(cFile: str, objectFile: str) -> str:

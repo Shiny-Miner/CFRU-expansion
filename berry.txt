@@ -1,0 +1,21 @@
+A soil tile with a specific new tile behaviour which will have our berry script
+Berry overworlds , probably a table which links berry planted ids to load that berry overworld when berry yields
+Function that stores the time when a berry was planted
+Function that keeps updating the berry overworld based on that stored time value
+function that gives you desired berry based on berry id
+function to show a berry growing (watering a berry with some item like jug xD)
+we can have additions like berry fermentation due to player not taking the yielded berry from a long time
+
+2 byte item number
+1 byte empty (for now)
+1 byte min item quantity
+2 byte time it has in seed stage
+2 byte OW for seed stage
+2 byte time in sprout stage
+2 byte OW for sprout
+2 byte time in half-grown stage
+2 byte OW for half-grown stage
+2 byte time in full grown
+2 byte OW for full-grown
+2 byte time to go back to seed
+2 bytes OW for ripe 

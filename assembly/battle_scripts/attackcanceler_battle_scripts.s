@@ -6,8 +6,8 @@ attackcanceler_battle_scripts.s
 	battle scripts to support attackcanceler battle command
 */
 
-.include "../asm_defines.s"
-.include "../battle_script_macros.s"
+.include "asm_defines.s"
+.include "battle_script_macros.s"
 
 .global BattleScript_PrintCustomString
 .global BattleScript_QuickClaw

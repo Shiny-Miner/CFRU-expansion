@@ -7,7 +7,7 @@ main.s
 	script functions/specials in asm - hooks and returns
 */
 
-.include "../asm_defines.s"
+.include "asm_defines.s"
 
 @@ Specials (credit to JPAN)
 @ see special_inserts for most of the code
@@ -396,4 +396,3 @@ return:
     .word 0x02024284
 .VAR:
     .word 0x020270B8 + (0x8004 * 2)
-	

@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "ability_tables.h": "c",
+        "util.h": "c",
+        "pokemon.h": "c",
+        "overworld.h": "c"
+    }
+}

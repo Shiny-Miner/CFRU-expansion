@@ -1,9 +1,9 @@
 .align 2
 .thumb
 
-.include "../xse_commands.s"
-.include "../xse_defines.s"
-.include "../asm_defines.s"
+.include "xse_commands.s"
+.include "xse_defines.s"
+.include "asm_defines.s"
 
 .global EventScript_Wonder_Trades
 

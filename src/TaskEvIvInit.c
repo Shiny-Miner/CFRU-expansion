@@ -32,7 +32,7 @@ if used.
 #include "../include/menu.h"
 #include "../include/party_menu.h"
 #include "../include/constants/species.h"
-#include "../include/base_stats.h"
+// #include "../include/base_stats.h"
 #include "../include/field_weather.h"
 #include "../include/text_window.h"
 #include "../include/new/build_pokemon.h"
@@ -45,6 +45,8 @@ if used.
 #include "../include/random.h"
 #include "../include/new/exp.h"
 #include "../include/constants/songs.h"
+
+#include "base_stats.c"
 
 #define FIRERED
 

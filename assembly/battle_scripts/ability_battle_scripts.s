@@ -6,8 +6,8 @@ ability_battle_scripts.s
 	battle scripts for specific abilities
 */
 
-.include "../asm_defines.s"
-.include "../battle_script_macros.s"
+.include "asm_defines.s"
+.include "battle_script_macros.s"
 
 .global BattleScript_OverworldWeatherStarts
 .global BattleScript_NewWeatherAbilityActivates

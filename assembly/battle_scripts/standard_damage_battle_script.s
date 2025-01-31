@@ -6,8 +6,8 @@ standard_damage_battle_scripts.s
 	scripts for basic damage calc
 */
 
-.include "../asm_defines.s"
-.include "../battle_script_macros.s"
+.include "asm_defines.s"
+.include "battle_script_macros.s"
 
 .global STANDARD_DAMAGE
 STANDARD_DAMAGE:

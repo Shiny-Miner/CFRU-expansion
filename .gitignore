@@ -31,3 +31,7 @@ Cover Art.png
 
 # pycache files
 *.pyc
+
+# Preproc files, might be wise to move these elsewhere.
+*.pc
+*.ps

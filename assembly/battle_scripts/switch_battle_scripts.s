@@ -6,8 +6,8 @@ switch_battle_scripts.s
 	scripts for switching logic
 */
 
-.include "../asm_defines.s"
-.include "../battle_script_macros.s"
+.include "asm_defines.s"
+.include "battle_script_macros.s"
 
 .equ OPEN_PARTY_ALLOW_CANCEL, 0x80
 

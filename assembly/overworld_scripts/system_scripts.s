@@ -2,9 +2,9 @@
 .thumb
 .align 2
 
-.include "../xse_commands.s"
-.include "../xse_defines.s"
-.include "../asm_defines.s"
+.include "xse_commands.s"
+.include "xse_defines.s"
+.include "asm_defines.s"
 
 .equ SPECIAL_STOP_SOUNDS, 0x9A
 

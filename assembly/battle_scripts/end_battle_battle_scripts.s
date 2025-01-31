@@ -6,8 +6,8 @@ end_battle_battle_scripts.s
 	Contains battle scripts that run at the end of a battle.
 */
 
-.include "../asm_defines.s"
-.include "../battle_script_macros.s"
+.include "asm_defines.s"
+.include "battle_script_macros.s"
 
 .global BattleScript_Victory
 .global BattleScript_PrintPlayerForfeited

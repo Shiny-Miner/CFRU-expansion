@@ -6,8 +6,8 @@ set_effect_battle_scripts.s
 	scripts for effects being set in battle
 */
 
-.include "../asm_defines.s"
-.include "../battle_script_macros.s"
+.include "asm_defines.s"
+.include "battle_script_macros.s"
 
 .global BattleScript_TargetSleepHeal
 .global BattleScript_TargetBurnHeal

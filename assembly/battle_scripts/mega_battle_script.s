@@ -6,8 +6,8 @@ mega_battle_scripts.s
 	handles mega evolution
 */
 
-.include "../asm_defines.s"
-.include "../battle_script_macros.s"
+.include "asm_defines.s"
+.include "battle_script_macros.s"
 
 .global BattleScript_MegaEvolution
 .global BattleScript_MegaWish

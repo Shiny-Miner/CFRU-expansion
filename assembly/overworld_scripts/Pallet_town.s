@@ -1,8 +1,8 @@
 .thumb
 .align 2
 
-.include "../xse_commands.s"
-.include "../xse_defines.s"
+.include "xse_commands.s"
+.include "xse_defines.s"
 
 .global EventScript_PalletTown_FatGuy
 EventScript_PalletTown_FatGuy:

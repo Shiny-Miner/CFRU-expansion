@@ -1,7 +1,7 @@
 .thumb
 .global AbilityDamageListTable
 
-.include "../asm_defines.s"
+.include "asm_defines.s"
 
 /*
 item_tables.s

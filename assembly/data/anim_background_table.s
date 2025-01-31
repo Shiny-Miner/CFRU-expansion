@@ -6,7 +6,7 @@ anim_background_tables.s
 	battle animation backgrounds
 */
 
-.include "../anim_defines.s"
+.include "anim_defines.s"
 .include "assembly/data/anim_backgrounds_graphics_defines.s"
 
 .global gAnimationBackgrounds

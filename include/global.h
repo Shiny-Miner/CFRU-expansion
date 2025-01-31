@@ -843,4 +843,14 @@ struct Clock
 
 extern struct Clock gClock; //0x3005EA0 - Was 0x300553C - new one doesn't conflict with linking
 
+#define _(x)        (x)
+#define __(x)       (x)
+#define INCBIN(...) {0}
+#define INCBIN_U8   INCBIN
+#define INCBIN_U16  INCBIN
+#define INCBIN_U32  INCBIN
+#define INCBIN_S8   INCBIN
+#define INCBIN_S16  INCBIN
+#define INCBIN_S32  INCBIN
+
 #endif // GUARD_GLOBAL_H

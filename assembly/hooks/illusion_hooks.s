@@ -2,7 +2,7 @@
 .thumb
 .align 2
 
-.include "../asm_defines.s"
+.include "asm_defines.s"
 
 @0x803432C with r2
 BattleLoadOpponentMonSpriteGfxHook:

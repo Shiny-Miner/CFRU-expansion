@@ -3,8 +3,8 @@
 .text
 .align 2
 
-.include "../anim_defines.s"
-/*.include "../asm_defines.s" Don't Uncomment This!*/
+.include "anim_defines.s"
+/*.include "asm_defines.s" Don't Uncomment This!*/
 
 /*
 playanimation_table.s

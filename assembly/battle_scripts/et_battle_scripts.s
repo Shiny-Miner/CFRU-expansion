@@ -5,8 +5,8 @@ et_battle_scripts.s
 	handles end of turn effects/strings
 */
 
-.include "../asm_defines.s"
-.include "../battle_script_macros.s"
+.include "asm_defines.s"
+.include "battle_script_macros.s"
 
 .global BattleScript_MysteriousAirCurrentContinues
 .global BattleScript_MysteriousAirCurrentContinuesNoString
