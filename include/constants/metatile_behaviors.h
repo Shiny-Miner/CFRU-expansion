@@ -10,6 +10,7 @@
 #define MB_0A 0x0A
 #define MB_0B 0x0B
 #define MB_MOUNTAIN_TOP 0x0C
+#define MB_BERRY_SOIL 0x0D
 #define MB_POND_WATER 0x10
 #define MB_FAST_CURRENT 0x11
 #define MB_DIVEABLE 0x12

@@ -400,6 +400,21 @@ struct BattleTowerData // Leftover from R/S
 	/*0x04D1, 0x0581*/ u8 filler_4D1[0x317];
 }; /* size = 0x7E8 */
 
+/**
+ * This is the *actual* struct that will
+ * be stored into the saveblock.
+ */
+typedef struct
+{
+	/*0x00*/ u16 berryId;           // The Berry's ID in the *prototype* table.
+	/*0x02*/ u16 map;               // The map in which the berry object event is found.
+	/*0x04*/ u16 objectEventId;     // The object event id in the map.
+	/*0x06*/ u8 currentStage : 2;   // The current stage of the growing berry.
+	/******/ u8 untilNextStage : 6; // Steps until the next stage.
+	/*0x07*/ u8 isWatered;          // Whether the berry was already watered or not.
+} BerryData;                        // =0x08
+ 
+ #define BERRIES_COUNT 0x400 / sizeof(BerryData)
 
 #define PARTY_SIZE 6
 
@@ -806,7 +821,7 @@ struct SaveBlock2 //0x2024588
 	/*0xAF0*/ struct BerryCrush berryCrush;
 	/*0xB00*/ struct PokemonJumpResults pokeJump;
 	/*0xB10*/ struct BerryPickingResults berryPick;
-	/*0xB20*/ u8 filler_B20[0x400];
+	/*0xB20*/ BerryData berries[BERRIES_COUNT];
 	/*0xF20*/ u32 encryptionKey;
 	/*0x???*/ //u16 optionsRButtonMode : 3;
 	/*0x???*/ //u16 optionsBattleMusic;

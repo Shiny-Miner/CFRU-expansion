@@ -112,6 +112,8 @@ static const u8* const sDefaultWalkingScripts[] =
 };
 #endif
 
+extern const u8 *EventScript_BerrySoil[];
+
 //Table full of pointers of scripts run when talking to tiles with certain behaviour bytes
 static const u8* const sMetatileInteractionScripts[] =
 {
@@ -172,6 +174,7 @@ static const u8* const sMetatileInteractionScripts[] =
 #ifdef MB_UNDERGROUND_MINING
 	[MB_UNDERGROUND_MINING] = EventScript_UndergroundMining,
 #endif
+	[MB_BERRY_SOIL] = EventScript_BerrySoil,
 };
 
 /*

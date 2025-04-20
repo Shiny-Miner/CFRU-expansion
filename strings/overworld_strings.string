@@ -311,3 +311,12 @@ Exp. Share turned on.
 
 #org @gText_Exp_Share_Off
 Exp. Share turned off.
+
+#org @gText_WouldYouLikeToPlantBerryHere
+Would you like to plant a berry here?
+
+#org @gText_PlayerPlantedABerry
+[PLAYER] planted a [BUFFER1].
+
+#org @gText_PlayerTookABerry
+[PLAYER] took a [BUFFER1].
