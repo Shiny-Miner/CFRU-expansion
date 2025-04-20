@@ -2,9 +2,31 @@
 #include "../include/field_camera.h"
 #include "../include/event_object_movement.h"
 #include "../include/event_data.h"
+#include "../include/constants/event_objects.h"
 #include "../include/item.h"
 #include "../include/script.h"
 #include "../include/new/Vanilla_functions.h"
+#include "defines.h"
+#include "defines_battle.h"
+#include "../include/dynamic_placeholder_text_util.h"
+#include "../include/event_object_movement.h"
+#include "../include/field_effect_helpers.h"
+#include "../include/field_player_avatar.h"
+#include "../include/link.h"
+#include "../include/random.h"
+#include "../include/sprite.h"
+#include "../include/trainer_pokemon_sprites.h"
+#include "../include/constants/character_customization.h"
+#include "../include/constants/event_object_movement_constants.h"
+#include "../include/constants/event_objects.h"
+#include "../include/constants/trainers.h"
+
+#include "../include/new/character_customization.h"
+#include "../include/new/follow_me.h"
+#include "../include/new/frontier.h"
+#include "../include/new/multi.h"
+#include "../include/new/util.h"
+
 
 extern BerryPrototype gBerries[];
 extern struct EventObject gEventObjects[NUM_FIELD_OBJECTS];
@@ -202,7 +224,7 @@ void GetFacedBerry(void)
 
     coords.x = gSaveBlock1->location.x;
     coords.y = gSaveBlock1->location.y;
-    player = &gEventObjects[gPlayerAvatar.eventObjectId];
+    player = &gEventObjects[gPlayerAvatar->eventObjectId];
 
     // Getting the possible berry in front of the player.
     switch (player->facingDirection)

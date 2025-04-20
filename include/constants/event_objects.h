@@ -100,10 +100,6 @@ enum OverworldNPCSprites
 #define EVENT_OBJ_GFX_RED_UNDERWATER 6 //By default VS. Seeker on bike b\c not used by anything else
 #define EVENT_OBJ_GFX_LEAF_UNDERWATER 13
 
-#define OBJ_EVENT_BERRY_TREE_SPROUT   237
-#define OBJ_EVENT_BERRY_TREE_MID      238
-#define OBJ_EVENT_BERRY_TREE_GROWN    239
-
 // These are dynamic object gfx ids.
 // They correspond with the values of the VAR_OBJ_GFX_ID_X vars.
 // More info about them in include/constants/vars.h
