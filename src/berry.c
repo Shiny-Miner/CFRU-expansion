@@ -204,13 +204,13 @@ void TryToTakeBerryWithObjEventId(u32 objEventId)
     gSpecialVar_LastResult = BERRY_NOT_TAKEN;
 }
 
-extern const u8 BerrySystem_WouldYouLikeToPlant[];
+extern const u8 gText_WouldYouLikeToPlantBerryHere[];
 
 // This function should also be called when interacting
 // with a specific tile behavior.
 void TryToPlantBerry(void)
 {
-    ScriptContext1_SetupScript(BerrySystem_WouldYouLikeToPlant);
+    ScriptContext1_SetupScript(gText_WouldYouLikeToPlantBerryHere);
 
     // The player doesn't want to plant a berry.
     if (gSpecialVar_LastResult == FALSE)
