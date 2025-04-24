@@ -1,6 +1,7 @@
 #pragma once
 
 #include "global.h"
+#include "task.h"
 
 #ifndef BATTLE_BANKS_COUNT
 #define BATTLE_BANKS_COUNT 4

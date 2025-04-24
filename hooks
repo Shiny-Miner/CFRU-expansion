@@ -793,6 +793,10 @@ OptionMenu_PickSwitchCancel 08088680 0
 StartMenuBagCallback 0806f480 0
 
 GetItemIconGfxPtr 08098974 2
+BattleTurnPassed 08013BD4 0
+EvolutionScene 080CDDF4 4
+Task_EvolutionScene 080CE8DC 1
+##PokemonUseItemEffects 080413E4 5
 
 #ifdef PALETTE_SWAPPER
 LoadObjectEventPalette 0805F4B0 1

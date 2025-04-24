@@ -75,6 +75,8 @@
 #define SIDE_STATUS_MIST             (1 << 8)
 #define SIDE_STATUS_SPIKES_DAMAGED   (1 << 9)
 
+#define B_ACTION_FINISHED                  12
+#define B_ACTION_NONE                      0xFF
 #define ACTION_USE_MOVE             0
 #define ACTION_USE_ITEM             1
 #define ACTION_SWITCH               2
@@ -682,6 +684,7 @@ struct BattleStruct
 	u8 expGetterBank;
 	u8 field_90;
 	u8 field_91;
+	u8 absentBattlerFlags;
 	u8 switchoutIndex[2];
 	u8 wallyBattleState;
 	u8 wallyMovesState;
@@ -1369,11 +1372,11 @@ struct BattleScripting
     u8 field_20;
     u8 reshowMainState;
     u8 reshowHelperState;
-    u8 field_23;
+	u8 field_23;
     u8 field_24;
     u8 multiplayerId;
+	u8 moveendState;
 };
-
 extern struct BattleScripting gBattleScripting;
 
 // functions
@@ -1573,6 +1576,7 @@ extern u16 gLastResultingMoves[MAX_BATTLERS_COUNT];
 extern u16 gLockedMoves[MAX_BATTLERS_COUNT];
 extern u8 gLastHitBy[MAX_BATTLERS_COUNT];
 extern u16 gChosenMovesByBanks[MAX_BATTLERS_COUNT];
+#define HITMARKER_PASSIVE_DAMAGE        (1 << 20)
 extern u8 gMoveResultFlags;
 extern u32 gHitMarker;
 extern u8 gTakenDmgBanks[MAX_BATTLERS_COUNT];
@@ -1644,5 +1648,8 @@ extern u16 gAnimBattlerSpecies[MAX_BATTLERS_COUNT];
 extern u8 gAnimCustomPanning;
 
 extern u8 gBattleBuffersTransferData[0x100];
+extern bool8 gPlayerDoesNotWantToEvolveLeft;
+extern bool8 gPlayerDoesNotWantToEvolveRight;
+extern u8 gBattleTerrainBackup;
 
 #define BATTLE_HISTORY ((struct BattleHistory*) (gBattleResources->battleHistory))
