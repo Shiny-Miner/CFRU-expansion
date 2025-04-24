@@ -684,7 +684,6 @@ struct BattleStruct
 	u8 expGetterBank;
 	u8 field_90;
 	u8 field_91;
-	u8 absentBattlerFlags;
 	u8 switchoutIndex[2];
 	u8 wallyBattleState;
 	u8 wallyMovesState;
@@ -1375,7 +1374,6 @@ struct BattleScripting
 	u8 field_23;
     u8 field_24;
     u8 multiplayerId;
-	u8 moveendState;
 };
 extern struct BattleScripting gBattleScripting;
 

@@ -70,7 +70,6 @@ extern u8 DoBattlerEndTurnEffects(void) __attribute__((long_call));
 extern bool8 HandleFaintedMonActions(void) __attribute__((long_call));
 extern bool8 HandleWishPerishSongOnTurnEnd(void) __attribute__((long_call));
 extern u16 gChosenMoveByBattler[MAX_BATTLERS_COUNT];
-extern u8 gAbsentBattlerFlags;
 extern u8 gChosenActionByBattler[MAX_BATTLERS_COUNT];
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem);
 
@@ -103,7 +102,7 @@ void BattleTurnPassed(void)
     gHitMarker &= ~(HITMARKER_PASSIVE_DAMAGE);
     gBattleScripting.animTurn = 0;
     gBattleScripting.animTargetsHit = 0;
-    gBattleScripting.moveendState = 0;
+    gBattleScripting.atk49_state = 0;
     gBattleMoveDamage = 0;
     gMoveResultFlags = 0;
     for (i = 0; i < 5; i++)
@@ -123,7 +122,7 @@ void BattleTurnPassed(void)
     }
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         *(gBattleStruct->monToSwitchIntoId + i) = PARTY_SIZE;
-    *(&gBattleStruct->absentBattlerFlags) = gAbsentBattlerFlags;
+    *(&gBattleStruct->field_91) = gAbsentBattlerFlags;
     gBattleMainFunc = PlayerTryEvolution;
     gRandomTurnNumber = Random();
 }
