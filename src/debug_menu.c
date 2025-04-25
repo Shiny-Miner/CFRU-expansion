@@ -193,7 +193,7 @@ void DebugMenu_GivePokemonFromVar(void)
 	if (slot >= PARTY_SIZE)
 		return;
 
-	CreateMon(&mon, species, 50, 32, TRUE, 0, OT_ID_PLAYER_ID, 0);
+	CreateMon(&mon, species, 15, 32, TRUE, 0, OT_ID_PLAYER_ID, 0);
 	gPlayerParty[slot] = mon;
 }
 void DebugMenu_GiveItemFromVar(void)

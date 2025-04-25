@@ -40,7 +40,7 @@ battle_start_turn_start.c
 	-handles the logic for determining which pokemon attacks first
 	-also handles setting up battle data
 */
-
+extern void PlayerTryEvolution(void);
 enum BattleBeginStates
 {
 	BTSTART_BACKUP_PARTY_ITEMS,
@@ -655,7 +655,7 @@ void BattleBeginFirstTurn(void)
 				TurnValuesCleanUp(0);
 				SpecialStatusesClear();
 				gBattleStruct->field_91 = gAbsentBattlerFlags;
-				gBattleMainFunc = (void*) (0x8014040 | 1);
+				gBattleMainFunc = PlayerTryEvolution;
 				ResetSentPokesToOpponentValue();
 				for (i = 0; i < 8; i++)
 					gBattleCommunication[i] = 0;
