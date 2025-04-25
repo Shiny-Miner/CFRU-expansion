@@ -73,7 +73,7 @@ extern u16 gChosenMoveByBattler[MAX_BATTLERS_COUNT];
 extern u8 gChosenActionByBattler[MAX_BATTLERS_COUNT];
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem);
 
-void PlayerTryEvolution(void);
+static void PlayerTryEvolution(void);
 static void WaitForEvolutionThenTryAnother(void);
 static void CB2_SetUpReshowBattleScreenAfterEvolution(void);
 
@@ -82,7 +82,7 @@ static void CB2_SetUpReshowBattleScreenAfterEvolution(void);
 #define LEFT_PKMN gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)]
 #define RIGHT_PKMN gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)]
 
-void CB2_SetUpReshowBattleScreenAfterEvolution(void)
+static void CB2_SetUpReshowBattleScreenAfterEvolution(void)
 {
     gBattleTerrain = gBattleTerrainBackup; 
     SetMainCallback2(ReshowBattleScreenAfterMenu);
@@ -107,8 +107,55 @@ static void Task_BeginBattleEvolutionScene(u8 taskId)
         EvolutionScene(&gPlayerParty[battlerPosition], SpeciesToEvolveInto, TRUE, battlerPosition);
     }
 }
+void BattleTurnPassed(void)
+{
+    s32 i;
 
-void PlayerTryEvolution(void)
+    TurnValuesCleanUp(TRUE);
+    if (gBattleOutcome == 0)
+    {
+        if (DoFieldEndTurnEffects())
+            return;
+        if (DoBattlerEndTurnEffects())
+            return;
+    }
+    if (HandleFaintedMonActions())
+        return;
+    gBattleStruct->faintedActionsState = 0;
+    if (HandleWishPerishSongOnTurnEnd())
+        return;
+    TurnValuesCleanUp(FALSE);
+    gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING);
+    gHitMarker &= ~(HITMARKER_UNABLE_TO_USE_MOVE);
+    gHitMarker &= ~(HITMARKER_PLAYER_FAINTED);
+    gHitMarker &= ~(HITMARKER_PASSIVE_DAMAGE);
+    gBattleScripting.animTurn = 0;
+    gBattleScripting.animTargetsHit = 0;
+    gBattleScripting.atk49_state = 0;
+    gBattleMoveDamage = 0;
+    gMoveResultFlags = 0;
+    for (i = 0; i < 5; i++)
+        gBattleCommunication[i] = 0;
+    if (gBattleOutcome != 0)
+    {
+        gCurrentActionFuncId = B_ACTION_FINISHED;
+        gBattleMainFunc = RunTurnActionsFunctions;
+        return;
+    }
+    if (gBattleResults.battleTurnCounter < 0xFF)
+        ++gBattleResults.battleTurnCounter;
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        gChosenActionByBattler[i] = B_ACTION_NONE;
+        gChosenMoveByBattler[i] = MOVE_NONE;
+    }
+    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        *(gBattleStruct->monToSwitchIntoId + i) = PARTY_SIZE;
+    *(&gBattleStruct->field_91) = gAbsentBattlerFlags;
+    gBattleMainFunc = PlayerTryEvolution;
+    gRandomTurnNumber = Random();
+}
+static void PlayerTryEvolution(void)
 {
     u16 species;
     u8 taskId; 
