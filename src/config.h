@@ -372,6 +372,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define TERASTAL_FEATURE //Comment this line to remove Terastallization
 #define FLAG_TERA_BATTLE 0xA08 //Works like an half tera orb
 #define SHOW_TERA_TYPE_ICON_ON_SUMMARY_SCREEN //If you just want to show the tera type icon on the summary screen, uncomment this one
+#define FLAG_QUEST_MENU_ACTIVE   0x200
 
 //#define BW_SUMMARY_SCREEN_IMPLEMENTED // Only if you have BW summary screen implemented, will implement nature coloured stats and IV ranking in summary
 /* DexNav Options */

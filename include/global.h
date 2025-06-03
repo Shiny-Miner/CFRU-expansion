@@ -706,6 +706,11 @@ struct TrainerNameRecord
 
 #define NUM_EASY_CHAT_EXTRA_PHRASES 33
 
+// quest menu
+#include "constants/quests.h"
+#define SIDE_QUEST_FLAGS_COUNT     ((SIDE_QUEST_COUNT / 8) + ((SIDE_QUEST_COUNT % 8) ? 1 : 0))
+
+
 struct SaveBlock1 //0x202552C
 {
 	/*0x0000*/ struct Coords16 pos;
@@ -767,6 +772,9 @@ struct SaveBlock1 //0x202552C
 	/*0x3D31*/ u8 filler_3D31[3];
 	/*0x3D34*/ u32 towerChallengeId;
 	/*0x3D38*/ struct TrainerTower trainerTower[NUM_TOWER_CHALLENGE_TYPES];
+    /*0x3C44*/ u8 unlockedQuests[SIDE_QUEST_FLAGS_COUNT];
+    /*0x????*/ u8 completedQuests[SIDE_QUEST_FLAGS_COUNT];
+    /*0x????*/ u8 activeQuest;
 };
 
 extern struct SaveBlock1* gSaveBlock1;
