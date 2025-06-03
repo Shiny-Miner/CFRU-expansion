@@ -193,6 +193,22 @@ extern const u8 gText_SideQuestReward_27[];
 extern const u8 gText_SideQuestReward_28[];
 extern const u8 gText_SideQuestReward_29[];
 extern const u8 gText_SideQuestReward_30[];
+extern const u8 sText_Quests[];
+extern const u8 sText_QuestMenu_Begin[];
+extern const u8 sText_QuestMenu_End[];
+extern const u8 sText_QuestMenu_Details[];
+extern const u8 sText_QuestMenu_Reward[];
+extern const u8 sText_Cancel[];
+extern const u8 sText_QuestMenu_Unk[];
+extern const u8 sText_QuestMenu_Active[];
+extern const u8 sText_QuestMenu_Complete[];
+extern const u8 sText_QuestMenu_Exit[];
+extern const u8 sText_QuestMenu_SelectedQuest[];
+extern const u8 sText_QuestMenu_DisplayDetails[];
+extern const u8 sText_QuestMenu_DisplayReward[];
+extern const u8 sText_QuestMenu_BeginQuest[];
+extern const u8 sText_QuestMenu_EndQuest[];
+
 
 //QUEST MENU
 //static void DebugSideQuestMenu(void);
