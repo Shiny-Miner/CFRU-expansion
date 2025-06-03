@@ -33,6 +33,11 @@
 #include "../include/quest_menu.h"
 #include "../include/constants/event_objects.h"
 #include "../include/menu.h"
+#include "../include/palette.h"
+#include "../include/event_data.h"
+#include "../include/new/item.h"
+#include "../include/list_menu.h"
+#include "../include/item_info.h"
 
 ////side quests
 //names
@@ -206,6 +211,24 @@ extern const u8 sText_QuestMenu_DisplayReward[];
 extern const u8 sText_QuestMenu_BeginQuest[];
 extern const u8 sText_QuestMenu_EndQuest[];
 
+struct ItemPcResources
+{
+    MainCallback savedCallback;
+    u8 moveModeOrigPos;
+    u8 itemMenuIconSlot;
+    u8 maxShowed;
+    u8 nItems;
+    u8 scrollIndicatorArrowPairId;
+    u16 withdrawQuantitySubmenuCursorPos;
+    s16 data[3];
+};
+
+#define sStateDataPtr (*(struct ItemPcResources **)0x203ADBC)
+#define sListMenuItems (*(struct ListMenuItem **)0x203ADC4)
+#define LIST_NOTHING_CHOSEN -1
+#define LIST_CANCEL -2
+#define LIST_HEADER -3
+
 
 //QUEST MENU
 //static void DebugSideQuestMenu(void);
@@ -351,19 +374,19 @@ bool8 ScrCmd_questmenu(struct ScriptContext *ctx)
             CopyQuestName(gStringVar1, questId);
         break;
     case QUEST_MENU_GET_ACTIVE_QUEST:
-        gSpecialVar_Result = GetActiveQuestIndex();
+        gSpecialVar_LastResult = GetActiveQuestIndex();
         break;
     case QUEST_MENU_CHECK_UNLOCKED:
         if (GetSetQuestFlag(questId, FLAG_GET_UNLOCKED))
-            gSpecialVar_Result = TRUE;
+            gSpecialVar_LastResult = TRUE;
         else
-            gSpecialVar_Result = FALSE;
+            gSpecialVar_LastResult = FALSE;
         break;
     case QUEST_MENU_CHECK_COMPLETE:
         if (GetSetQuestFlag(questId, FLAG_GET_COMPLETED))
-            gSpecialVar_Result = TRUE;
+            gSpecialVar_LastResult = TRUE;
         else
-            gSpecialVar_Result = FALSE;
+            gSpecialVar_LastResult = FALSE;
         break;
     }
 
@@ -388,7 +411,7 @@ void ItemPc_BuildListMenuTemplate(void)
     {
         for (i = 0; i < sStateDataPtr->nItems; i++)
         {
-            sListMenuItems[i].label = ItemId_GetName(gSaveBlock1Ptr->pcItems[i].itemId);
+            sListMenuItems[i].label = ItemId_GetName(gSaveBlock1->pcItems[i].itemId);
             sListMenuItems[i].index = i;
         }
     }
@@ -538,7 +561,7 @@ void ItemPc_CountPcItems(void)
         sStateDataPtr->nItems = 0;
         for (i = 0; i < PC_ITEMS_COUNT; sStateDataPtr->nItems++, i++)
         {
-            if (gSaveBlock1Ptr->pcItems[i].itemId == ITEM_NONE)
+            if (gSaveBlock1->pcItems[i].itemId == ITEM_NONE)
                 break;
         }
     }
@@ -714,14 +737,14 @@ s8 GetSetQuestFlag(u8 quest, u8 caseId)
     switch (caseId)
     {
     case FLAG_GET_UNLOCKED:
-        return gSaveBlock1Ptr->unlockedQuests[index] & mask;
+        return gSaveBlock1->unlockedQuests[index] & mask;
     case FLAG_SET_UNLOCKED:
-        gSaveBlock1Ptr->unlockedQuests[index] |= mask;
+        gSaveBlock1->unlockedQuests[index] |= mask;
         return 1;
     case FLAG_GET_COMPLETED:
-        return gSaveBlock1Ptr->completedQuests[index] & mask;
+        return gSaveBlock1->completedQuests[index] & mask;
     case FLAG_SET_COMPLETED:
-        gSaveBlock1Ptr->completedQuests[index] |= mask;
+        gSaveBlock1->completedQuests[index] |= mask;
         return 1;
     }
 
@@ -730,8 +753,8 @@ s8 GetSetQuestFlag(u8 quest, u8 caseId)
 
 s8 GetActiveQuestIndex(void)
 {
-    if (gSaveBlock1Ptr->activeQuest > 0)
-        return (gSaveBlock1Ptr->activeQuest - 1);
+    if (gSaveBlock1->activeQuest > 0)
+        return (gSaveBlock1->activeQuest - 1);
     else
         return NO_ACTIVE_QUEST;
 }
@@ -746,12 +769,12 @@ static bool8 IsActiveQuest(u8 questId)
 
 void SetActiveQuest(u8 questId)
 {
-    gSaveBlock1Ptr->activeQuest = questId + 1;  // 1-indexed
+    gSaveBlock1->activeQuest = questId + 1;  // 1-indexed
 }
 
 void ResetActiveQuest(void)
 {
-    gSaveBlock1Ptr->activeQuest = 0;
+    gSaveBlock1->activeQuest = 0;
 }
 
 static void QuestMenuSubmenuSelectionMessage(u8 taskId)
