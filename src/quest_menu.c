@@ -1,5 +1,4 @@
 #include "../include/global.h"
-#include "../include/gflib.h"
 #include "../include/script.h"
 #include "../include/mystery_event_script.h"
 #include "../include/event_data.h"
@@ -15,14 +14,11 @@
 #include "../include/field_player_avatar.h"
 #include "../include/script_movement.h"
 #include "../include/event_object_movement.h"
-#include "../include/event_object_lock.h"
 #include "../include/field_message_box.h"
 #include "../include/new_menu_helpers.h"
 #include "../include/script_menu.h"
-#include "../include/data.h"
 #include "../include/field_specials.h"
 #include "../include/constants/items.h"
-#include "../include/script_pokemon_util.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/party_menu.h"
 #include "../include/money.h"
@@ -36,6 +32,7 @@
 #include "../include/item_pc.h"
 #include "../include/quest_menu.h"
 #include "../include/constants/event_objects.h"
+#include "../include/menu.h"
 
 ////side quests
 //names
