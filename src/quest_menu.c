@@ -232,11 +232,6 @@ struct ItemPcResources
     u16 withdrawQuantitySubmenuCursorPos;
     s16 data[3];
 };
-struct ListMenuItems2
-{
-    const u8 *label;
-    u32 index;
-};
 
 struct ItemPcStaticResources
 {
@@ -247,7 +242,7 @@ struct ItemPcStaticResources
 };
 
 #define sStateDataPtr (*(struct ItemPcResources **)0x203ADBC)
-#define sListMenuItems (*(struct ListMenuItems2 **)0x203ADC4)
+#define sListMenuItems (*(struct ListMenuItem **)0x203ADC4)
 #define LIST_NOTHING_CHOSEN -1
 #define LIST_CANCEL -2
 #define LIST_HEADER -3
@@ -459,24 +454,24 @@ void ItemPc_BuildListMenuTemplate(void)
         for (i = 0; i < sStateDataPtr->nItems; i++)
         {
             if (GetSetQuestFlag(i, FLAG_GET_UNLOCKED))
-                sListMenuItems[i].label = sSideQuests[i].name;
+                sListMenuItems[i].name = sSideQuests[i].name;
             else
-                sListMenuItems[i].label = sText_QuestMenu_Unk;
+                sListMenuItems[i].name = sText_QuestMenu_Unk;
 
-            sListMenuItems[i].index = i;
+            sListMenuItems[i].id = i;
         }
     }
     else
     {
         for (i = 0; i < sStateDataPtr->nItems; i++)
         {
-            sListMenuItems[i].label = ItemId_GetName(gSaveBlock1->pcItems[i].itemId);
-            sListMenuItems[i].index = i;
+            sListMenuItems[i].name = ItemId_GetName(gSaveBlock1->pcItems[i].itemId);
+            sListMenuItems[i].id = i;
         }
     }
 
-    sListMenuItems[i].label = gFameCheckerText_Cancel;
-    sListMenuItems[i].index = LIST_CANCEL;
+    sListMenuItems[i].name = gFameCheckerText_Cancel;
+    sListMenuItems[i].id = LIST_CANCEL;
 
     gMultiuseListMenuTemplate->items = (const struct ListMenuItem *)sListMenuItems;
     gMultiuseListMenuTemplate->totalItems = sStateDataPtr->nItems + 1;
