@@ -259,7 +259,7 @@ struct ItemPcStaticResources
 
 
 //QUEST MENU
-//static void DebugSideQuestMenu(void);
+void DebugSideQuestMenu(void);
 static void SetQuestMenuInactive(void);
 static bool8 IsQuestMenuActive(void);
 static bool8 IsActiveQuest(u8 questId);
@@ -946,8 +946,8 @@ void CopyQuestName(u8 *dst, u8 questId)
     StringCopy(dst, sSideQuests[questId].name);
 }
 
-/*
-static void DebugSideQuestMenu(void)
+
+void DebugSideQuestMenu(void)
 {
     FlagSet(FLAG_QUEST_MENU_ACTIVE);
     
@@ -965,4 +965,3 @@ static void DebugSideQuestMenu(void)
     
     SetActiveQuest(6);
 }
-*/
