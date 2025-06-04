@@ -37,7 +37,11 @@
 #include "../include/event_data.h"
 #include "../include/new/item.h"
 #include "../include/list_menu.h"
-#include "../include/item_info.h"
+#include "../include/item_icon.h"
+#include "../include/constants/songs.h"
+#include "../include/constants/moves.h"
+#include "../include/string_util.h"
+#include "../include/new/Vanilla_functions.h"
 
 ////side quests
 //names
@@ -210,6 +214,12 @@ extern const u8 sText_QuestMenu_DisplayDetails[];
 extern const u8 sText_QuestMenu_DisplayReward[];
 extern const u8 sText_QuestMenu_BeginQuest[];
 extern const u8 sText_QuestMenu_EndQuest[];
+extern const u8 gFameCheckerText_Cancel[];
+extern const u8 gText_ReturnToPC[];
+extern u8 gExpandedPlaceholder_Empty[];
+extern const u8 gText_TimesStrVar1[];
+extern const u8 gText_WithdrawItem[];
+extern const u8 gText_Var1IsSelected[];
 
 struct ItemPcResources
 {
@@ -222,12 +232,30 @@ struct ItemPcResources
     u16 withdrawQuantitySubmenuCursorPos;
     s16 data[3];
 };
+struct ListMenuItems2
+{
+    const u8 *label;
+    u32 index;
+};
+
+struct ItemPcStaticResources
+{
+    MainCallback savedCallback;
+    u16 scroll;
+    u16 row;
+    u8 initialized;
+};
 
 #define sStateDataPtr (*(struct ItemPcResources **)0x203ADBC)
-#define sListMenuItems (*(struct ListMenuItem **)0x203ADC4)
+#define sListMenuItems (*(struct ListMenuItems2 **)0x203ADC4)
 #define LIST_NOTHING_CHOSEN -1
 #define LIST_CANCEL -2
 #define LIST_HEADER -3
+#define gMultiuseListMenuTemplate ((struct ListMenuTemplate*) ((u32*) 0x3005E70))
+#define sListMenuState (*(struct ItemPcStaticResources *)0x0203ADCC)
+#define ITEM_N_A 375
+#define SE_HAZURE 26
+#define sItemPcSubmenuOptions ((const struct MenuAction *)0x08453F74)
 
 
 //QUEST MENU
@@ -240,6 +268,37 @@ static void Task_QuestMenuEndQuest(u8 taskId);
 static void Task_QuestMenuDetails(u8 taskId);
 static void Task_QuestMenuCancel(u8 taskId);
 static void Task_QuestMenuReward(u8 taskId);
+void ItemPc_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu * list);
+void ItemPc_ItemPrintFunc(u8 windowId, s32 itemId, u8 y);
+extern void PlaySE(u16 song);
+u16 ItemPc_GetItemIdBySlotId(u16 itemIndex);
+extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+extern bool8 IsPCScreenEffectRunning_TurnOff(void);
+extern void ItemPc_RemoveScrollIndicatorArrowPair(void);
+extern void ItemPc_FreeResources(void);
+extern void ItemPcCompaction(void);
+extern void Task_ItemPcTurnOff1(u8 taskId);
+extern void ItemPc_PrintOrRemoveCursorAt(u8 y, u8 mode);
+void Task_ItemPcSubmenuInit(u8 taskId);
+extern void GetOrCreateSubmenuWindow(void);
+extern void PrintTextArray(u8 windowId, u8 fontId, u8 left, u8 top, u8 lineHeight, u8 itemCount, const struct MenuAction *strs);
+extern void Task_ItemPcSubmenuRun(u8 taskId);
+extern void ItemPc_SetCursorPosition(void);
+extern void ItemPc_AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 * str, u8 x, u8 y, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 colorIdx);
+extern void ItemPc_PrintOrRemoveCursor(s32 listTaskId, u8 mode);
+extern void ItemPc_SetMessageWindowPalette(u8 paletteId);
+extern void ItemPc_MoveItemModeInit(u8 taskId, s16 itemIndex);
+extern void ItemPc_SetBorderStyleOnWindow(u8 windowId);
+extern void ItemPc_DestroySubwindow(u8 id);
+extern void ItemPc_ReturnFromSubmenu(u8 taskId);
+extern void Task_ItemPcCancel(u8 taskId);
+extern u16 ItemPc_GetItemIdBySlotId(u16 slotId);
+extern u16 ItemPc_GetItemQuantityBySlotId(u16 slotId);
+extern bool8 IsPCScreenEffectRunning_TurnOn(void);
+extern u8 ItemPc_GetCursorPosition(void);
+extern u8 ItemPc_GetOrCreateSubwindow(u8 id);
+extern s32 Menu_ProcessInputNoWrapAround(void);
+
 
 //menu actions
 // Selected an incomplete quest
@@ -419,29 +478,30 @@ void ItemPc_BuildListMenuTemplate(void)
     sListMenuItems[i].label = gFameCheckerText_Cancel;
     sListMenuItems[i].index = LIST_CANCEL;
 
-    gMultiuseListMenuTemplate.items = sListMenuItems;
-    gMultiuseListMenuTemplate.totalItems = sStateDataPtr->nItems + 1;
-    gMultiuseListMenuTemplate.windowId = 0;
-    gMultiuseListMenuTemplate.header_X = 0;
-    gMultiuseListMenuTemplate.item_X = 9;
-    gMultiuseListMenuTemplate.cursor_X = 1;
-    gMultiuseListMenuTemplate.lettersSpacing = 1;
-    gMultiuseListMenuTemplate.itemVerticalPadding = 2;
-    gMultiuseListMenuTemplate.upText_Y = 2;
-    gMultiuseListMenuTemplate.maxShowed = sStateDataPtr->maxShowed;
-    gMultiuseListMenuTemplate.fontId = 2;
-    gMultiuseListMenuTemplate.cursorPal = 2;
-    gMultiuseListMenuTemplate.fillValue = 0;
-    gMultiuseListMenuTemplate.cursorShadowPal = 3;
-    gMultiuseListMenuTemplate.moveCursorFunc = ItemPc_MoveCursorFunc;
-    gMultiuseListMenuTemplate.itemPrintFunc = ItemPc_ItemPrintFunc;
-    gMultiuseListMenuTemplate.scrollMultiple = 0;
-    gMultiuseListMenuTemplate.cursorKind = 0;
+    gMultiuseListMenuTemplate->items = (const struct ListMenuItem *)sListMenuItems;
+    gMultiuseListMenuTemplate->totalItems = sStateDataPtr->nItems + 1;
+    gMultiuseListMenuTemplate->windowId = 0;
+    gMultiuseListMenuTemplate->header_X = 0;
+    gMultiuseListMenuTemplate->item_X = 9;
+    gMultiuseListMenuTemplate->cursor_X = 1;
+    gMultiuseListMenuTemplate->lettersSpacing = 1;
+    gMultiuseListMenuTemplate->itemVerticalPadding = 2;
+    gMultiuseListMenuTemplate->upText_Y = 2;
+    gMultiuseListMenuTemplate->maxShowed = sStateDataPtr->maxShowed;
+    gMultiuseListMenuTemplate->fontId = 2;
+    gMultiuseListMenuTemplate->cursorPal = 2;
+    gMultiuseListMenuTemplate->fillValue = 0;
+    gMultiuseListMenuTemplate->cursorShadowPal = 3;
+    gMultiuseListMenuTemplate->moveCursorFunc = ItemPc_MoveCursorFunc;
+    gMultiuseListMenuTemplate->itemPrintFunc = ItemPc_ItemPrintFunc;
+    gMultiuseListMenuTemplate->scrollMultiple = 0;
+    gMultiuseListMenuTemplate->cursorKind = 0;
 }
 void ItemPc_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu * list)
 {
     u16 itemId;
     const u8 * desc;
+    (void)list;
     if (onInit != TRUE)
         PlaySE(SE_SELECT);
     if (sStateDataPtr->moveModeOrigPos == 0xFF)
@@ -633,7 +693,7 @@ void Task_ItemPcMain(u8 taskId)
         }
     }
 }
-static void Task_ItemPcSubmenuInit(u8 taskId)
+void Task_ItemPcSubmenuInit(u8 taskId)
 {
     s16 * data = gTasks[taskId].data;
     u8 windowId;
@@ -800,7 +860,7 @@ static void Task_QuestMenuCleanUp(u8 taskId)
     ItemPc_CountPcItems();
     ItemPc_SetCursorPosition();
     ItemPc_BuildListMenuTemplate();
-    data[0] = ListMenuInit(&gMultiuseListMenuTemplate, sListMenuState.scroll, sListMenuState.row);
+    data[0] = ListMenuInit(gMultiuseListMenuTemplate, sListMenuState.scroll, sListMenuState.row);
     ScheduleBgCopyTilemapToVram(0);
     ItemPc_ReturnFromSubmenu(taskId);
 }

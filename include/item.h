@@ -76,8 +76,6 @@ u8 ItemId_GetHoldEffectParam(u16 itemId);
 bool32 ItemId_CopyDescription(u8 *a, u32 itemId, u32 c);
 u8 ItemId_GetImportance(u16 itemId);
 u8 ItemId_GetUnknownValue(u16 itemId);
-u8 ItemId_GetPocket(u16 itemId);
-u8 ItemId_GetType(u16 itemId);
 u8 ItemId_GetBattleUsage(u16 itemId);
 ItemUseFunc ItemId_GetBattleFunc(u16 itemId);
 u8 ItemId_GetSecondaryId(u16 itemId);
@@ -86,4 +84,6 @@ void sub_809A2DC(void);
 void sub_809A2A4(void);
 void sub_8099E90(u16, u8 *);
 */
+u8 ItemId_GetPocket(u16 itemId);
+u8 ItemId_GetType(u16 itemId);
 #endif // ITEM_H
