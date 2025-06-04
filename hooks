@@ -812,3 +812,13 @@ sideway_change_movement_2 080BD3C8 1
 #ifdef SHOW_TERA_TYPE_ICON_ON_SUMMARY_SCREEN
 PrintInfoPage 08136fb0 1
 #endif
+
+Task_ItemPcSubmenuRun 0810e358 1
+Task_ItemPcSubmenuInit 0810e274 1
+Task_ItemPcMain 0810dea0 1
+ItemPc_CountPcItems 0810dda4 1
+Task_ItemPcTurnOff2 0810dce4 1
+ItemPc_PrintWithdrawItem 0810db34 1
+ItemPc_ItemPrintFunc 0810da20 1
+ItemPc_MoveCursorFunc 0810d954 1
+ItemPc_BuildListMenuTemplate 0810d878 1
