@@ -431,6 +431,7 @@ def main():
 
         # Read hooks from a file
         if os.path.isfile(HOOKS):
+            print("Building Hooks...")
             with open(HOOKS, 'r') as hookList:
                 definesDict = {}
                 conditionals = []
@@ -454,6 +455,7 @@ def main():
 
         # Read repoints from a file
         if os.path.isfile(REPOINTS):
+            print("Building Repoints...")
             with open(REPOINTS, 'r') as repointList:
                 definesDict = {}
                 conditionals = []
@@ -489,6 +491,7 @@ def main():
 
         # Read routine repoints from a file
         if os.path.isfile(ROUTINE_POINTERS):
+            print("Building Routine Pointers...")
             with open(ROUTINE_POINTERS, 'r') as pointerlist:
                 definesDict = {}
                 conditionals = []
@@ -512,6 +515,7 @@ def main():
 
         # Read routine rewrite wrapper from a file
         if os.path.isfile(FUNCTION_REWRITES):
+            print("Building Function Rewrites...")
             with open(FUNCTION_REWRITES, 'r') as frwlist:
                 definesDict = {}
                 conditionals = []
