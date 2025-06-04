@@ -812,4 +812,3 @@ sideway_change_movement_2 080BD3C8 1
 #ifdef SHOW_TERA_TYPE_ICON_ON_SUMMARY_SCREEN
 PrintInfoPage 08136fb0 1
 #endif
-Task_ItemPcMain 0810dea0 3

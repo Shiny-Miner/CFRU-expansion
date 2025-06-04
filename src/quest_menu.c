@@ -497,6 +497,7 @@ void ItemPc_BuildListMenuTemplate(void)
     gMultiuseListMenuTemplate->scrollMultiple = 0;
     gMultiuseListMenuTemplate->cursorKind = 0;
 }
+static const u8 sTextColor_WhiteBlackRed[] = {0x1, 0x8, 0x0};
 void ItemPc_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu * list)
 {
     u16 itemId;
@@ -549,7 +550,7 @@ void ItemPc_MoveCursorFunc(s32 itemIndex, bool8 onInit, struct ListMenu * list)
         }
         sStateDataPtr->itemMenuIconSlot ^= 1;
         FillWindowPixelBuffer(1, 0);
-        ItemPc_AddTextPrinterParameterized(1, 2, desc, 0, 3, 2, 0, 0, 3);
+        AddTextPrinterParameterized3(1, 2, 0, 3, sTextColor_WhiteBlackRed, 0, desc);
     }
 }
 void ItemPc_ItemPrintFunc(u8 windowId, s32 itemId, u8 y)
@@ -573,23 +574,23 @@ void ItemPc_ItemPrintFunc(u8 windowId, s32 itemId, u8 y)
             else
                 StringCopy(gStringVar4, gExpandedPlaceholder_Empty);
 
-            ItemPc_AddTextPrinterParameterized(windowId, 0, gStringVar4, 110, y, 0, 0, TEXT_SPEED_FF, 1);
+            AddTextPrinterParameterized3(windowId, 0, 110, y, sTextColor_WhiteBlackRed, TEXT_SPEED_FF, gStringVar4);
         }
         else
         {
             u16 quantity = ItemPc_GetItemQuantityBySlotId(itemId);
             ConvertIntToDecimalStringN(gStringVar1, quantity, STR_CONV_MODE_RIGHT_ALIGN, 3);
             StringExpandPlaceholders(gStringVar4, gText_TimesStrVar1);
-            ItemPc_AddTextPrinterParameterized(windowId, 0, gStringVar4, 110, y, 0, 0, 0xFF, 1);
+            AddTextPrinterParameterized3(windowId, 0, 110, y, sTextColor_WhiteBlackRed, TEXT_SPEED_FF, gStringVar4);
         }
     }
 }
 void ItemPc_PrintWithdrawItem(void)
 {
     if (IsQuestMenuActive())
-        ItemPc_AddTextPrinterParameterized(2, 0, sText_Quests, 0, 1, 0, 1, 0, 0);
+        AddTextPrinterParameterized3(2, 0, 0, 1, sTextColor_WhiteBlackRed, 0, sText_Quests);
     else
-        ItemPc_AddTextPrinterParameterized(2, 0, gText_WithdrawItem, 0, 1, 0, 1, 0, 0);
+        AddTextPrinterParameterized3(2, 0, 0, 1, sTextColor_WhiteBlackRed, 0, gText_WithdrawItem);
 }
 void Task_ItemPcTurnOff2(u8 taskId)
 {
@@ -733,7 +734,7 @@ void Task_ItemPcSubmenuInit(u8 taskId)
         StringExpandPlaceholders(gStringVar4, gText_Var1IsSelected);
     }
 
-    ItemPc_AddTextPrinterParameterized(windowId, 2, gStringVar4, 0, 2, 1, 0, 0, 1);
+    AddTextPrinterParameterized3(windowId, 2, 0, 2, sTextColor_WhiteBlackRed, 0, gStringVar4);
     ScheduleBgCopyTilemapToVram(0);
     gTasks[taskId].func = Task_ItemPcSubmenuRun;
 }

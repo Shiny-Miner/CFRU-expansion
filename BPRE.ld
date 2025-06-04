@@ -2323,7 +2323,6 @@ ItemPc_RemoveScrollIndicatorArrowPair = 0x0810dbd0 |1;
 ItemPc_FreeResources = 0x0810dc40 |1;
 ItemPcCompaction = 0x0809a4e8 |1;
 ItemPc_MoveItemModeInit = 0x0810dfe0 |1;
-Task_ItemPcTurnOff1 = 0x0810dc8c |1;
 ItemPc_SetMessageWindowPalette = 0x0810de6c |1;
 ItemPc_PrintOrRemoveCursor = 0x0810dab4 |1;
 ItemPc_SetBorderStyleOnWindow = 0x0810ea9c |1;

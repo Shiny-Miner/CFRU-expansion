@@ -9,8 +9,6 @@ CB2_EndTrainerBattle 0x080804ac 0 1
 CB2_EndWildBattle 0x0807fb40 0 1
 CB2_EndScriptedWildBattle_2 0x0807fba0 0 1
 PrintSkillsPage 0x081370ec 0 1
-Task_ItemPcSubmenuRun 0810e358 1 0
-Task_ItemPcSubmenuInit 0810e274 1 0
 
 ItemPc_CountPcItems 0810dda4 0 1
 Task_ItemPcTurnOff2 0810dce4 1 0
@@ -18,5 +16,5 @@ Task_ItemPcTurnOff2 0810dce4 1 0
 ItemPc_ItemPrintFunc 0810da20 0 1
 ItemPc_MoveCursorFunc 0810d954 0 1
 ItemPc_BuildListMenuTemplate 0810d878 0 1
-
+Task_ItemPcMain 0810dea0 1 0
 ItemPc_PrintWithdrawItem 0810db34 0 1
