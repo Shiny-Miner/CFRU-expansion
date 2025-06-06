@@ -1,5 +1,8 @@
 #include "../defines.h"
 #include "../../include/global.h"
+#include "../../include/global.fieldmap.h"
+#include "../../include/constants/field_effects.h"
+#include "../../include/field_effect.h"
 #include "../../include/fieldmap.h"
 #include "../../include/metatile_behavior.h"
 #include "../../include/overworld.h"
@@ -16,6 +19,7 @@
 #define JUMP_FINISHED ((u8)-1)
 extern struct EventObject gObjectEvents[EVENT_OBJECTS_COUNT];
 extern struct LinkPlayerEventObject gLinkPlayerEventObjects[4];
+extern void ObjectEventGetLocalIdAndMap(struct ObjectEvent *objectEvent, void *localId, void *mapNum, void *mapGroup);
 
 bool8 (*const gMovementTypeFuncs_FollowingPokemon[])(struct EventObject *, struct Sprite *);
 const u8* GetFollowerScriptPointer(void);
@@ -1913,6 +1917,19 @@ bool8 (*const sMovementActionFuncs_PlayerRunRight[])(struct EventObject *, struc
     MovementAction_PauseSpriteAnim,
 };
 
+u8 MovementAction_Emote_Heart_Step0(struct EventObject *objectEvent __attribute__((unused)), struct Sprite *sprite)
+{
+    ObjectEventGetLocalIdAndMap((struct ObjectEvent *)objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
+    FieldEffectStart(FLDEFF_EMOTE_HEART_ICON);
+    sprite->data[2] = 1;
+    return TRUE;
+}
+
+u8 (*const sMovementActionFuncs_Emote_Heart[])(struct EventObject *objectEvent __attribute__((unused)), struct Sprite *sprite) = {
+    MovementAction_Emote_Heart_Step0,
+    MovementAction_Finish,
+};
+
 u8 MovementAction_FollowingPokemon_Step0(struct EventObject *objectEvent __attribute__((unused)), struct Sprite *sprite)
 {    
     if(sprite->animNum > 20)
@@ -2364,6 +2381,7 @@ const struct MovementTable sMovementActionFuncs[] =
     {gMovementActionFuncs_FollowingPokemon_FaceNorth},      //0xE8
     {gMovementActionFuncs_FollowingPokemon_FaceWest},       //0xE9
     {gMovementActionFuncs_FollowingPokemon_FaceEast},       //0xEA
+    {sMovementActionFuncs_Emote_Heart},                     //0xEC
 };
 
 void (*const sMovementTypeCallbacks[MOVEMENT_TYPES_COUNT])(struct Sprite *) =

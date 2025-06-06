@@ -2415,3 +2415,6 @@ Task_DestroyResourcesOnExit = 0x08137e64|1;
 SetHelpContext = 0x812b1f0 | 1;
 BufferSelectedMonData = 0x08138b8c|1;
 sLevelNickTextColors = 0x8463fa4;
+ObjectEventGetLocalIdAndMap = 0x0805f364 |1;
+SetIconSpriteData = 0x0808265c |1;
+SpriteCB_TrainerIcons = 0x080826a8 |1;

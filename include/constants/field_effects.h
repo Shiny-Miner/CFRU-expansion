@@ -70,6 +70,7 @@
 #define FLDEFF_MOVE_DEOXYS_ROCK          67
 #define FLDEFF_DESTROY_DEOXYS_ROCK       68
 #define FLDEFF_SCREEN_FLASH              69
+#define FLDEFF_EMOTE_HEART_ICON            70
 
 #define FLDEFF_PAL_TAG_GENERAL_0          0x1004
 #define FLDEFF_PAL_TAG_GENERAL_1          0x1005

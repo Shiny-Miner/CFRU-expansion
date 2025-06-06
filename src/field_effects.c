@@ -42,6 +42,8 @@ extern const struct CompressedSpriteSheet gExplosionSpriteSheet;
 extern const struct CompressedSpriteSheet gThinRingSpriteSheet;
 extern const struct CompressedSpritePalette gExplosionSpritePalette;
 extern const struct CompressedSpritePalette gThinRingSpritePalette;
+extern const u8 emote_heartTiles[];
+extern const u16 emote_heartPal[];
 
 //This file's functions
 static void GetSpriteTemplateAndPaletteForGrassFieldEffect(const struct SpriteTemplate** spriteTemplate, const struct SpritePalette** spritePalette, u8 fieldEffectTemplateArg);
@@ -1360,3 +1362,59 @@ const struct FieldEffectScript2 FieldEffectScript_RockClimbDust =
 	FLDEFF_LOAD_FADED_PAL_CALLASM, &sBigDustSpritePalette, (void*) FldEff_RockClimbDust,
 	FLDEFF_END,
 };
+
+extern void SpriteCB_TrainerIcons(struct Sprite *sprite);
+extern void SetIconSpriteData(struct Sprite *sprite, u16 fldEffId, u8 spriteAnimNum);
+
+static const struct OamData sOamData_Emoticons = {
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(16x16),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(16x16),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+
+static const struct SpriteFrameImage sSpriteImages_Emoticons[] = {
+    {emote_heartTiles + 0x000, 0x80, 0},
+    {emote_heartTiles + 0x040, 0x80, 0},
+    {emote_heartTiles + 0x080, 0x80, 0},
+};
+
+static const union AnimCmd sAnimCmd_Emote_Heart[] = {
+    ANIMCMD_FRAME( 0,  4),
+    ANIMCMD_FRAME( 1,  4),
+    ANIMCMD_FRAME( 2, 52),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sSpriteAnimTable_Emoticons[] = {
+    sAnimCmd_Emote_Heart,
+};
+
+static const struct SpriteTemplate sSpriteTemplate_Emoticons = {
+    .tileTag = 0xFFFF,
+    .paletteTag = 0xFFFF,
+    .oam = &sOamData_Emoticons,
+    .anims = sSpriteAnimTable_Emoticons,
+    .images = sSpriteImages_Emoticons,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCB_TrainerIcons
+};
+
+u8 FldEff_EmoteHeartIcon(void)
+{
+    u8 spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x53);
+
+    if (spriteId != MAX_SPRITES)
+        SetIconSpriteData(&gSprites[spriteId], FLDEFF_EMOTE_HEART_ICON, 0);
+
+    return 0;
+}
