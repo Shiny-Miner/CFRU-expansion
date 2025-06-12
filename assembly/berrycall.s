@@ -9,7 +9,7 @@ BerryCall:
     mov   r1, #1
     strh  r1, [r0, #14] @.data[3]
     mov   r0, #0 @taskId
-    ldr   r1, =0x080A1821 @FieldUseFunc_BerryPuch
+    ldr   r1, =0x080A1881 @FieldUseFunc_BerryPuch
     bl    linker
     pop   {pc}
 

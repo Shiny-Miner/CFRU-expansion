@@ -28,7 +28,7 @@ ReturnYes:
     compare 0x800E 0x0
     if equal _goto noberry
     bufferitem 0x0 0x800E
-    msgbox planted 2
+    msgbox gText_PlayerPlantedABerry 2
     release
     end
 
