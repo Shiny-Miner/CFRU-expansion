@@ -313,10 +313,16 @@ Exp. Share turned on.
 Exp. Share turned off.
 
 #org @gText_WouldYouLikeToPlantBerryHere
-Would you like to plant a berry here?
+Would you like to plant\na berry here?
 
 #org @gText_PlayerPlantedABerry
 [PLAYER] planted a [BUFFER1].
 
 #org @gText_PlayerTookABerry
 [PLAYER] took a [BUFFER1].
+
+#org @planted
+= You planted a [BUFFER1].
+
+#org @noplant
+= The trees cried because you\ndidn't plant anything.

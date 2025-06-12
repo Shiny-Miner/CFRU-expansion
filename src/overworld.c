@@ -3175,3 +3175,28 @@ const struct Coords32 gDirectionToVectors[] =
     [DIR_NORTHWEST] = {-1, -1},
     [DIR_NORTHEAST] = { 1, -1},
 };
+
+enum BerryPouchType
+{
+    BERRYPOUCH_FROMFIELD,
+    BERRYPOUCH_FROMPARTYGIVE,
+    BERRYPOUCH_FROMMARTSELL,
+    BERRYPOUCH_FROMPOKEMONSTORAGEPC,
+    BERRYPOUCH_FROMBATTLE,
+    BERRYPOUCH_FROMBERRYCRUSH,
+    BERRYPOUCH_NA
+};
+
+void InitBerryPouch(u8 type, void (*savedCallback)(void), u8 allowSelect);
+
+void FieldCB_OpenBerryPouch(void)
+{
+    CleanupOverworldWindowsAndTilemaps();
+    InitBerryPouch(BERRYPOUCH_FROMFIELD, CB2_ReturnToField, TRUE);
+}
+
+void OpenBerryPouchFromScript(void)
+{
+    gFieldCallback = FieldCB_OpenBerryPouch;
+    SetMainCallback2(CB2_ReturnToField);
+}

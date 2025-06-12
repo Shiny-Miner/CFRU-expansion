@@ -1,4 +1,4 @@
 ##
 npc 3 0 1 EventScript_Pallet_FatGuy
 npc 3 0 0 EventScript_Pallet_Girl
-npc 4 3 1 SystemScript_DebugMenu
+npc 4 3 1 EventScript_BerrySoil
