@@ -16,3 +16,9 @@ PrintSkillsPage 0x081370ec 0 1
 #ifdef BW_SUMMARY_SCREEN
 ShowPokemonSummaryScreen 0x081344F8 0 1
 #endif
+GetAllGroundEffectFlags_OnSpawn 08067b34 2 0
+GetAllGroundEffectFlags_OnBeginStep 08067b7c 2 0
+GetAllGroundEffectFlags_OnFinishStep 08067bd4 2 0
+FldEff_Shadow 080db1dc 0 0
+Task_WeatherMain 08079e0c 1 0
+DoFlaggedGroundEffects 0806874c 3 0

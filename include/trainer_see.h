@@ -2,6 +2,7 @@
 #define GUARD_TRAINER_SEE_H
 
 #include "global.h"
+struct MapObject;
 
 void sub_80B4578(struct MapObject *);
 u8 sub_80B47BC(void);

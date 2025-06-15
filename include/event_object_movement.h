@@ -4,6 +4,8 @@
 #define NUM_OBJECT_GRAPHICS_INFO 239
 #define SPRITE_VAR 240
 
+#include "sprite.h"
+
 enum SpinnerRunnerFollowPatterns
 {
     RUNFOLLOW_ANY,
