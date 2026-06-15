@@ -106,6 +106,11 @@ const u8* ItemId_GetName(u16 itemId)
 	return name;
 }
 
+void CopyItemName(u16 itemId, u8* dst)
+{
+	StringCopy(dst, ItemId_GetName(itemId));
+}
+
 u8 ItemId_GetHoldEffect(u16 itemId)
 {
 	return gItems[SanitizeItemId(itemId)].holdEffect;
@@ -114,6 +119,11 @@ u8 ItemId_GetHoldEffect(u16 itemId)
 u8 ItemId_GetHoldEffectParam(u16 itemId)
 {
 	return gItems[SanitizeItemId(itemId)].holdEffectParam;
+}
+
+u8 GetPocketByItemId(u16 itemId)
+{
+	return gItems[SanitizeItemId(itemId)].pocket;
 }
 
 bool8 IsMegaStone(u16 item)
@@ -2302,4 +2312,3 @@ void ResetPokeVialUses(void)
 {
     VarSet(VAR_POKEVIAL_USES, 0);  // Reset PokéVial usage counter
 }
-

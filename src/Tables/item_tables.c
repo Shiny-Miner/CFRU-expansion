@@ -13739,7 +13739,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_LONELY_MINT]
+	[ITEM_LONELY_MINT] =
     {
         .name = {_L, _o, _n, _e, _l, _y, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_LONELY_MINT,
@@ -13756,7 +13756,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_ADAMANT_MINT]
+	[ITEM_ADAMANT_MINT] =
     {
         .name = {_A, _d, _a, _m, _a, _n, _t, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_ADAMANT_MINT,
@@ -13773,7 +13773,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_NAUGHTY_MINT]
+	[ITEM_NAUGHTY_MINT] =
     {
         .name = {_N, _a, _u, _g, _h, _t, _y, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_NAUGHTY_MINT,
@@ -13790,7 +13790,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_BRAVE_MINT]
+	[ITEM_BRAVE_MINT] =
     {
         .name = {_B, _r, _a, _v, _e, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_BRAVE_MINT,
@@ -13807,7 +13807,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_BOLD_MINT]
+	[ITEM_BOLD_MINT] =
     {
         .name = {_B, _o, _l, _d, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_BOLD_MINT,
@@ -13824,7 +13824,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_IMPISH_MINT]
+	[ITEM_IMPISH_MINT] =
     {
         .name = {_I, _m, _p, _i, _s, _h, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_IMPISH_MINT,
@@ -13841,7 +13841,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_LAX_MINT]
+	[ITEM_LAX_MINT] =
     {
         .name = {_L, _a, _x, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_LAX_MINT,
@@ -13858,7 +13858,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_RELAXED_MINT]
+	[ITEM_RELAXED_MINT] =
     {
         .name = {_R, _e, _l, _a, _x, _e, _d, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_RELAXED_MINT,
@@ -13875,7 +13875,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_MODEST_MINT]
+	[ITEM_MODEST_MINT] =
     {
         .name = {_M, _o, _d, _e, _s, _t, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_MODEST_MINT,
@@ -13892,7 +13892,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_MILD_MINT]
+	[ITEM_MILD_MINT] =
     {
         .name = {_M, _i, _l, _d, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_MILD_MINT,
@@ -13909,7 +13909,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_RASH_MINT]
+	[ITEM_RASH_MINT] =
     {
         .name = {_R, _a, _s, _h, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_RASH_MINT,
@@ -13926,7 +13926,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_QUIET_MINT]
+	[ITEM_QUIET_MINT] =
     {
         .name = {_Q, _u, _i, _e, _t, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_QUIET_MINT,
@@ -13943,7 +13943,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_CALM_MINT]
+	[ITEM_CALM_MINT] =
     {
         .name = {_C, _a, _l, _m, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_CALM_MINT,
@@ -13960,7 +13960,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_GENTLE_MINT]
+	[ITEM_GENTLE_MINT] =
     {
         .name = {_G, _e, _n, _t, _l, _e, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_GENTLE_MINT,
@@ -13977,7 +13977,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_CAREFUL_MINT]
+	[ITEM_CAREFUL_MINT] =
     {
         .name = {_C, _a, _r, _e, _f, _u, _l, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_CAREFUL_MINT,
@@ -13994,7 +13994,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_SASSY_MINT]
+	[ITEM_SASSY_MINT] =
     {
         .name = {_S, _a, _s, _s, _y, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_SASSY_MINT,
@@ -14011,7 +14011,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_TIMID_MINT]
+	[ITEM_TIMID_MINT] =
     {
         .name = {_T, _i, _m, _i, _d, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_TIMID_MINT,
@@ -14028,7 +14028,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_HASTY_MINT]
+	[ITEM_HASTY_MINT] =
     {
         .name = {_H, _a, _s, _t, _y, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_HASTY_MINT,
@@ -14045,7 +14045,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_JOLLY_MINT]
+	[ITEM_JOLLY_MINT] =
     {
         .name = {_J, _o, _l, _l, _y, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_JOLLY_MINT,
@@ -14062,7 +14062,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_NAIVE_MINT]
+	[ITEM_NAIVE_MINT] =
     {
         .name = {_N, _a, _i, _v, _e, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_NAIVE_MINT,
@@ -14079,7 +14079,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_SERIOUS_MINT]
+	[ITEM_SERIOUS_MINT] =
     {
         .name = {_S, _e, _r, _i, _o, _u, _s, _SPACE, _M, _i, _n, _t, _END},
         .itemId = ITEM_SERIOUS_MINT,
@@ -14096,7 +14096,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_POKEVIAL]
+	[ITEM_POKEVIAL] =
 	{
 		.name = {_P, _o, _k, _e, _v, _i, _a, _l, _END},
 		.itemId = ITEM_POKEVIAL,  // No standard effect
@@ -14113,7 +14113,7 @@ const struct Item gItemData[] =
 		.battleUseFunc = NULL,
 		.secondaryId = 0,
 	},
-	[ITEM_EVIV_DISPLAYER]
+	[ITEM_EVIV_DISPLAYER] =
  	{
  		.name = {_E, _V, _HYPHEN, _I, _V, _SPACE, _V, _i, _e, _w, _e, _r, _END},
  		.itemId = ITEM_EVIV_DISPLAYER,  // No standard effect
@@ -14130,7 +14130,7 @@ const struct Item gItemData[] =
  		.battleUseFunc = NULL,
  		.secondaryId = 0,
  	},
-	[ITEM_CATCHING_CHARM]
+	[ITEM_CATCHING_CHARM] =
 	{    .name = {_C, _a, _t, _c, _h, _i, _n, _g, _C, _h, _a, _r, _m, _END},
         .itemId = ITEM_CATCHING_CHARM,
         .price = 0,
@@ -14146,7 +14146,7 @@ const struct Item gItemData[] =
         .battleUseFunc = NULL,
         .secondaryId = 0
     },
-	[ITEM_HISUI_ROCK]
+	[ITEM_HISUI_ROCK] =
 	{    .name = {_H, _i, _s, _u, _i, _SPACE, _R, _o, _c, _k, _END},
 		.itemId = ITEM_HISUI_ROCK,
 		.price = 10000,
@@ -14162,7 +14162,7 @@ const struct Item gItemData[] =
 		.battleUseFunc = NULL,
 		.secondaryId = 0
 	},
-	[ITEM_UNREMARKABLE_TEACUP]
+	[ITEM_UNREMARKABLE_TEACUP] =
 	{
 		.name = {_U, _n, _r, _PERIOD, _SPACE, _T, _e, _a, _c, _u, _p, _END},
 		.itemId = ITEM_UNREMARKABLE_TEACUP,
@@ -14179,7 +14179,7 @@ const struct Item gItemData[] =
 		.battleUseFunc = NULL,
 		.secondaryId = 0
 	},
-	[ITEM_MASTERPIECE_TEACUP]
+	[ITEM_MASTERPIECE_TEACUP] =
 	{
 		.name = {_M, _a, _s, _p, _PERIOD, _SPACE, _T, _e, _a, _c, _u, _p, _END},
 		.itemId = ITEM_MASTERPIECE_TEACUP,
@@ -14196,7 +14196,7 @@ const struct Item gItemData[] =
 		.battleUseFunc = NULL,
 		.secondaryId = 0
 	},
-	[ITEM_TERA_ORB]
+	[ITEM_TERA_ORB] =
 	{
 		.name = {_T, _e, _r, _a, _SPACE, _O, _r, _b, _END},
 		.itemId = ITEM_TERA_ORB,
@@ -14213,7 +14213,7 @@ const struct Item gItemData[] =
 		.battleUseFunc = NULL,
 		.secondaryId = 0
 	},
-	[ITEM_PORTABLE_PC]
+	[ITEM_PORTABLE_PC] =
 	{
 		.name = {_P, _o, _r, _t, _a, _b, _l, _e, _SPACE, _P, _C, _END},
 		.itemId = ITEM_PORTABLE_PC,

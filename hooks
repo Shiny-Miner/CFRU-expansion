@@ -631,10 +631,12 @@ AreItemsDisabledHook 80143D4 0
 GetCurrentPocketItemAmountHook 8028760 0
 ExpandedBerriesFix1 806BDEC 0
 SetMemoryForBagStorage 8099E44 0
+CopyItemName 8099E90 2
 DoesBagHaveBerry 8099FAC 0
 CompactItemsInBagPocket 809A584 2
 SortBerriesOrTMHMs 809A720 1
 SanitizeItemId 809A8A4 1
+GetPocketByItemId 809A9D8 1
 BerryIdFromItemId 809C8E4 1
 PrintRegisteredItemInBagHook 810872C 0
 AllocateBagItemListBuffers 81083F4 0
