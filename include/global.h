@@ -758,11 +758,12 @@ struct SaveBlock1 //0x202552C
 	/*0x3A4C*/ u8 rivalName[PLAYER_NAME_LENGTH + 1];
 	/*0x3A54*/ struct FameCheckerSaveData fameChecker[NUM_FAMECHECKER_PERSONS];
 	/*0x3A94*/ u8 ringChallengeStreaks[0x10];
-	/*0x3AA4*/ u8 filler_3AA4[0x30];
+	/*0x3AA4*/ u16 registeredItems[6]; //For use with SELECT
+	/*0x3AB0*/ u8 filler_3AB0[0x24];
 	/*0x3AD4*/ u8 registeredTexts[UNION_ROOM_KB_ROW_COUNT][21];
 	/*0x3BA8*/ struct TrainerNameRecord trainerNameRecords[20];
 	/*0x3C98*/ struct DaycareMon route5DayCareMon;
-	/*0x3D24*/ u16 registeredItems[6]; //For use with SELECT
+	/*0x3D24*/ u8 filler_3D24[12];
 	/*0x3D30*/ u8 lastHealingSpot;
 	/*0x3D31*/ u8 filler_3D31[3];
 	/*0x3D34*/ u32 towerChallengeId;
