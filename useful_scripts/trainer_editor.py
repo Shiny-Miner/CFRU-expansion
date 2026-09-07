@@ -116,6 +116,7 @@ class TrainerBlock:
     fields: dict[str, str] = field(default_factory=dict)
     pokemon: list[PokemonEntry] = field(default_factory=list)
     raw_prefix: str = ""
+    editable: bool = True
 
     @property
     def label(self) -> str:
@@ -613,6 +614,7 @@ class PartyTab(ttk.Frame):
     def __init__(self, parent: ttk.Notebook, title: str, path: Path, trainer_pics: dict[str, Path], pic_choices: list[str], species_choices: list[str], move_choices: list[str], item_choices: list[str], ability_choices: list[str], species_ability_choices: dict[str, list[str]], type_choices: list[str], nature_choices: list[str], ball_choices: list[str], music_choices: list[str], ai_choices: list[str]) -> None:
         super().__init__(parent)
         self.repo = PartyRepository(path)
+        self.trainer_ids = c_defines(TRAINER_DEFINES, "TRAINER_")
         self.trainer_pics = trainer_pics
         self.pic_choices = pic_choices
         self.species_choices = species_choices
@@ -811,16 +813,22 @@ class PartyTab(ttk.Frame):
         ttk.Button(mon_right, text="Apply Pokemon changes", command=self.apply_mon_edit).grid(row=8, column=4, sticky="e", padx=6, pady=6)
 
     def refresh_trainers(self) -> None:
+        self.trainer_ids = c_defines(TRAINER_DEFINES, "TRAINER_")
         query = self.search.get().lower()
+        trainers = self.repo.trainers
+        if "TRAINER_NONE" in self.trainer_ids and not any(trainer.trainer_id == "TRAINER_NONE" for trainer in trainers):
+            trainers = [TrainerBlock("TRAINER_NONE", -1, -1, editable=False)] + trainers
         self.visible_trainers = [
-            trainer for trainer in self.repo.trainers
+            trainer for trainer in trainers
             if query in trainer.trainer_id.lower()
             or query in trainer.fields.get("Name", "").lower()
             or query in trainer.fields.get("Class", "").lower()
         ]
         self.trainer_list.delete(0, tk.END)
-        for index, trainer in enumerate(self.visible_trainers):
-            self.trainer_list.insert(tk.END, f"{index:03X}  {trainer.label}")
+        for trainer in self.visible_trainers:
+            trainer_number = self.trainer_ids.get(trainer.trainer_id)
+            displayed_number = f"{trainer_number:03X}" if trainer_number is not None else "???"
+            self.trainer_list.insert(tk.END, f"{displayed_number}  {trainer.label}")
 
     def reload(self) -> None:
         self.repo.load()
@@ -844,6 +852,9 @@ class PartyTab(ttk.Frame):
 
     def update_clone_button(self) -> None:
         if self.current is None:
+            self.clone_button.configure(text="Clone", state=tk.DISABLED)
+            return
+        if not self.current.editable:
             self.clone_button.configure(text="Clone", state=tk.DISABLED)
             return
         clone_header = find_opponent_header_clone(self.current.trainer_id)
@@ -930,6 +941,9 @@ class PartyTab(ttk.Frame):
         if self.current is None:
             messagebox.showwarning("Trainer Party Editor", "Select a trainer first.")
             return
+        if not self.current.editable:
+            messagebox.showwarning("Trainer Party Editor", "TRAINER_NONE is reserved and cannot be edited.")
+            return
         self.apply_mon_edit(show_warning=False)
         self.gather_trainer_fields()
         trainer_id = self.current.trainer_id
@@ -966,6 +980,9 @@ class PartyTab(ttk.Frame):
     def clone_opponent_header(self) -> None:
         if self.current is None:
             messagebox.showwarning("Trainer Party Editor", "Select a trainer first.")
+            return
+        if not self.current.editable:
+            messagebox.showwarning("Clone", "TRAINER_NONE is reserved and cannot be cloned.")
             return
         clone_header = find_opponent_header_clone(self.current.trainer_id)
         if clone_header is not None:
@@ -1006,6 +1023,9 @@ class PartyTab(ttk.Frame):
         if self.current is None:
             messagebox.showwarning("Trainer Party Editor", "Select a trainer first.")
             return
+        if not self.current.editable:
+            messagebox.showwarning("Trainer Party Editor", "TRAINER_NONE is reserved and cannot have a party.")
+            return
         species = simpledialog.askstring("Add Pokemon", "Species:", parent=self) or "Rattata"
         self.current.pokemon.append(PokemonEntry(title=species, fields={"Level": "5"}, moves=[]))
         self.refresh_party()
@@ -1014,7 +1034,7 @@ class PartyTab(ttk.Frame):
         self.on_mon_select()
 
     def remove_pokemon(self) -> None:
-        if self.current is None or self.current_mon_index is None:
+        if self.current is None or not self.current.editable or self.current_mon_index is None:
             return
         del self.current.pokemon[self.current_mon_index]
         self.refresh_party()
