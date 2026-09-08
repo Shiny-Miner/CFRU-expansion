@@ -875,7 +875,9 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 			break;
 
 		case EFFECT_MORNING_SUN:
-			if (gBattleWeather == 0 || gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL || !WEATHER_HAS_EFFECT)
+			if ((gBattleWeather == 0 && ABILITY(bankAtk) != ABILITY_MEGA_SOL)
+			|| gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL
+			|| !WEATHER_HAS_EFFECT)
 			{
 				amountToRecover = MathMax(1, maxHp / 2);
 				break;
@@ -890,7 +892,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 					break;
 
 				default:
-					if (gBattleWeather & WEATHER_SUN_ANY)
+					if ((gBattleWeather & WEATHER_SUN_ANY) || ABILITY(bankAtk) == ABILITY_MEGA_SOL)
 					{
 						if (AffectedBySun(bankAtk))
 							amountToRecover = maxHp;

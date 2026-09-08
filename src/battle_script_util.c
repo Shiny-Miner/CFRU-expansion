@@ -88,7 +88,7 @@ void ModifyGrowthInSun(void)
 {
 	if (gCurrentMove == MOVE_GROWTH
 	&& WEATHER_HAS_EFFECT
-	&& gBattleWeather & WEATHER_SUN_ANY
+	&& ((gBattleWeather & WEATHER_SUN_ANY) || ABILITY(gBankAttacker) == ABILITY_MEGA_SOL)
 	&& AffectedBySun(gBankAttacker))
 		gBattleScripting.statChanger += INCREASE_1;
 }
