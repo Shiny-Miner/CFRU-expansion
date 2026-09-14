@@ -3,7 +3,9 @@
 
 #include "global.h"
 
-#define HEAP_SIZE 0x1C000
+// The final 8 KiB are reserved for the HQ mixer code and mix buffer.
+// HQMixerInitHeap also limits vanilla ROM callers using the original size.
+#define HEAP_SIZE 0x1A000
 #define malloc Alloc
 #define calloc(ct, sz) AllocZeroed((ct) * (sz))
 #define free Free

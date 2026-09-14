@@ -52,7 +52,8 @@ else:  # Linux, OSX, etc.
         GR = "deps/grit.exe"
     else:
         WAV2AGB = 'wav2agb'
-        MID2AGB = 'mid2agb'
+        localMid2Agb = Path(__file__).resolve().parent.parent / 'deps' / 'mid2agb'
+        MID2AGB = str(localMid2Agb) if localMid2Agb.is_file() else 'mid2agb'
         GR = "grit"
 
     OBJCOPY = PREFIX + 'objcopy'
@@ -177,6 +178,7 @@ def DoMiddleManAssembly(originalFile: str, assemblyFile: str, flagFile: str, fla
 
     if fileExists \
             and os.path.getmtime(objectFile) > os.path.getmtime(originalFile) \
+            and os.path.getmtime(objectFile) > os.path.getmtime(__file__) \
             and (flagFile == "" or os.path.getmtime(objectFile) > os.path.getmtime(flagFile)):
         # If the .o file was created after the original and flag file were last modified
         return objectFile
@@ -398,9 +400,26 @@ def ProcessMusic(midiFile: str) -> str:
             line = file.readline()  # Only needs the first line
             flags = line.strip().split()
     except FileNotFoundError:
-        pass
+        flagFile = ""
 
-    cmd = [MID2AGB, midiFile, assemblyFile] + flags
+    # Accept both Nintendo-style -G274 and separated -G voicegroup274.
+    flags = [part for flag in flags
+             for part in (['-G', flag[2:]] if flag.startswith('-G') and len(flag) > 2 else [flag])]
+    converterFlags = flags.copy()
+    if '-G' in flags:
+        index = flags.index('-G') + 1
+        if index == len(flags):
+            raise ValueError('Missing voicegroup after -G in ' + flagFile)
+        group = flags[index]
+        if group in {str(n) for n in range(274, 281)}:
+            group = 'voicegroup' + group
+        flags[index] = group
+        if group.startswith('voicegroup') and group[len('voicegroup'):].isdigit():
+            converterFlags[index] = group[len('voicegroup'):]
+        # The converter takes a numeric group; DoMiddleManAssembly replaces
+        # its generated reference with the requested symbol or ROM address.
+
+    cmd = [MID2AGB, midiFile, assemblyFile] + converterFlags
 
     return DoMiddleManAssembly(midiFile, assemblyFile, flagFile, flags, cmd,
                                MakeOutputMusicFile, Master.printCompilingMusic, True)
