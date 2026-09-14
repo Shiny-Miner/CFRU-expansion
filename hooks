@@ -1,8 +1,5 @@
 #include "src/config.h"
 
-##Protect HQ mixer RAM when vanilla code reinitializes the main heap
-HQMixerInitHeap 8002B80 3
-
 ##Emit Functions
 EmitPrintString 800E2D4 2
 EmitPrintSelectionString 800E3EC 2

@@ -30,9 +30,4 @@ SECTIONS {
         _end = __bss_end__ ;
         __end__ = __bss_end__ ;
         } >rom = 0xff
-        .hq_mixer_hot : {
-                KEEP(*(.hq_mixer_hot))
-        } >mixer_iwram AT>rom
-        HQMixerHotImage = LOADADDR(.hq_mixer_hot);
-        ASSERT(SIZEOF(.hq_mixer_hot) == 0x800, "HQ mixer hot area must be 2 KiB")
 }

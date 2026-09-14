@@ -5,11 +5,14 @@
 #include "include/new/catching.h"
 
 ##Optional Byte Changes##
-##HQ mixer: copy 8 KiB (code + zeroed buffer) to reserved EWRAM
-081DD0B8 00 A0 01 02
-081DD0BC 00 08 00 04
-##SoundMain must execute the relocated Thumb mixer
-081DC094 01 A0 01 02
+#ifdef HQ_MUSIC
+#HQ Mixer
+081DD0B8 E0 28 00 03
+081DD0BC 9B
+081DD0C0 00 E3 03 02
+081DD0B8 50 5F 00 03
+081DC094 51 5F 00 03
+#endif
 ##Don't Count Eggs Healing PKMN Centre
 08083B8E 08 F0 D5 FA
 ##Extend Direct Sound Tracks

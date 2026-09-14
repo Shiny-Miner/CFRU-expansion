@@ -5,7 +5,7 @@
      * CONFIGURATION AREA *
      **********************/
 
-    .equ    hq_buffer_ptr, 0x0201B000                @ Separate from hot code at 030028E0; large enough for all supported rates
+    .equ    hq_buffer_ptr, 0x30028E0                @ <-- set this to an IWRAM address where you want your high quality mix buffer to be
     .equ    POKE_CHN_INIT, 1                        @ <-- set to '1' for pokemon games, '0' for other games
     .equ    ENABLE_STEREO, 1                        @ <-- TODO actually implement, not functional yet
     .equ    ENABLE_REVERB, 0                        @ <-- if you want faster code or don't like reverb, set this to '0', set to '1' otherwise
@@ -16,8 +16,6 @@
      *****************/
 
     /* NO USER SERVICABLE CODE BELOW HERE! YOU HAVE BEEN WARNED */
-
-    .cpu arm7tdmi
 
     /* globals */
     .global SoundMainRAM
@@ -125,17 +123,6 @@
 SoundMainRAM:
     /* load Reverb level and check if we need to apply it */
     STR     R4, [SP, #ARG_BUFFER_POS_INDEX_HINT]
-    @ Load the self-modifying hot loop into the old 2 KiB mixer area.
-    @ Its first instruction is immutable, so this only copies after reset.
-    LDR     R0, =HQMixerHotImage
-    LDR     R1, =C_mixing_setup
-    LDR     R2, [R0]
-    LDR     R3, [R1]
-    CMP     R2, R3
-    BEQ     C_hot_code_ready
-    LDR     R2, =0x04000200
-    SWI     0x0B
-C_hot_code_ready:
     /*
      * okay, before the actual mixing starts
      * the volume and envelope calculation takes place
@@ -145,18 +132,6 @@ C_hot_code_ready:
      * this stroes the buffer length to a backup location
      */
     STR     R4, [SP, #ARG_FRAME_LENGTH]
-.if ENABLE_REVERB==0
-    @ Start each frame clean, including after sound reinitialization.
-    @ Select the same buffer as both mixing and downsampling below.
-    LDR     R0, =hq_buffer_ptr
-C_clear_frame_buffer:
-    MOV     R1, #0
-    MOV     R2, R4
-C_clear_frame_buffer_loop:
-    STMIA   R0!, {R1}
-    SUB     R2, #1
-    BGT     C_clear_frame_buffer_loop
-.endif
     /* init channel loop */
     LDR     R4, [SP, #ARG_PCM_STRUCT]           @ R4 = main work area pointer
     LDR     R0, [R4, #VAR_DEF_PITCH_FAC]        @ R0 = samplingrate pitch factor
@@ -391,11 +366,10 @@ C_sample_loop_setup_skip:
     LDR     R2, [R4, #CHN_SAMPLE_COUNTDOWN]
     LDR     R3, [R4, #CHN_POSITION_ABS]
     LDRB    R0, [R4, #CHN_MODE]
-    LDR     R1, =C_mixing_setup
+    ADR     R1, C_mixing_setup
     BX      R1
 
     .align  2
-    .pool
 hq_buffer_literal:
     .word   hq_buffer_ptr
 
@@ -417,333 +391,6 @@ hq_buffer_literal:
      * R11: volume
      * R12: sampval diff
      * LR:  scratch */
-    .thumb
-
-C_end_channel_state_loop:
-    LDR     R0, [SP, #ARG_REMAIN_CHN]
-    SUB     R0, #1
-    BLE     C_main_mixer_return
-
-    ADD     R4, #0x40
-    B       C_channel_state_loop
-
-C_main_mixer_return:
-    LDR     R3, [SP, #ARG_PCM_STRUCT]
-    LDRB    R4, [R3, #VAR_EXT_NOISE_SHAPE_LEFT]
-    LSL     R4, R4, #16
-    LDRB    R5, [R3, #VAR_EXT_NOISE_SHAPE_RIGHT]
-    LSL     R5, R5, #16
-.if ENABLE_REVERB==1
-    LDRB    R2, [R3, #VAR_REVERB]
-    LSR     R2, R2, #2
-    LDR     R1, [SP, #ARG_BUFFER_POS_INDEX_HINT]
-    CMP     R1, #2
-.else
-    MOV     R2, #0
-    MOV     R3, #0
-.endif
-    ADR     R0, C_downsampler
-    BX      R0
-
-    .arm
-    .align  2
-
-C_downsampler:
-    LDR     R8, [SP, #ARG_FRAME_LENGTH]
-    LDR     R9, [SP, #ARG_BUFFER_POS]
-.if ENABLE_REVERB==1
-    ORR     R2, R2, R2, LSL#16
-    MOVNE   R3, R8
-    ADDEQ   R3, R3, #VAR_PCM_BUFFER
-    SUBEQ   R3, R3, R9
-.endif
-    LDR     R10, hq_buffer_literal
-    MOV     R11, #0xFF00
-    MOV     LR, #0xC0000000
-
-C_downsampler_loop:
-    LDMIA   R10, {R0, R1}
-    ADD     R12, R4, R0         @ left sample #1
-    ADDS    R4, R12, R12
-    EORVS   R12, LR, R4, ASR#31
-    AND     R4, R12, #0x007F0000
-    AND     R6, R11, R12, LSR#15
-
-    ADD     R12, R5, R0, LSL#16 @ right sample #1
-    ADDS    R5, R12, R12
-    EORVS   R12, LR, R5, ASR#31
-    AND     R5, R12, #0x007F0000
-    AND     R7, R11, R12, LSR#15
-
-    ADD     R12, R4, R1         @ left sample #2
-    ADDS    R4, R12, R12
-    EORVS   R12, LR, R4, ASR#31
-    AND     R4, R12, #0x007F0000
-    AND     R12, R11, R12, LSR#15
-    ORR     R6, R12, R6, LSR#8
-
-    ADD     R12, R5, R1, LSL#16 @ right sample #2
-    ADDS    R5, R12, R12
-    EORVS   R12, LR, R5, ASR#31
-    AND     R5, R12, #0x007F0000
-    AND     R12, R11, R12, LSR#15
-    ORR     R7, R12, R7, LSR#8
-
-.if ENABLE_REVERB==1
-    LDRSH   R12, [R9, R3]!
-
-    MOV     R1, R12, ASR#8
-    MOV     R12, R12, LSL#24
-    MOV     R0, R12, ASR#24
-
-    ADD     R9, R9, #DMA_BUFFER_SIZE    @ \ LDRSH  R12, [R9, #0x630]!
-    LDRSH   R12, [R9]                   @ / is unfortunately not a valid instruction
-
-    ADD     R1, R1, R12, ASR#8
-    MOV     R12, R12, LSL#24
-    ADD     R0, R0, R12, ASR#24
-
-    LDRSH   R12, [R9, -R3]!
-
-    ADD     R1, R1, R12, ASR#8
-    MOV     R12, R12, LSL#24
-    ADD     R0, R0, R12, ASR#24
-
-    STRH    R6, [R9]                    @ \ STRH  R6, [R9], #-0x630
-    SUB     R9, R9, #DMA_BUFFER_SIZE    @ / is unfortunately not a valid instruction
-    LDRSH   R12, [R9]
-    STRH    R7, [R9], #2
-
-    ADD     R1, R1, R12, ASR#8
-    MOV     R12, R12, LSL#24
-    ADD     R0, R0, R12, ASR#24
-
-    MUL     R1, R2, R1
-    MUL     R0, R2, R0
-
-    STMIA   R10!, {R0, R1}
-.else /* if ENABLE_REVERB==0 */
-    MOV     R0, #DMA_BUFFER_SIZE
-    STRH    R6, [R9, R0]
-    STRH    R7, [R9], #2
-
-    STMIA   R10!, {R2, R3}
-.endif
-    SUBS    R8, #2
-    BGT     C_downsampler_loop
-
-    ADR     R0, (C_downsampler_return+1)
-    BX      R0
-
-    .pool
-
-    .align  1
-    .thumb
-
-C_downsampler_return:
-    LDR     R0, [SP, #ARG_PCM_STRUCT]
-    LSR     R4, #16
-    STRB    R4, [R0, #VAR_EXT_NOISE_SHAPE_LEFT]
-    LSR     R5, #16
-    STRB    R5, [R0, #VAR_EXT_NOISE_SHAPE_RIGHT]
-    LDR     R3, =0x68736D53                     @ this is used to indicate the interrupt handler the rendering was finished properly
-    STR     R3, [R0]
-    ADD     SP, SP, #0x1C
-    POP     {R0-R7}
-    MOV     R8, R0
-    MOV     R9, R1
-    MOV     R10, R2
-    MOV     R11, R3
-    POP     {PC}
-
-    .pool
-
-    .arm
-    .align  2
-
-C_setup_synth:
-    LDRB    R12, [R3, #SYNTH_TYPE]
-    CMP     R12, #0
-    BNE     C_check_synth_saw
-
-    /* modulating pulse wave */
-    LDRB    R6, [R3, #SYNTH_WIDTH_CHANGE_1]
-    ADD     R2, R2, R6, LSL#24
-    LDRB    R6, [R3, #SYNTH_WIDTH_CHANGE_2]
-    ADDS    R6, R2, R6, LSL#24
-    MVNMI   R6, R6
-    MOV     R10, R6, LSR#8
-    LDRB    R1, [R3, #SYNTH_MOD_AMOUNT]
-    LDRB    R0, [R3, #SYNTH_BASE_WAVE_DUTY]
-    MOV     R0, R0, LSL#24
-    MLA     R6, R10, R1, R0                 @ calculate the final duty cycle with the offset, and intensity * rotating duty cycle amount
-    STMFD   SP!, {R2, R3, R9, R12}
-
-C_synth_pulse_loop:
-    LDMIA   R5, {R0-R3, R9, R10, R12, LR} @ load 8 samples
-    CMP     R7, R6                      @ Block #1
-    ADDLO   R0, R0, R11, LSL#6
-    SUBHS   R0, R0, R11, LSL#6
-    ADDS    R7, R7, R4, LSL#3
-    CMP     R7, R6                      @ Block #2
-    ADDLO   R1, R1, R11, LSL#6
-    SUBHS   R1, R1, R11, LSL#6
-    ADDS    R7, R7, R4, LSL#3
-    CMP     R7, R6                      @ Block #3
-    ADDLO   R2, R2, R11, LSL#6
-    SUBHS   R2, R2, R11, LSL#6
-    ADDS    R7, R7, R4, LSL#3
-    CMP     R7, R6                      @ Block #4
-    ADDLO   R3, R3, R11, LSL#6
-    SUBHS   R3, R3, R11, LSL#6
-    ADDS    R7, R7, R4, LSL#3
-    CMP     R7, R6                      @ Block #5
-    ADDLO   R9, R9, R11, LSL#6
-    SUBHS   R9, R9, R11, LSL#6
-    ADDS    R7, R7, R4, LSL#3
-    CMP     R7, R6                      @ Block #6
-    ADDLO   R10, R10, R11, LSL#6
-    SUBHS   R10, R10, R11, LSL#6
-    ADDS    R7, R7, R4, LSL#3
-    CMP     R7, R6                      @ Block #7
-    ADDLO   R12, R12, R11, LSL#6
-    SUBHS   R12, R12, R11, LSL#6
-    ADDS    R7, R7, R4, LSL#3
-    CMP     R7, R6                      @ Block #8
-    ADDLO   LR, LR, R11, LSL#6
-    SUBHS   LR, LR, R11, LSL#6
-    ADDS    R7, R7, R4, LSL#3
-
-    STMIA   R5!, {R0-R3, R9, R10, R12, LR} @ write 8 samples
-    SUBS    R8, R8, #8
-    BGT     C_synth_pulse_loop
-
-    LDMFD   SP!, {R2, R3, R9, R12}
-    LDR     PC, =C_end_mixing
-    .pool
-
-C_check_synth_saw:
-    /*
-     * This is actually not a true saw wave
-     * but looks pretty similar
-     * (has a jump in the middle of the wave)
-     */
-    SUBS    R12, R12, #1
-    BNE     C_synth_triangle
-
-    MOV     R6, #0x300
-    MOV     R11, R11, LSR#1
-    BIC     R11, R11, #0xFF00
-    MOV     R12, #0x70
-
-C_synth_saw_loop:
-
-    LDMIA   R5, {R0, R1, R10, LR}       @ load 4 samples from memory
-    ADDS    R7, R7, R4, LSL#3           @ Block #1 (some oscillator type code)
-    RSB     R9, R12, R7, LSR#24
-    MOV     R6, R7, LSL#1
-    SUB     R9, R9, R6, LSR#27
-    ADDS    R2, R9, R2, ASR#1
-    MLANE   R0, R11, R2, R0
-
-    ADDS    R7, R7, R4, LSL#3           @ Block #2
-    RSB     R9, R12, R7, LSR#24
-    MOV     R6, R7, LSL#1
-    SUB     R9, R9, R6, LSR#27
-    ADDS    R2, R9, R2, ASR#1
-    MLANE   R1, R11, R2, R1
-
-    ADDS    R7, R7, R4, LSL#3           @ Block #3
-    RSB     R9, R12, R7, LSR#24
-    MOV     R6, R7, LSL#1
-    SUB     R9, R9, R6, LSR#27
-    ADDS    R2, R9, R2, ASR#1
-    MLANE   R10, R11, R2, R10
-
-    ADDS    R7, R7, R4, LSL#3           @ Block #4
-    RSB     R9, R12, R7, LSR#24
-    MOV     R6, R7, LSL#1
-    SUB     R9, R9, R6, LSR#27
-    ADDS    R2, R9, R2, ASR#1
-    MLANE   LR, R11, R2, LR
-
-    STMIA   R5!, {R0, R1, R10, LR}
-    SUBS    R8, R8, #4
-    BGT     C_synth_saw_loop
-
-    LDR     PC, =C_end_mixing
-    .pool
-
-C_synth_triangle:
-    MOV     R6, #0x80
-    MOV     R12, #0x180
-
-C_synth_triangle_loop:
-    LDMIA   R5, {R0, R1, R10, LR}       @ load samples from work buffer
-    ADDS    R7, R7, R4, LSL#3           @ Block #1
-    RSBPL   R9, R6, R7, ASR#23
-    SUBMI   R9, R12, R7, LSR#23
-    MLA     R0, R11, R9, R0
-
-    ADDS    R7, R7, R4, LSL#3           @ Block #2
-    RSBPL   R9, R6, R7, ASR#23
-    SUBMI   R9, R12, R7, LSR#23
-    MLA     R1, R11, R9, R1
-
-    ADDS    R7, R7, R4, LSL#3           @ Block #3
-    RSBPL   R9, R6, R7, ASR#23
-    SUBMI   R9, R12, R7, LSR#23
-    MLA     R10, R11, R9, R10
-
-    ADDS    R7, R7, R4, LSL#3           @ Block #4
-    RSBPL   R9, R6, R7, ASR#23
-    SUBMI   R9, R12, R7, LSR#23
-    MLA     LR, R11, R9, LR
-
-    STMIA   R5!, {R0, R1, R10, LR}
-    SUBS    R8, R8, #4                  @ subtract #4 from the remainging samples
-    BGT     C_synth_triangle_loop
-
-    LDR     PC, =C_end_mixing
-    .pool
-
-@ The installer copies this entire image, including the zeroed mix buffer.
-@ InitHeap is capped at 0x1A000, so heap resets cannot overwrite the mixer.
-@ Only the hot loops occupy original IWRAM 030028E0-030030DF.
-    @ .org fails assembly if the code outgrows its reserved 4 KiB.
-    .org SoundMainRAM + 0x1000, 0
-    .space 0x1000, 0
-
-    .thumb
-    .align 2
-    .global HQMixerInitHeap
-    .thumb_func
-HQMixerInitHeap:
-    @ Preserve InitHeap's arguments; cap only the vanilla main heap.
-    ldr r2, =0x02000000
-    cmp r0, r2
-    bne HQMixerInitHeapContinue
-    ldr r2, =0x1A000
-    cmp r1, r2
-    bls HQMixerInitHeapContinue
-    mov r1, r2
-HQMixerInitHeapContinue:
-    @ Replay the instructions overwritten by the eight-byte entry hook.
-    push {lr}
-    ldr r2, =0x03000A38
-    str r0, [r2]
-    ldr r2, =0x03000A3C
-    ldr r3, =0x08002B89
-    bx r3
-    .pool
-
-    .set HQColdSynth, 0x0201A000 + (C_setup_synth - SoundMainRAM)
-    .set HQColdChannelEnd, 0x0201A001 + (C_end_channel_state_loop - SoundMainRAM)
-
-@ VMA is IWRAM; linker provides the ROM copy source HQMixerHotImage.
-    .section .hq_mixer_hot, "ax", %progbits
-    .arm
-    .align 2
 C_mixing_setup:
     /* frequency and mixing loading routine */
     LDRSB   R6, [R4, #CHN_SAMPLE_STOR]
@@ -761,7 +408,7 @@ C_mixing_setup_comp_rev:
     LDMIA   R4, {R7, LR}                    @ R7 = Fine Position, LR = Frequency
     MUL     R4, LR, R12                     @ R4 = inter sample steps = output rate factor * samplerate
     TST     R0, #MODE_SYNTH
-    LDRNE   PC, =HQColdSynth
+    BNE     C_setup_synth
     /*
      * Mixing goes with volume ranges 0-127
      * They come in 0-255 --> divide by 2
@@ -1351,10 +998,298 @@ C_mixing_end_store:
     STR     R3, [R4, #CHN_POSITION_ABS]
 
 C_mixing_epilogue:
-    LDR     R0, =HQColdChannelEnd
+    ADR     R0, (C_end_channel_state_loop+1)
     BX      R0
 
-/* R0: base address; R1: length in bytes. */
+    .thumb
+
+C_end_channel_state_loop:
+    LDR     R0, [SP, #ARG_REMAIN_CHN]
+    SUB     R0, #1
+    BLE     C_main_mixer_return
+
+    ADD     R4, #0x40
+    B       C_channel_state_loop
+
+C_main_mixer_return:
+    LDR     R3, [SP, #ARG_PCM_STRUCT]
+    LDRB    R4, [R3, #VAR_EXT_NOISE_SHAPE_LEFT]
+    LSL     R4, R4, #16
+    LDRB    R5, [R3, #VAR_EXT_NOISE_SHAPE_RIGHT]
+    LSL     R5, R5, #16
+.if ENABLE_REVERB==1
+    LDRB    R2, [R3, #VAR_REVERB]
+    LSR     R2, R2, #2
+    LDR     R1, [SP, #ARG_BUFFER_POS_INDEX_HINT]
+    CMP     R1, #2
+.else
+    MOV     R2, #0
+    MOV     R3, #0
+.endif
+    ADR     R0, C_downsampler
+    BX      R0
+
+    .arm
+    .align  2
+
+C_downsampler:
+    LDR     R8, [SP, #ARG_FRAME_LENGTH]
+    LDR     R9, [SP, #ARG_BUFFER_POS]
+.if ENABLE_REVERB==1
+    ORR     R2, R2, R2, LSL#16
+    MOVNE   R3, R8
+    ADDEQ   R3, R3, #VAR_PCM_BUFFER
+    SUBEQ   R3, R3, R9
+.endif
+    LDR     R10, hq_buffer_literal
+    MOV     R11, #0xFF00
+    MOV     LR, #0xC0000000
+
+C_downsampler_loop:
+    LDMIA   R10, {R0, R1}
+    ADD     R12, R4, R0         @ left sample #1
+    ADDS    R4, R12, R12
+    EORVS   R12, LR, R4, ASR#31
+    AND     R4, R12, #0x007F0000
+    AND     R6, R11, R12, LSR#15
+
+    ADD     R12, R5, R0, LSL#16 @ right sample #1
+    ADDS    R5, R12, R12
+    EORVS   R12, LR, R5, ASR#31
+    AND     R5, R12, #0x007F0000
+    AND     R7, R11, R12, LSR#15
+
+    ADD     R12, R4, R1         @ left sample #2
+    ADDS    R4, R12, R12
+    EORVS   R12, LR, R4, ASR#31
+    AND     R4, R12, #0x007F0000
+    AND     R12, R11, R12, LSR#15
+    ORR     R6, R12, R6, LSR#8
+
+    ADD     R12, R5, R1, LSL#16 @ right sample #2
+    ADDS    R5, R12, R12
+    EORVS   R12, LR, R5, ASR#31
+    AND     R5, R12, #0x007F0000
+    AND     R12, R11, R12, LSR#15
+    ORR     R7, R12, R7, LSR#8
+
+.if ENABLE_REVERB==1
+    LDRSH   R12, [R9, R3]!
+
+    MOV     R1, R12, ASR#8
+    MOV     R12, R12, LSL#24
+    MOV     R0, R12, ASR#24
+
+    ADD     R9, R9, #DMA_BUFFER_SIZE    @ \ LDRSH  R12, [R9, #0x630]!
+    LDRSH   R12, [R9]                   @ / is unfortunately not a valid instruction
+
+    ADD     R1, R1, R12, ASR#8
+    MOV     R12, R12, LSL#24
+    ADD     R0, R0, R12, ASR#24
+
+    LDRSH   R12, [R9, -R3]!
+
+    ADD     R1, R1, R12, ASR#8
+    MOV     R12, R12, LSL#24
+    ADD     R0, R0, R12, ASR#24
+
+    STRH    R6, [R9]                    @ \ STRH  R6, [R9], #-0x630
+    SUB     R9, R9, #DMA_BUFFER_SIZE    @ / is unfortunately not a valid instruction
+    LDRSH   R12, [R9]
+    STRH    R7, [R9], #2
+
+    ADD     R1, R1, R12, ASR#8
+    MOV     R12, R12, LSL#24
+    ADD     R0, R0, R12, ASR#24
+
+    MUL     R1, R2, R1
+    MUL     R0, R2, R0
+
+    STMIA   R10!, {R0, R1}
+.else /* if ENABLE_REVERB==0 */
+    MOV     R0, #DMA_BUFFER_SIZE
+    STRH    R6, [R9, R0]
+    STRH    R7, [R9], #2
+
+    STMIA   R10!, {R2, R3}
+.endif
+    SUBS    R8, #2
+    BGT     C_downsampler_loop
+
+    ADR     R0, (C_downsampler_return+1)
+    BX      R0
+
+    .pool
+
+    .align  1
+    .thumb
+
+C_downsampler_return:
+    LDR     R0, [SP, #ARG_PCM_STRUCT]
+    LSR     R4, #16
+    STRB    R4, [R0, #VAR_EXT_NOISE_SHAPE_LEFT]
+    LSR     R5, #16
+    STRB    R5, [R0, #VAR_EXT_NOISE_SHAPE_RIGHT]
+    LDR     R3, =0x68736D53                     @ this is used to indicate the interrupt handler the rendering was finished properly
+    STR     R3, [R0]
+    ADD     SP, SP, #0x1C
+    POP     {R0-R7}
+    MOV     R8, R0
+    MOV     R9, R1
+    MOV     R10, R2
+    MOV     R11, R3
+    POP     {PC}
+
+    .pool
+
+    .arm
+    .align  2
+
+C_setup_synth:
+    LDRB    R12, [R3, #SYNTH_TYPE]
+    CMP     R12, #0
+    BNE     C_check_synth_saw
+
+    /* modulating pulse wave */
+    LDRB    R6, [R3, #SYNTH_WIDTH_CHANGE_1]
+    ADD     R2, R2, R6, LSL#24
+    LDRB    R6, [R3, #SYNTH_WIDTH_CHANGE_2]
+    ADDS    R6, R2, R6, LSL#24
+    MVNMI   R6, R6
+    MOV     R10, R6, LSR#8
+    LDRB    R1, [R3, #SYNTH_MOD_AMOUNT]
+    LDRB    R0, [R3, #SYNTH_BASE_WAVE_DUTY]
+    MOV     R0, R0, LSL#24
+    MLA     R6, R10, R1, R0                 @ calculate the final duty cycle with the offset, and intensity * rotating duty cycle amount
+    STMFD   SP!, {R2, R3, R9, R12}
+
+C_synth_pulse_loop:
+    LDMIA   R5, {R0-R3, R9, R10, R12, LR} @ load 8 samples
+    CMP     R7, R6                      @ Block #1
+    ADDLO   R0, R0, R11, LSL#6
+    SUBHS   R0, R0, R11, LSL#6
+    ADDS    R7, R7, R4, LSL#3
+    CMP     R7, R6                      @ Block #2
+    ADDLO   R1, R1, R11, LSL#6
+    SUBHS   R1, R1, R11, LSL#6
+    ADDS    R7, R7, R4, LSL#3
+    CMP     R7, R6                      @ Block #3
+    ADDLO   R2, R2, R11, LSL#6
+    SUBHS   R2, R2, R11, LSL#6
+    ADDS    R7, R7, R4, LSL#3
+    CMP     R7, R6                      @ Block #4
+    ADDLO   R3, R3, R11, LSL#6
+    SUBHS   R3, R3, R11, LSL#6
+    ADDS    R7, R7, R4, LSL#3
+    CMP     R7, R6                      @ Block #5
+    ADDLO   R9, R9, R11, LSL#6
+    SUBHS   R9, R9, R11, LSL#6
+    ADDS    R7, R7, R4, LSL#3
+    CMP     R7, R6                      @ Block #6
+    ADDLO   R10, R10, R11, LSL#6
+    SUBHS   R10, R10, R11, LSL#6
+    ADDS    R7, R7, R4, LSL#3
+    CMP     R7, R6                      @ Block #7
+    ADDLO   R12, R12, R11, LSL#6
+    SUBHS   R12, R12, R11, LSL#6
+    ADDS    R7, R7, R4, LSL#3
+    CMP     R7, R6                      @ Block #8
+    ADDLO   LR, LR, R11, LSL#6
+    SUBHS   LR, LR, R11, LSL#6
+    ADDS    R7, R7, R4, LSL#3
+
+    STMIA   R5!, {R0-R3, R9, R10, R12, LR} @ write 8 samples
+    SUBS    R8, R8, #8
+    BGT     C_synth_pulse_loop
+
+    LDMFD   SP!, {R2, R3, R9, R12}
+    B       C_end_mixing
+
+C_check_synth_saw:
+    /*
+     * This is actually not a true saw wave
+     * but looks pretty similar
+     * (has a jump in the middle of the wave)
+     */
+    SUBS    R12, R12, #1
+    BNE     C_synth_triangle
+
+    MOV     R6, #0x300
+    MOV     R11, R11, LSR#1
+    BIC     R11, R11, #0xFF00
+    MOV     R12, #0x70
+
+C_synth_saw_loop:
+
+    LDMIA   R5, {R0, R1, R10, LR}       @ load 4 samples from memory
+    ADDS    R7, R7, R4, LSL#3           @ Block #1 (some oscillator type code)
+    RSB     R9, R12, R7, LSR#24
+    MOV     R6, R7, LSL#1
+    SUB     R9, R9, R6, LSR#27
+    ADDS    R2, R9, R2, ASR#1
+    MLANE   R0, R11, R2, R0
+
+    ADDS    R7, R7, R4, LSL#3           @ Block #2
+    RSB     R9, R12, R7, LSR#24
+    MOV     R6, R7, LSL#1
+    SUB     R9, R9, R6, LSR#27
+    ADDS    R2, R9, R2, ASR#1
+    MLANE   R1, R11, R2, R1
+
+    ADDS    R7, R7, R4, LSL#3           @ Block #3
+    RSB     R9, R12, R7, LSR#24
+    MOV     R6, R7, LSL#1
+    SUB     R9, R9, R6, LSR#27
+    ADDS    R2, R9, R2, ASR#1
+    MLANE   R10, R11, R2, R10
+
+    ADDS    R7, R7, R4, LSL#3           @ Block #4
+    RSB     R9, R12, R7, LSR#24
+    MOV     R6, R7, LSL#1
+    SUB     R9, R9, R6, LSR#27
+    ADDS    R2, R9, R2, ASR#1
+    MLANE   LR, R11, R2, LR
+
+    STMIA   R5!, {R0, R1, R10, LR}
+    SUBS    R8, R8, #4
+    BGT     C_synth_saw_loop
+
+    B       C_end_mixing
+
+C_synth_triangle:
+    MOV     R6, #0x80
+    MOV     R12, #0x180
+
+C_synth_triangle_loop:
+    LDMIA   R5, {R0, R1, R10, LR}       @ load samples from work buffer
+    ADDS    R7, R7, R4, LSL#3           @ Block #1
+    RSBPL   R9, R6, R7, ASR#23
+    SUBMI   R9, R12, R7, LSR#23
+    MLA     R0, R11, R9, R0
+
+    ADDS    R7, R7, R4, LSL#3           @ Block #2
+    RSBPL   R9, R6, R7, ASR#23
+    SUBMI   R9, R12, R7, LSR#23
+    MLA     R1, R11, R9, R1
+
+    ADDS    R7, R7, R4, LSL#3           @ Block #3
+    RSBPL   R9, R6, R7, ASR#23
+    SUBMI   R9, R12, R7, LSR#23
+    MLA     R10, R11, R9, R10
+
+    ADDS    R7, R7, R4, LSL#3           @ Block #4
+    RSBPL   R9, R6, R7, ASR#23
+    SUBMI   R9, R12, R7, LSR#23
+    MLA     LR, R11, R9, LR
+
+    STMIA   R5!, {R0, R1, R10, LR}
+    SUBS    R8, R8, #4                  @ subtract #4 from the remainging samples
+    BGT     C_synth_triangle_loop
+
+    B       C_end_mixing
+
+/* R0: base addr
+ * R1: len in bytes */
 F_clear_mem:
     STMFD   SP!, {R0, R2-R5, LR}
     MOV     R2, #0
@@ -1379,8 +1314,3 @@ C_clear_loop_rest:
     BGT     C_clear_loop_rest
     LDMFD   SP!, {R0, R2-R5, PC}
     
-
-
-    .pool
-    @ Reserve exactly the vanilla SoundMainRAM capacity. Overflow is an error.
-    .org C_mixing_setup + 0x800, 0
