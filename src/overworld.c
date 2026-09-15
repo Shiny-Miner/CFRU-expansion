@@ -36,6 +36,7 @@
 #include "../include/script_menu.h"
 #include "../include/sound.h"
 #include "../include/string_util.h"
+#include "../include/start_menu.h"
 
 #include "../include/constants/flags.h"
 #include "../include/constants/items.h"
@@ -3105,7 +3106,7 @@ const union AnimCmd gEventObjectImageAnim_RunEast[] =
 };
 #endif
 
-#define ReturnFieldOpenedMenu ((bool8 (*)(void)) (0x0807E3BD))
+#define ReturnFieldOpenedMenu ((bool8 (*)(void)) (0x08C00DB0))
 
 static bool8 ReturnFieldOpenedMenuWithFollowerPalette(void)
 {
@@ -3118,11 +3119,21 @@ static bool8 ReturnFieldOpenedMenuWithFollowerPalette(void)
     return result;
 }
 
+#define CB2_StartMenu ((void (*)(void))0x0871A9E1)
+
 void CB2_ReturnToFieldWithOpenMenuHook(void)
 {
+	#ifdef BW_START_MENU
+	sStartMenuPtr = Calloc(sizeof(struct StartMenuResources));
+	sStartMenuPtr->cursorpos[0] = VarGet(0x8000); 
+	sStartMenuPtr->cursorpos[1] = VarGet(0x8001);
+	ChangeFollowerPalette();
+	SetMainCallback2(CB2_StartMenu);
+	#else
     FieldClearVBlankHBlankCallbacks();
     gFieldCallback2 = ReturnFieldOpenedMenuWithFollowerPalette;
     CB2_ReturnToField();
+	#endif
 }
 
 /*
