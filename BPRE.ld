@@ -39,6 +39,7 @@ gClock = 0x3005EA0;
 sRTCFrameCount = 0x3005EA9;
 sPlayTimeCounterState = 0x3000E7C;
 gLastClockSecond = 0x300539C;
+strlen = 0x081E98F4 | 1;
 
 /* Party RAM */
 gMultiPartnerParty = 0x2022B58;

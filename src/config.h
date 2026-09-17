@@ -71,6 +71,7 @@
 #define FLAG_DAILY_EVENTS_START 0xE00 //To flag + 0xFF, resets every new day.
 
 /*===== Start Menu/Poketools Flags =====*/
+#define BW_START_MENU_COMPATIBILITY //Delegate menu return callbacks to an externally installed start menu
 #define FLAG_SYS_BAG_HIDE 0x91B		//Toggle bag off
 #define FLAG_SYS_PLAYER_HIDE 0x91C	//Toggle [player] off
 #define FLAG_SYS_SAVE_HIDE 0x91D	//Toggle save off
@@ -370,7 +371,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define FLAG_TERA_BATTLE 0xA08 // Set this flag before a trainerbattle command to enable Terastallization
 //#define SHOW_TERA_TYPE_ICON_ON_SUMMARY_SCREEN // Comment this out if you want only the Tera Icon to be displayed on summary screen
 #define FLAG_EXPLAINED_MINING_RULES 0xA09 //If set, the player will not be shown the mining rules second time when using the mining feature
-//#define BW_SUMMARY_SCREEN // Implements the BW summary screen
+#define BW_SUMMARY_SCREEN // Implements the BW summary screen
 //#define NATURE_COLORS_ON_SUMMARY_SCREEN //will implement nature coloured stats and IV ranking in summary (Don't uncomment if you're using BW Summary Screen)
 //#define MID_BATTLE_EVO //Comment this line to remove Mid-Battle Evolution.
 //#define SKIP_INTRO_CONTROLS_GUIDE //Uncomment this line to remove the intro constrols guide.

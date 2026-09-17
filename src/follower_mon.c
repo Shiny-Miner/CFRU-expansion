@@ -10,6 +10,8 @@
 #include "../include/script.h"
 #include "../include/follower_mon_pal.h"
 #include "../include/new/character_customization.h"
+#include "../include/field_weather.h"
+#include "../include/trainer_pokemon_sprites.h"
 
 
 extern u8 SparkleTiles[];
@@ -233,17 +235,6 @@ void ShowFollowerMon(void)
         gEventObjects[gFollowerState.objId].invisible = FALSE;
 }
 extern void Task_ScriptShowMonPic(u8 taskId);
-#define gMonPaletteTable (*((struct CompressedSpritePalette**) 0x8000130))
-#define gMonShinyPaletteTable (*((struct CompressedSpritePalette**) 0x8000134))
-
-struct CompressedSpritePalette * GetSpritePalToUse(bool8 isShiny)
-{
-    if(isShiny)
-        return gMonShinyPaletteTable;
-    else
-        return gMonPaletteTable;
-}
-
 u8 CreateMonSprite_MysteryGift(u16 species, s16 x, s16 y)
 {
     struct Pokemon* mon = GetFirstValidPartyMon();
@@ -252,18 +243,15 @@ u8 CreateMonSprite_MysteryGift(u16 species, s16 x, s16 y)
 
     u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
     u32 otId = GetMonData(mon, MON_DATA_OT_ID, NULL);
-    u16 isShiny = IsMonShiny(mon);
-    const struct CompressedSpritePalette * spritePal = GetSpritePalToUse(isShiny);
-    u16 spriteId = CreateMonPicSprite_HandleDeoxys(species, otId, personality, 1, x, y, 0, spritePal[species].tag);
-    LoadCompressedSpritePalette(&spritePal[species]);
-    if(spriteId != 0xFFFF)
-    {
-        gSprites[spriteId].oam.paletteNum = IndexOfSpritePaletteTag(spritePal[species].tag);
-    }
-    if (spriteId == 0xFFFF)
+    const struct CompressedSpritePalette *spritePal = GetMonSpritePalStructFromOtIdPersonality(species, otId, personality);
+    u16 spriteId = CreateMonPicSprite_HandleDeoxys(species, otId, personality, TRUE, x, y, 0, spritePal->tag);
+    if (spriteId >= MAX_SPRITES)
         return MAX_SPRITES;
-    else
-        return spriteId;
+
+    // The picture loader already loads the correct normal/shiny palette.
+    // Keep overworld weather from recoloring the portrait's allocated slot.
+    PreservePaletteInWeather(gSprites[spriteId].oam.paletteNum + 0x10);
+    return spriteId;
 }
 
 bool8 ScriptMenu_ShowMysteryPokemonPic(u16 species, u8 x, u8 y)
@@ -313,9 +301,8 @@ void Remove_PokemonPic(void)
             struct Sprite *sprite = &gSprites[spriteId];
 
             FreeSpriteOamMatrix(sprite);
-            DestroySprite(sprite);
-            FreeSpriteTiles(sprite);
-            FreeSpritePalette(sprite);
+            // Also release the picture loader's buffers and internal slot.
+            FreeAndDestroyMonPicSprite(spriteId);
         }
         DestroyTask(taskId);
     }
