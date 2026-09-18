@@ -2418,9 +2418,6 @@ BufferSelectedMonData = 0x08138b8c|1;
 sLevelNickTextColors = 0x8463fa4;
 
 /*MidBattle Evo*/
-gPlayerDoesNotWantToEvolveLeft = 0x0203C040;
-gPlayerDoesNotWantToEvolveRight = 0x0203C048;
-gBattleTerrainBackup = 0x02023ddc;
 sIntroScanlineParams16Bit = 0x824efe4;
 InitBattleBgsVideo = 0x800f34c | 1;
 gReservedSpritePaletteCount = 0x03003e58;
@@ -2457,7 +2454,6 @@ IsHMMove2 = 0x80441b8 | 1;
 RemoveBattleMonPPBonus = 0x80410a0 | 1;
 SetBattleMonMoveSlot = 0x803e9a4 | 1;
 BufferMoveToLearnIntoBattleTextBuff2 = 0x8026878 | 1;
-gSpeciesInfo = 0x8254784 | 1 ;
 GetAbilityBySpecies = 0x8040d38 | 1;
 GetPartyIdFromBattlePartyId = 0x8128030 | 1;
 DecompressPicFromTable = 0x800ec8c | 1;

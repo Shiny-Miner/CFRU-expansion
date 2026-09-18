@@ -133,6 +133,13 @@ u8 GetBattleTerrainOverride(void)
 {
 	u8 terrain = gBattleTerrain;
 
+    // Post-battle evolution may clear flags, but a mid-battle scene must not
+    // turn a trainer/double battle into a wild/single battle on return.
+    if (gNewBS != NULL && gMain.inBattle && gNewBS->midBattleEvolution.active)
+    {
+        return BATTLE_TERRAIN_PLAIN;
+    }
+
 	if (gMain.callback2 == CB2_EvolutionSceneLoadGraphics
 	|| gMain.callback2 == CB2_BeginEvolutionScene
 	|| gMain.callback2 == CB2_EvolutionSceneUpdate

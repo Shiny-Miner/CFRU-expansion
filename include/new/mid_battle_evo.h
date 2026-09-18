@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../global.h"
 #include "../battle_string_ids.h"
 
@@ -8,7 +10,6 @@ void __attribute__((long_call)) CB2_HandleStartMultiBattle(void);
 void __attribute__((long_call)) CB2_HandleStartBattle(void);
 void __attribute__((long_call)) ReshowBattleScreenAfterMenu(void);
 void __attribute__((long_call)) HandleTurnActionSelectionState(void);
-u8 __attribute__((long_call)) CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum);
 void __attribute__((long_call)) AllocateMonSpritesGfx(void);
 u8 __attribute__((long_call)) *StringCopy_Nickname(u8 *dest, const u8 *src);
 void __attribute__((long_call)) SpriteCallbackDummy_2(struct Sprite *sprite);
@@ -35,47 +36,11 @@ void __attribute__((long_call)) BattleDestroyYesNoCursorAt2(void);
 bool32 __attribute__((long_call)) IsHMMove2(u16 move);
 void __attribute__((long_call)) RemoveBattleMonPPBonus(struct BattlePokemon *mon, u8 moveIndex);
 void __attribute__((long_call)) SetBattleMonMoveSlot(struct BattlePokemon *mon, u16 move, u8 slot);
-ability_t __attribute__((long_call)) GetAbilityBySpecies(u16 species, bool8 altAbility);
 u8 __attribute__((long_call)) GetPartyIdFromBattlePartyId(u8 battlePartyId);
 void VBlankCB_Battle(void);
 void ClearTemporarySpeciesSpriteData(u8 bank, bool8 dontClearSubstitute);
 void __attribute__((long_call)) DecompressPicFromTable(const struct CompressedSpriteSheet *src, void *buffer, s32 species);
 void BuildTrainerPartySetup(void);
-
-struct SpeciesInfo
-{
- /* 0x00 */ u8 baseHP;
- /* 0x01 */ u8 baseAttack;
- /* 0x02 */ u8 baseDefense;
- /* 0x03 */ u8 baseSpeed;
- /* 0x04 */ u8 baseSpAttack;
- /* 0x05 */ u8 baseSpDefense;
- /* 0x06 */ u8 types[2];
- /* 0x08 */ u8 catchRate;
- /* 0x09 */ u8 expYield;
- /* 0x0A */ u16 evYield_HP:2;
- /* 0x0A */ u16 evYield_Attack:2;
- /* 0x0A */ u16 evYield_Defense:2;
- /* 0x0A */ u16 evYield_Speed:2;
- /* 0x0B */ u16 evYield_SpAttack:2;
- /* 0x0B */ u16 evYield_SpDefense:2;
- /* 0x0C */ u16 itemCommon;
- /* 0x0E */ u16 itemRare;
- /* 0x10 */ u8 genderRatio;
- /* 0x11 */ u8 eggCycles;
- /* 0x12 */ u8 friendship;
- /* 0x13 */ u8 growthRate;
- /* 0x14 */ u8 eggGroups[2];
- /* 0x16 */ u8 abilities[2];
- /* 0x18 */ u8 safariZoneFleeRate;
- /* 0x19 */ u8 bodyColor : 7;
-            u8 noFlip : 1;
-};
-
-extern u8 gBattleTerrainBackup;
-extern const struct SpeciesInfo gSpeciesInfo[];
-extern const union AffineAnimCmd * const sDummySpriteAffineAnimTable[];
-extern const u32 sBitTable[];
 
 #define sEvoCursorPos           gBattleCommunication[1] // when learning a new move
 #define sEvoGraphicsTaskId      gBattleCommunication[2]

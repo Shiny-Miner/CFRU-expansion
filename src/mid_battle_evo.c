@@ -23,6 +23,10 @@
 #include "../include/gba/macro.h"
 
 #include "../include/new/battle_terrain.h"
+#include "../include/new/battle_util.h"
+#include "../include/new/dynamax.h"
+#include "../include/new/frontier.h"
+#include "../include/new/terastallization.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/evolution.h"
 #include "../include/new/learn_move.h"
@@ -34,9 +38,11 @@ void PlayerTryEvolution(void);
 static void WaitForEvolutionThenTryAnother(void);
 static void CB2_SetUpReshowBattleScreenAfterEvolution(void);
 static void Task_EvolutionScene(u8 taskId);
-void CopyPlayerPartyMonToBattleData(u8 battlerId, u8 partyIndex, bool8 resetStats);
+static void UpdateEvolvedBattleMon(struct Pokemon *mon);
+static void UpdateEvolvedBattleMoves(struct Pokemon *mon);
+static void CB2_MidBattleEvolutionLoadGraphics(void);
 static void EvolutionScene(struct Pokemon* mon, u16 postEvoSpecies, bool8 canStopEvo, u8 partyId);
-u16 TryGetFemaleGenderedSpecies(u16 species, u32 personality);
+static u16 TryGetFemaleGenderedSpecies(u16 species, u32 personality);
 
 struct EvoInfo
 {
@@ -47,11 +53,7 @@ struct EvoInfo
     u16 savedPalette[48];
 };
 
-bool8 gPlayerDoesNotWantToEvolveLeft = FALSE;
-bool8 gPlayerDoesNotWantToEvolveRight = FALSE;
-
 extern struct EvoInfo *sEvoStructPtr;
-extern const struct ScanlineEffectParams sIntroScanlineParams16Bit;
 
 #define gMonFrontPicTable ((const struct CompressedSpriteSheet*) *((u32*) 0x8000128))
 #define tState              data[0]
@@ -70,94 +72,121 @@ static void EvoDummyFunc(void)
 {
 }
 
-void Cb2_InitBattleTurn_False(void)
-{
-    gPlayerDoesNotWantToEvolveLeft = FALSE;
-    gPlayerDoesNotWantToEvolveRight = FALSE;
-}
-
-#define LEFT_PKMN gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)]
-#define RIGHT_PKMN gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)]
-
 static void CB2_SetUpReshowBattleScreenAfterEvolution(void)
 {
-    gBattleTerrain = BattleSetup_GetTerrainId(); 
+    gBattleTerrain = gNewBS->midBattleEvolution.savedTerrain;
+    memcpy(gBattleCommunication, gNewBS->midBattleEvolution.savedCommunication, sizeof(gBattleCommunication));
+    gNewBS->midBattleEvolution.active = FALSE;
     SetMainCallback2(ReshowBattleScreenAfterMenu);
 }
 
 #define tSpeciesToEvolveInto data[0]
-#define tBattlerPosition     data[1]
+#define tPartyToEvolve       data[1]
 
 static void Task_BeginBattleEvolutionScene(u8 taskId)
 {
     if (!gPaletteFade->active)
     {
-        u8 battlerPosition;
-        u16 SpeciesToEvolveInto;
-        FreeAllWindowBuffers();
-        gCB2_AfterEvolution = CB2_SetUpReshowBattleScreenAfterEvolution;
-        gBattleTerrainBackup = gBattleTerrain; // Store the battle terrain to be reloaded later
+        u8 partyId = gTasks[taskId].tPartyToEvolve;
+        u16 species = gTasks[taskId].tSpeciesToEvolveInto;
 
-        battlerPosition = gTasks[taskId].tBattlerPosition;
-        SpeciesToEvolveInto = gTasks[taskId].tSpeciesToEvolveInto;
+        gCB2_AfterEvolution = CB2_SetUpReshowBattleScreenAfterEvolution;
         DestroyTask(taskId);
-        EvolutionScene(&gPlayerParty[battlerPosition], SpeciesToEvolveInto, TRUE, battlerPosition);
+        EvolutionScene(&gPlayerParty[partyId], species, TRUE, partyId);
     }
 }
 
 void PlayerTryEvolution(void)
 {
-    u16 species;
-    u8 taskId; 
-    if (gLeveledUpInBattle & gBitTable[LEFT_PKMN] && !gPlayerDoesNotWantToEvolveLeft)
+    u8 position;
+
+    if (gNewBS == NULL || !gMain.inBattle || gBattleOutcome != 0
+     || gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE
+                         | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER
+                         | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_BENJAMIN_BUTTERFREE))
     {
-        gLeveledUpInBattle &= ~(gBitTable[LEFT_PKMN]); // Mask the bit
-        species = GetEvolutionTargetSpecies(&gPlayerParty[LEFT_PKMN], EVO_MODE_NORMAL, ITEM_NONE);
-        if (species != SPECIES_NONE)
-        {
-            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
-            gBattleMainFunc = WaitForEvolutionThenTryAnother;
-            taskId = CreateTask(Task_BeginBattleEvolutionScene, 0);
-            gTasks[taskId].tSpeciesToEvolveInto = species;
-            gTasks[taskId].tBattlerPosition = LEFT_PKMN;
-            return;
-        }
+        gBattleMainFunc = HandleTurnActionSelectionState;
+        return;
     }
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gLeveledUpInBattle & gBitTable[RIGHT_PKMN] && !gPlayerDoesNotWantToEvolveRight)
+
+    // Don't reset the scene while a controller/animation is still using it.
+    if (gBattleExecBuffer || gPaletteFade->active)
+        return;
+
+    for (position = B_POSITION_PLAYER_LEFT; position <= B_POSITION_PLAYER_RIGHT; position += BIT_FLANK)
     {
-        gLeveledUpInBattle &= ~(gBitTable[RIGHT_PKMN]); // Mask the bit
-        species = GetEvolutionTargetSpecies(&gPlayerParty[RIGHT_PKMN], EVO_MODE_NORMAL, ITEM_NONE);
-        if (species != SPECIES_NONE)
-        {
-            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
-            gBattleMainFunc = WaitForEvolutionThenTryAnother;
-            taskId = CreateTask(Task_BeginBattleEvolutionScene, 0);
-            gTasks[taskId].tSpeciesToEvolveInto = species;
-            gTasks[taskId].tBattlerPosition = RIGHT_PKMN;
+        u8 bank, partyId, taskId;
+        u16 species;
+        struct Pokemon *mon;
+
+        if (position == B_POSITION_PLAYER_RIGHT && !IS_DOUBLE_BATTLE)
+            break;
+        bank = GetBattlerAtPosition(position);
+        if (bank >= gBattlersCount || !IsBattlerAlive(bank))
+            continue;
+        partyId = gBattlerPartyIndexes[bank];
+        if (partyId >= PARTY_SIZE
+         || (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && partyId >= PARTY_SIZE / 2)
+         || !(gLeveledUpInBattle & gBitTable[partyId])
+         || (gNewBS->midBattleEvolution.cancelledParty & gBitTable[partyId]))
+            continue;
+
+        mon = &gPlayerParty[partyId];
+        // Defer temporary battle forms; keep the level-up bit for later/post-battle.
+        if (IS_TRANSFORMED(bank) || IsDynamaxed(bank) || IsTerastallized(bank)
+         || SPECIES(bank) != mon->species || gMonSpritesGfxPtr == NULL)
+            continue;
+        species = GetEvolutionTargetSpecies(mon, EVO_MODE_NORMAL, ITEM_NONE);
+        if (species == SPECIES_NONE || species >= NUM_SPECIES)
+            continue;
+        taskId = CreateTask(Task_BeginBattleEvolutionScene, 0);
+        if (taskId >= NUM_TASKS)
             return;
-        }
+
+        gLeveledUpInBattle &= ~gBitTable[partyId];
+        gNewBS->midBattleEvolution.battler = bank;
+        gNewBS->midBattleEvolution.savedTerrain = gBattleTerrain;
+        memcpy(gNewBS->midBattleEvolution.savedCommunication, gBattleCommunication, sizeof(gBattleCommunication));
+        memcpy(gNewBS->midBattleEvolution.originalMoves, mon->moves, sizeof(mon->moves));
+        gNewBS->midBattleEvolution.active = TRUE;
+        // Recalculation must start from the current HP, not heal battle damage.
+        SetMonData(mon, MON_DATA_HP, &gBattleMons[bank].hp);
+        SetMonData(mon, MON_DATA_STATUS, &gBattleMons[bank].status1);
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
+        gBattleMainFunc = WaitForEvolutionThenTryAnother;
+        gTasks[taskId].tSpeciesToEvolveInto = species;
+        gTasks[taskId].tPartyToEvolve = partyId;
+        return;
     }
 
     gBattleMainFunc = HandleTurnActionSelectionState;
-
 }
 
 static void WaitForEvolutionThenTryAnother(void)
 {
-    if (gMain.callback2 == BattleMainCB2 && !gPaletteFade->active)
-    {
+    if (!gNewBS->midBattleEvolution.active
+     && gMain.callback2 == BattleMainCB2 && !gPaletteFade->active)
         gBattleMainFunc = PlayerTryEvolution;
-    }
 }
 
 static void EvolutionScene(struct Pokemon* mon, u16 postEvoSpecies, bool8 canStopEvo, u8 partyId)
 {
     u8 name[20];
-    u16 currSpecies;
+    u16 currSpecies, spriteSpecies;
     u32 trainerId, personality;
     const struct CompressedSpritePalette* pokePal;
     u8 id;
 
+    sEvoStructPtr = AllocZeroed(sizeof(struct EvoInfo));
+    if (sEvoStructPtr == NULL)
+    {
+        // Defer to post-battle rather than loop forever after an allocation failure.
+        gLeveledUpInBattle |= gBitTable[partyId];
+        gNewBS->midBattleEvolution.cancelledParty |= gBitTable[partyId];
+        SetMainCallback2(gCB2_AfterEvolution);
+        return;
+    }
+    FreeAllWindowBuffers();
     SetHBlankCallback(NULL);
     SetVBlankCallback(NULL);
     CpuFill32(0, (void *)(VRAM), VRAM_SIZE);
@@ -192,10 +221,6 @@ static void EvolutionScene(struct Pokemon* mon, u16 postEvoSpecies, bool8 canSto
 
     gReservedSpritePaletteCount = 4;
 
-    sEvoStructPtr = AllocZeroed(sizeof(struct EvoInfo));
-    if (!gMain.inBattle || gMonSpritesGfxPtr == NULL)
-        AllocateMonSpritesGfx();  // If gMonSpritesGfxPtr has been freed (which can also happen at the end of the battle) then it needs to be reallocated
-
     GetMonData(mon, MON_DATA_NICKNAME, name);
     StringCopy_Nickname(gStringVar1, name);
     StringCopy(gStringVar2, gSpeciesNames[postEvoSpecies]);
@@ -205,15 +230,15 @@ static void EvolutionScene(struct Pokemon* mon, u16 postEvoSpecies, bool8 canSto
     trainerId = GetMonData(mon, MON_DATA_OT_ID, NULL);
     personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
 
-    currSpecies = TryGetFemaleGenderedSpecies(currSpecies, personality);
+    spriteSpecies = TryGetFemaleGenderedSpecies(currSpecies, personality);
 
-    DecompressPicFromTable(&gMonFrontPicTable[currSpecies],
+    DecompressPicFromTable(&gMonFrontPicTable[spriteSpecies],
                              gMonSpritesGfxPtr->sprites[B_POSITION_OPPONENT_LEFT],
-                             currSpecies);
-    pokePal = GetMonSpritePalStructFromOtIdPersonality(currSpecies, trainerId, personality);
+                             spriteSpecies);
+    pokePal = GetMonSpritePalStructFromOtIdPersonality(spriteSpecies, trainerId, personality);
     LoadCompressedPalette(pokePal->data, OBJ_PLTT_ID(1), PLTT_SIZE_4BPP);
 
-    SetMultiuseSpriteTemplateToPokemon(currSpecies, B_POSITION_OPPONENT_LEFT);
+    SetMultiuseSpriteTemplateToPokemon(spriteSpecies, B_POSITION_OPPONENT_LEFT);
     gMultiuseSpriteTemplate->affineAnims = gDummySpriteAffineAnimTable;
     sEvoStructPtr->preEvoSpriteId = id = CreateSprite(gMultiuseSpriteTemplate, 120, 64, 30);
 
@@ -221,16 +246,16 @@ static void EvolutionScene(struct Pokemon* mon, u16 postEvoSpecies, bool8 canSto
     gSprites[id].oam.paletteNum = 1;
     gSprites[id].invisible = TRUE;
 
-    postEvoSpecies = TryGetFemaleGenderedSpecies(postEvoSpecies, personality);
+    spriteSpecies = TryGetFemaleGenderedSpecies(postEvoSpecies, personality);
 
     // postEvo sprite
-    DecompressPicFromTable(&gMonFrontPicTable[postEvoSpecies],
+    DecompressPicFromTable(&gMonFrontPicTable[spriteSpecies],
                              gMonSpritesGfxPtr->sprites[B_POSITION_OPPONENT_RIGHT],
-                             postEvoSpecies);
-    pokePal = GetMonSpritePalStructFromOtIdPersonality(postEvoSpecies, trainerId, personality);
+                             spriteSpecies);
+    pokePal = GetMonSpritePalStructFromOtIdPersonality(spriteSpecies, trainerId, personality);
     LoadCompressedPalette(pokePal->data, OBJ_PLTT_ID(2), PLTT_SIZE_4BPP);
 
-    SetMultiuseSpriteTemplateToPokemon(postEvoSpecies, B_POSITION_OPPONENT_RIGHT);
+    SetMultiuseSpriteTemplateToPokemon(spriteSpecies, B_POSITION_OPPONENT_RIGHT);
     gMultiuseSpriteTemplate->affineAnims = gDummySpriteAffineAnimTable;
     sEvoStructPtr->postEvoSpriteId = id = CreateSprite(gMultiuseSpriteTemplate, 120, 64, 30);
     gSprites[id].callback = SpriteCallbackDummy_2;
@@ -264,33 +289,14 @@ static void Task_EvolutionScene(u8 taskId)
     u32 var;
     struct Pokemon* mon = &gPlayerParty[gTasks[taskId].tPartyId];
 
-    // Automatically cancel if the Pokemon would evolve into a species you have not
-    // yet unlocked, such as Crobat.
-    if (!IsNationalPokedexEnabled()
-        && gTasks[taskId].tState == EVOSTATE_WAIT_CYCLE_MON_SPRITE
-        && gTasks[taskId].tPostEvoSpecies > SPECIES_MEW)
-    {
-        gTasks[taskId].tState = EVOSTATE_CANCEL;
-        gTasks[taskId].tEvoWasStopped = TRUE;
-        gTasks[sEvoGraphicsTaskId].tEvoStopped = TRUE;
-        if (gMain.inBattle && gBattleOutcome == 0)
-        {
-            if (gTasks[taskId].tPartyId == LEFT_PKMN) 
-            gPlayerDoesNotWantToEvolveLeft = TRUE; // Stop trying to make the left Pokémon evolve again in battle
-            else if (gTasks[taskId].tPartyId == RIGHT_PKMN) 
-            gPlayerDoesNotWantToEvolveRight = TRUE; // Stop trying to make the right Pokémon evolve again in battle
-        }
-        StopBgAnimation();
-        return;
-    }
-
     // check if B Button was held, so the evolution gets stopped
-    if (gMain.heldKeys == B_BUTTON
+    if (gMain.heldKeys & B_BUTTON
         && gTasks[taskId].tState == EVOSTATE_WAIT_CYCLE_MON_SPRITE
         && gTasks[sEvoGraphicsTaskId].isActive
         && gTasks[taskId].tBits & TASK_BIT_CAN_STOP)
     {
         gTasks[taskId].tState = EVOSTATE_CANCEL;
+        gNewBS->midBattleEvolution.cancelledParty |= gBitTable[gTasks[taskId].tPartyId];
         gTasks[sEvoGraphicsTaskId].tEvoStopped = TRUE;
         StopBgAnimation();
         return;
@@ -417,31 +423,24 @@ static void Task_EvolutionScene(u8 taskId)
             GetSetPokedexFlag(SpeciesToNationalPokedexNum(gTasks[taskId].tPostEvoSpecies), FLAG_SET_SEEN);
             GetSetPokedexFlag(SpeciesToNationalPokedexNum(gTasks[taskId].tPostEvoSpecies), FLAG_SET_CAUGHT);
             IncrementGameStat(GAME_STAT_EVOLVED_POKEMON);
-            if (gMain.inBattle && gBattleOutcome == 0)
-            { 
-                // Update BattlePokemon stats if in battle
-                u8 monId = gTasks[taskId].tPartyId;
-                if (monId == LEFT_PKMN) 
-                    CopyPlayerPartyMonToBattleData(0, monId, FALSE);
-                else if (monId == RIGHT_PKMN) 
-                {
-                    CopyPlayerPartyMonToBattleData(2, monId, FALSE);
-                }
-            }
+            UpdateEvolvedBattleMon(mon);
         }
         break;
     case EVOSTATE_TRY_LEARN_MOVE:
         if (!IsTextPrinterActive(0))
         {
             HelpSystem_Enable();
-            var = MonTryLearningNewMove(mon, gTasks[taskId].tLearnsFirstMove);
+            var = gTasks[taskId].tEvoWasStopped ? MOVE_NONE
+                : MonTryLearningNewMoveAfterEvolution(mon, gTasks[taskId].tLearnsFirstMove);
             if (var != MOVE_NONE && !gTasks[taskId].tEvoWasStopped)
             {
                 u8 text[20];
 
-                StopMapMusic();
-                if (gMain.inBattle && gBattleOutcome == 0) PlayBattleBGM(); // If battle is still ongoing, replay battle music
-                else Overworld_PlaySpecialMapMusic();
+                if (!(gTasks[taskId].tBits & TASK_BIT_LEARN_MOVE))
+                {
+                    StopMapMusic();
+                    PlayBattleBGM();
+                }
                 gTasks[taskId].tBits |= TASK_BIT_LEARN_MOVE;
                 gTasks[taskId].tLearnsFirstMove = FALSE;
                 gTasks[taskId].tLearnMoveState = MVSTATE_INTRO_MSG_1;
@@ -454,17 +453,6 @@ static void Task_EvolutionScene(u8 taskId)
                     break;
                 else
                 {
-                    if (gMain.inBattle && gBattleOutcome == 0)
-                    {
-                        if (gTasks[taskId].tPartyId == LEFT_PKMN) 
-                        {
-                            GiveMoveToBattleMon(&gBattleMons[0], var); // Ensure the Pokémon can use the move in battle
-                        }
-                        else if (gTasks[taskId].tPartyId == RIGHT_PKMN) 
-                        {
-                            GiveMoveToBattleMon(&gBattleMons[2], var);  // Ensure the Pokémon can use the move in battle
-                        }
-                    }
                     gTasks[taskId].tState = EVOSTATE_LEARNED_MOVE;
                 }
             }
@@ -487,10 +475,12 @@ static void Task_EvolutionScene(u8 taskId)
                     Overworld_PlaySpecialMapMusic();
             }
             if (!gTasks[taskId].tEvoWasStopped)
+            {
+                UpdateEvolvedBattleMoves(mon);
                 CreateShedinja(gTasks[taskId].tPreEvoSpecies, mon);
+            }
 
             DestroyTask(taskId);
-             if (!gMain.inBattle || gBattleOutcome != 0) FreeMonSpritesGfx(); // Free resources if battle is not ongoing
             FREE_AND_SET_NULL(sEvoStructPtr);
             FreeAllWindowBuffers();
             SetMainCallback2(gCB2_AfterEvolution);
@@ -633,7 +623,7 @@ static void Task_EvolutionScene(u8 taskId)
             {
                 FreeAllWindowBuffers();
                 ShowSelectMovePokemonSummaryScreen(gPlayerParty, gTasks[taskId].tPartyId,
-                            gPlayerPartyCount - 1, CB2_EvolutionSceneLoadGraphics,
+                            gPlayerPartyCount - 1, CB2_MidBattleEvolutionLoadGraphics,
                             gMoveToLearn);
                 gTasks[taskId].tLearnMoveState++;
             }
@@ -662,19 +652,6 @@ static void Task_EvolutionScene(u8 taskId)
                     {
                         // Forget move
                         PREPARE_MOVE_BUFFER(gBattleTextBuff2, move)
-                        if (gMain.inBattle && gBattleOutcome == 0)
-                        {
-                            if (gTasks[taskId].tPartyId == LEFT_PKMN) 
-                            {
-                                RemoveBattleMonPPBonus(&gBattleMons[0], var);
-                                SetBattleMonMoveSlot(&gBattleMons[0], gMoveToLearn, var); // Replace in-battle Pokémon's move with the new move
-                            }
-                            else if (gTasks[taskId].tPartyId == RIGHT_PKMN) 
-                            {
-                                RemoveBattleMonPPBonus(&gBattleMons[2], var);
-                                SetBattleMonMoveSlot(&gBattleMons[2], gMoveToLearn, var); // Replace in-battle Pokémon's move with the new move
-                            }
-                        }
                         RemoveMonPPBonus(mon, var);
                         SetMonMoveSlot(mon, gMoveToLearn, var);
                         gTasks[taskId].tLearnMoveState++;
@@ -724,68 +701,65 @@ static void Task_EvolutionScene(u8 taskId)
     }
 }
 
-void CopyPlayerPartyMonToBattleData(u8 battlerId, u8 partyIndex, bool8 resetStats)
+// Only update fields changed by evolution. This is not a switch-in/revive:
+// preserve consumed items, volatile statuses, stat stages, Substitute and timers.
+static void UpdateEvolvedBattleMon(struct Pokemon *mon)
 {
-    u16 *hpSwitchout;
-    s32 i;
-    u8 nickname[POKEMON_NAME_LENGTH * 2]; // Why is the nickname array here longer in FR/LG?
+    u8 bank = gNewBS->midBattleEvolution.battler;
+    u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 
-    gBattleMons[battlerId].species = GetMonData(&gPlayerParty[partyIndex], MON_DATA_SPECIES, NULL);
-    gBattleMons[battlerId].item = GetMonData(&gPlayerParty[partyIndex], MON_DATA_HELD_ITEM, NULL);
-
-    for (i = 0; i < MAX_MON_MOVES; i++)
+    gBattleMons[bank].species = species;
+    RELOAD_BATTLE_STATS(bank, mon);
+    if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+        UpdateTypesForCamomons(bank);
+    else
     {
-        gBattleMons[battlerId].moves[i] = GetMonData(&gPlayerParty[partyIndex], MON_DATA_MOVE1 + i, NULL);
-        gBattleMons[battlerId].pp[i] = GetMonData(&gPlayerParty[partyIndex], MON_DATA_PP1 + i, NULL);
+        gBattleMons[bank].type1 = gBaseStats[species].type1;
+        gBattleMons[bank].type2 = gBaseStats[species].type2;
     }
-
-    gBattleMons[battlerId].ppBonuses = GetMonData(&gPlayerParty[partyIndex], MON_DATA_PP_BONUSES, NULL);
-    gBattleMons[battlerId].friendship = GetMonData(&gPlayerParty[partyIndex], MON_DATA_FRIENDSHIP, NULL);
-    gBattleMons[battlerId].experience = GetMonData(&gPlayerParty[partyIndex], MON_DATA_EXP, NULL);
-    gBattleMons[battlerId].hpIV = GetMonData(&gPlayerParty[partyIndex], MON_DATA_HP_IV, NULL);
-    gBattleMons[battlerId].attackIV = GetMonData(&gPlayerParty[partyIndex], MON_DATA_ATK_IV, NULL);
-    gBattleMons[battlerId].defenseIV = GetMonData(&gPlayerParty[partyIndex], MON_DATA_DEF_IV, NULL);
-    gBattleMons[battlerId].speedIV = GetMonData(&gPlayerParty[partyIndex], MON_DATA_SPEED_IV, NULL);
-    gBattleMons[battlerId].spAttackIV = GetMonData(&gPlayerParty[partyIndex], MON_DATA_SPATK_IV, NULL);
-    gBattleMons[battlerId].spDefenseIV = GetMonData(&gPlayerParty[partyIndex], MON_DATA_SPDEF_IV, NULL);
-    gBattleMons[battlerId].personality = GetMonData(&gPlayerParty[partyIndex], MON_DATA_PERSONALITY, NULL);
-    gBattleMons[battlerId].status1 = GetMonData(&gPlayerParty[partyIndex], MON_DATA_STATUS, NULL);
-    gBattleMons[battlerId].level = GetMonData(&gPlayerParty[partyIndex], MON_DATA_LEVEL, NULL);
-    gBattleMons[battlerId].hp = GetMonData(&gPlayerParty[partyIndex], MON_DATA_HP, NULL);
-    gBattleMons[battlerId].maxHP = GetMonData(&gPlayerParty[partyIndex], MON_DATA_MAX_HP, NULL);
-    gBattleMons[battlerId].attack = GetMonData(&gPlayerParty[partyIndex], MON_DATA_ATK, NULL);
-    gBattleMons[battlerId].defense = GetMonData(&gPlayerParty[partyIndex], MON_DATA_DEF, NULL);
-    gBattleMons[battlerId].speed = GetMonData(&gPlayerParty[partyIndex], MON_DATA_SPEED, NULL);
-    gBattleMons[battlerId].spAttack = GetMonData(&gPlayerParty[partyIndex], MON_DATA_SPATK, NULL);
-    gBattleMons[battlerId].spDefense = GetMonData(&gPlayerParty[partyIndex], MON_DATA_SPDEF, NULL);
-    gBattleMons[battlerId].isEgg = GetMonData(&gPlayerParty[partyIndex], MON_DATA_IS_EGG, NULL);
-    gBattleMons[battlerId].altAbility = GetMonData(&gPlayerParty[partyIndex], MON_DATA_ALT_ABILITY, NULL);
-    gBattleMons[battlerId].otId = GetMonData(&gPlayerParty[partyIndex], MON_DATA_OT_ID, NULL);
-    gBattleMons[battlerId].type1 = gSpeciesInfo[gBattleMons[battlerId].species].types[0];
-    gBattleMons[battlerId].type2 = gSpeciesInfo[gBattleMons[battlerId].species].types[1];
-    ABILITY(battlerId) = GetAbilityBySpecies(
-        gBattleMons[battlerId].species,
-        gBattleMons[battlerId].altAbility);
-    GetMonData(&gPlayerParty[partyIndex], MON_DATA_NICKNAME, nickname);
-    StringCopy_Nickname(gBattleMons[battlerId].nickname, nickname);
-    GetMonData(&gPlayerParty[partyIndex], MON_DATA_OT_NAME, gBattleMons[battlerId].otName);
-
-    hpSwitchout = &gBattleStruct->hpOnSwitchout[GetBattlerSide(battlerId)];
-    *hpSwitchout = gBattleMons[battlerId].hp;
-
-    if (resetStats)
-    {
-        for (i = 0; i < BATTLE_STATS_NO-1; i++)
-            gBattleMons[battlerId].statStages[i] = DEFAULT_STAT_STAGE;
-
-        gBattleMons[battlerId].status2 = 0;
-    }
-    gBattleMons[battlerId].status2 = 0;
-    UpdateSentPokesToOpponentValue(battlerId);
-    ClearTemporarySpeciesSpriteData(battlerId, FALSE);
+    gBattleMons[bank].type3 = TYPE_BLANK;
+    *GetAbilityLocation(bank) = GetMonAbility(mon);
+    ClearBattlerAbilityHistory(bank);
+    GetMonData(mon, MON_DATA_NICKNAME, gBattleMons[bank].nickname);
+    gStatuses3[bank] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE | STATUS3_ILLUSION);
+    ClearTemporarySpeciesSpriteData(bank, TRUE);
 }
 
-u16 TryGetFemaleGenderedSpecies(u16 species, u32 personality)
+static void UpdateEvolvedBattleMoves(struct Pokemon *mon)
+{
+    u8 bank = gNewBS->midBattleEvolution.battler;
+    u8 i;
+
+    for (i = 0; i < MAX_MON_MOVES; ++i)
+    {
+        // Do not erase a temporary Mimic move, or reset PP in unchanged slots.
+        if (mon->moves[i] != gNewBS->midBattleEvolution.originalMoves[i])
+        {
+            gBattleMons[bank].moves[i] = mon->moves[i];
+            gBattleMons[bank].pp[i] = mon->pp[i];
+            gBattleMons[bank].ppBonuses = (gBattleMons[bank].ppBonuses & ~(3 << (i * 2)))
+                                      | (mon->ppBonuses & (3 << (i * 2)));
+            gDisableStructs[bank].mimickedMoves &= ~gBitTable[i];
+        }
+    }
+    if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+        UpdateTypesForCamomons(bank);
+}
+
+static void CB2_MidBattleEvolutionLoadGraphics(void)
+{
+    u8 taskId = sEvoStructPtr->evoTaskId;
+    u16 species = gTasks[taskId].tPostEvoSpecies;
+    struct Pokemon *mon = &gPlayerParty[gTasks[taskId].tPartyId];
+
+    // The ROM reloader reads this task field for graphics only. Keep the
+    // actual species for learnsets, nickname updates and Shedinja creation.
+    gTasks[taskId].tPostEvoSpecies = TryGetFemaleGenderedSpecies(species, mon->personality);
+    CB2_EvolutionSceneLoadGraphics();
+    gTasks[taskId].tPostEvoSpecies = species;
+}
+
+static u16 TryGetFemaleGenderedSpecies(u16 species, u32 personality)
 {
 	if (GetGenderFromSpeciesAndPersonality(species, personality) == MON_FEMALE)
 	{
@@ -815,11 +789,4 @@ u16 TryGetFemaleGenderedSpecies(u16 species, u32 personality)
 	
 	return species;
 }
-#else
-void CopyPlayerPartyMonToBattleData(unusedArg u8 battlerId, unusedArg u8 partyIndex, unusedArg bool8 resetStats)
-{}
-
-void Cb2_InitBattleTurn_False(void)
-{}
-
 #endif

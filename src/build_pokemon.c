@@ -439,10 +439,6 @@ void BuildTrainerPartySetup(void)
 	if (ViableMonCount(gEnemyParty) <= 1 && !IsRaidBattle() && !(gBattleTypeFlags & BATTLE_TYPE_LINK)) //Error prevention
 		gBattleTypeFlags &= ~(BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_DOUBLE);
 
-	#ifdef MID_BATTLE_EVO
-	gPlayerDoesNotWantToEvolveLeft = FALSE;
-    gPlayerDoesNotWantToEvolveRight = FALSE;
-	#endif
 }
 
 static void TryGiveMonOnlyMetronome(struct Pokemon* mon)

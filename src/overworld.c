@@ -3106,11 +3106,11 @@ const union AnimCmd gEventObjectImageAnim_RunEast[] =
 };
 #endif
 
-#define ReturnFieldOpenedMenu ((bool8 (*)(void)) (0x08C00DB0))
-
 static bool8 ReturnFieldOpenedMenuWithFollowerPalette(void)
 {
-    bool8 result = ReturnFieldOpenedMenu();
+    // Use the FireRed callback mapped in BPRE.ld. A fixed free-space address
+    // depends on an external patch and can point to empty ROM instead of code.
+    bool8 result = FieldCB_ReturnToFieldOpenStartMenu();
 
     // The field reload restores the normal object palette after the follower
     // has already been recreated. Reapply the lead Pokemon's palette only

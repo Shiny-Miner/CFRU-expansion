@@ -275,6 +275,6 @@ EventScript_Pallet_AideGuy:
 EventScript_GiveMons_Special:
     lock
     faceplayer
-    setflag 0xA08
+    givepokemon SPECIES_BULBASAUR 15 0 0 0
     release
     end

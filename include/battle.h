@@ -1101,6 +1101,16 @@ struct NewBattleStruct
 	} ai;
 
 	struct Pokemon** foePartyBackup; //Pointer to dynamically allocated memory
+
+    struct
+    {
+        bool8 active;
+        u8 cancelledParty;
+        u8 battler;
+        u8 savedTerrain;
+        u8 savedCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT];
+        u16 originalMoves[MAX_MON_MOVES];
+    } midBattleEvolution;
 };
 
 extern struct NewBattleStruct* gNewBS; //0x203E038
@@ -1679,7 +1689,5 @@ extern u8 gAnimCustomPanning;
 
 extern u8 gBattleBuffersTransferData[0x100];
 
-extern bool8 gPlayerDoesNotWantToEvolveLeft;
-extern bool8 gPlayerDoesNotWantToEvolveRight;
 
 #define BATTLE_HISTORY ((struct BattleHistory*) (gBattleResources->battleHistory))
