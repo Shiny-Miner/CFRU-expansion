@@ -30,6 +30,18 @@ MAX_TABLE_ENTRIES = 240
 # to an adjacent SpriteTemplate table. Because they also point into the ROM,
 # looking only for the first invalid pointer would expose non-overworld data.
 ROM_TABLE_ENTRY_COUNT = 152
+ANIMATION_TABLE_CHOICES = {
+    "Automatic": None,
+    **{f"AnimTable_{name}": f"((const union AnimCmd *const *) 0x{address:08X})"
+       for name, address in (
+           ("PlayerNormal", 0x83A3470), ("Standard", 0x83A3368),
+           ("Surfing", 0x83A3584), ("FieldMove", 0x83A3638),
+           ("Fishing", 0x83A3668), ("VsSeekerBike", 0x83A3640),
+           ("CutTree", 0x83A3660), ("RockSmash", 0x83A3658),
+           ("Boulder", 0x83A3314),
+       )},
+    "AnimTable_FollowerMon": "gFollowerMonAnimTable",
+}
 
 
 class EditorError(RuntimeError):
@@ -74,6 +86,7 @@ class PendingSprite:
     sheet: Optional[Path]
     target_table: int = -1
     target_index: int = -1
+    animation_table: Optional[str] = None
 
 
 def read_text_preserving(path: Path) -> tuple[str, str]:
@@ -480,6 +493,28 @@ class ProjectModel:
             changes[index] = normalized
         return normalized
 
+    def sprite_animation_table(self, item: dict) -> str:
+        """Keep the target's frame layout when replacing an existing sprite."""
+        if item.get("animation_table"):
+            return item["animation_table"]
+        if item.get("mode") == "resize":
+            table, index = item["target_table"], item["target_index"]
+            previous = self.custom_overrides.get((table, index), {})
+            if previous.get("animation_table"):
+                return previous["animation_table"]
+            value = self.dirty.get(table, {}).get(index, self.tables[table][index].value)
+            custom = re.fullmatch(r"&?gOverworldEditorGfx_([A-Za-z0-9_]+)", value)
+            if custom:
+                previous = self.custom_sprites.get(custom.group(1), {})
+                if previous.get("animation_table"):
+                    return previous["animation_table"]
+            if re.fullmatch(r"0[xX][0-9A-Fa-f]+", value):
+                offset = self._gba_offset(int(value, 16), len(self.rom_data), "EventObjectGraphicsInfo")
+                address = struct.unpack_from("<I", self.rom_data, offset + 0x18)[0]
+                self._gba_offset(address, len(self.rom_data), "Animation table")
+                return f"((const union AnimCmd *const *) 0x{address:08X})"
+        return "gFollowerMonAnimTable"
+
     def install_sprites(self, pending: list[PendingSprite]) -> None:
         if not pending:
             return
@@ -529,6 +564,7 @@ class ProjectModel:
                 "table_entry": item.mode == "add",
                 "mode": item.mode, "target_table": item.target_table,
                 "target_index": item.target_index,
+                "animation_table": item.animation_table,
             })
             used.add(clean)
 
@@ -549,11 +585,12 @@ class ProjectModel:
             item["palette_tag"] = tag
             next_tag += 1
 
-        header = ["#pragma once", "", '#include "global.h"', ""]
+        header = ["#pragma once", "", '#include "../global.h"', ""]
         source = ['#include "../defines.h"', '#include "../../include/follower_mon_sprites.h"',
                   '#include "../../include/new/overworld_editor_sprites.h"', ""]
         pointers = []
         for item in metadata:
+            item["animation_table"] = self.sprite_animation_table(item)
             name=item["name"]; width=item["width"]; height=item["height"]; frames=item["frames"]
             symbol=f"gOverworldEditor_{name}"; pal=item["palette_tag"]
             header += [f"extern const u8 {symbol}Tiles[];", f"extern const u16 {symbol}Pal[];",
@@ -568,7 +605,7 @@ class ProjectModel:
                 "    .inanimate = FALSE,", "    .disableReflectionPaletteLoad = FALSE,", "    .tracks = TRACKS_FOOT,",
                 "    .gender = MALE,", f"    .oam = gEventObjectBaseOam_{width}x{height},",
                 f"    .subspriteTables = gEventObjectSpriteOamTables_{width}x{height},",
-                "    .anims = gFollowerMonAnimTable,", f"    .images = sOverworldEditorFrames_{name},",
+                f"    .anims = {item['animation_table']},", f"    .images = sOverworldEditorFrames_{name},",
                 "    .affineAnims = gDummySpriteAffineAnimTable,", "};", ""]
             if item.get("table_entry", True):
                 pointers.append(f"    &gOverworldEditorGfx_{name},")
@@ -746,6 +783,10 @@ def launch_gui(project_root: Path) -> None:
             self.selection_var=tk.StringVar(value="Select an overworld"); ttk.Label(edit,textvariable=self.selection_var).grid(row=7,column=0,columnspan=2,sticky="w")
             self.value_var=tk.StringVar(); self.value_entry=ttk.Entry(edit,textvariable=self.value_var); self.value_entry.grid(row=8,column=0,columnspan=2,sticky="ew",pady=6)
             self.value_entry.bind("<Return>",lambda _e:self.apply_edit()); ttk.Button(edit,text="Apply change",command=self.apply_edit).grid(row=9,column=0,columnspan=2,sticky="ew")
+            self.animation_var = tk.StringVar(value="Automatic")
+            ttk.Label(edit, text="Spritesheet animation:").grid(row=10, column=0, sticky="w", pady=6)
+            ttk.Combobox(edit, textvariable=self.animation_var, values=tuple(ANIMATION_TABLE_CHOICES),
+                         state="readonly", width=25).grid(row=10, column=1, sticky="ew", pady=6)
             actions=ttk.LabelFrame(middle,text="Tables Menu",padding=12); actions.grid(row=1,column=0,sticky="nsew",pady=(10,0)); actions.columnconfigure(0,weight=1)
             buttons=ttk.Frame(actions); buttons.grid(row=0,column=0,sticky="ew"); buttons.columnconfigure((0,1),weight=1)
             ttk.Button(buttons,text="Add",command=lambda:self.sprite_dialog("add")).grid(row=0,column=0,sticky="ew",padx=(0,3),pady=3)
@@ -827,6 +868,11 @@ def launch_gui(project_root: Path) -> None:
             entry = self.model.tables[self.current_table][index]
             self.selection_var.set(f"Table {self.current_table} | ID {index} | {entry.name}")
             self.value_var.set(self.effective_value(self.current_table, index))
+            animation = self.model.sprite_animation_table({
+                "mode": "resize", "target_table": self.current_table, "target_index": index,
+            })
+            self.animation_var.set(next((label for label, value in ANIMATION_TABLE_CHOICES.items()
+                                         if value == animation), "Automatic"))
             self.show_sprite(index)
 
         @staticmethod
@@ -921,15 +967,20 @@ def launch_gui(project_root: Path) -> None:
                 path=filedialog.askopenfilename(parent=dialog,title="Select the spritesheet",filetypes=[("PNG","*.png")]);
                 if path:sheet.set(path)
             ttk.Button(frame,text="Escolher...",command=browse).grid(row=3,column=2,padx=(5,0))
+            animation = tk.StringVar(value=self.animation_var.get() if mode == "resize" else "Automatic")
+            ttk.Label(frame, text="ImageAnimTable:").grid(row=4, column=0, sticky="w", pady=4)
+            ttk.Combobox(frame, textvariable=animation, values=tuple(ANIMATION_TABLE_CHOICES),
+                         state="readonly", width=25).grid(row=4, column=1, sticky="ew")
             def confirm():
                 try:
                     width,height=map(int,size.get().split("x")); count=int(frames.get())
                     if not 1<=count<=32:raise ValueError
                 except ValueError:
                     messagebox.showerror("Invalid value","Choose between 1 and 32 frames.",parent=dialog); return
-                request=PendingSprite(mode,name.get().strip(),width,height,count,Path(sheet.get()) if sheet.get() else None,*target)
+                request=PendingSprite(mode,name.get().strip(),width,height,count,Path(sheet.get()) if sheet.get() else None,*target,
+                                      animation_table=ANIMATION_TABLE_CHOICES[animation.get()])
                 self.pending.append(request); dialog.destroy(); self.update_pending_status()
-            ttk.Button(frame,text="Add to queue",command=confirm).grid(row=4,column=0,columnspan=3,sticky="ew",pady=(12,0))
+            ttk.Button(frame,text="Add to queue",command=confirm).grid(row=5,column=0,columnspan=3,sticky="ew",pady=(12,0))
             dialog.wait_window()
 
         def add_sheet(self):
@@ -969,7 +1020,8 @@ def launch_gui(project_root: Path) -> None:
             entry=self.model.tables[self.current_table][index]
             base=re.sub(r"\W+","_",entry.name).strip("_") or f"Table{self.current_table}_OW{index}"
             name=f"{base}_Sheet_{len(self.pending)+1}"
-            self.pending.append(PendingSprite("resize",name,info.width,info.height,info.frames,Path(path),self.current_table,index))
+            self.pending.append(PendingSprite("resize",name,info.width,info.height,info.frames,Path(path),self.current_table,index,
+                                              animation_table=ANIMATION_TABLE_CHOICES[self.animation_var.get()]))
             self.update_pending_status()
             messagebox.showinfo("Spritesheet","The new sheet has been assigned to the selection. Use Save changes to apply it.")
 
