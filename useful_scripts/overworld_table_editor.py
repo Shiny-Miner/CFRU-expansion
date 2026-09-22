@@ -30,6 +30,7 @@ MAX_TABLE_ENTRIES = 240
 # to an adjacent SpriteTemplate table. Because they also point into the ROM,
 # looking only for the first invalid pointer would expose non-overworld data.
 ROM_TABLE_ENTRY_COUNT = 152
+PALETTE_ID_CHOICES = ("Automatic",) + tuple(f"0x{tag:04X}" for tag in range(0x1100, 0x11FF))
 ANIMATION_TABLE_CHOICES = {
     "Automatic": None,
     **{f"AnimTable_{name}": f"((const union AnimCmd *const *) 0x{address:08X})"
@@ -87,6 +88,7 @@ class PendingSprite:
     target_table: int = -1
     target_index: int = -1
     animation_table: Optional[str] = None
+    palette_id: Optional[int] = None
 
 
 def read_text_preserving(path: Path) -> tuple[str, str]:
@@ -565,6 +567,7 @@ class ProjectModel:
                 "mode": item.mode, "target_table": item.target_table,
                 "target_index": item.target_index,
                 "animation_table": item.animation_table,
+                "palette_id": item.palette_id,
             })
             used.add(clean)
 
@@ -578,12 +581,23 @@ class ProjectModel:
         base_body = "\n".join(line for line in palette_body.splitlines() if "gOverworldEditor_" not in line)
         occupied = {int(tag, 16) for tag in re.findall(r"0x(11[0-9A-Fa-f]{2})\b", base_body) if int(tag, 16) != 0x11FF}
         next_tag = max(occupied, default=0x10FF) + 1
+        reserved = occupied | {item.get("palette_id") for item in metadata} | {item.get("palette_tag") for item in metadata}
+        registered = set(occupied)
         for item in metadata:
-            if next_tag >= 0x11FF:
-                raise EditorError("No sequential Palette Tag is available in gObjectEventSpritePalettes11; 0x11FF is reserved for the terminator")
-            tag = next_tag
+            tag = item.get("palette_id")
+            if tag is None:
+                tag = item.get("palette_tag")
+            if tag is None:
+                while next_tag in reserved:
+                    next_tag += 1
+                tag = next_tag
+                next_tag += 1
+            if not 0x1100 <= tag < 0x11FF:
+                raise EditorError("Palette ID must be between 0x1100 and 0x11FE; 0x11FF is reserved for the terminator")
             item["palette_tag"] = tag
-            next_tag += 1
+            item["register_palette"] = tag not in registered
+            registered.add(tag)
+            reserved.add(tag)
 
         header = ["#pragma once", "", '#include "../global.h"', ""]
         source = ['#include "../defines.h"', '#include "../../include/follower_mon_sprites.h"',
@@ -644,6 +658,7 @@ class ProjectModel:
         palette_body = text[palette_open + 1 : palette_close]
         generated_palettes = "".join(
             f"\t\t{{gOverworldEditor_{item['name']}Pal, 0x{item['palette_tag']:04X}}},\n" for item in metadata
+            if item["register_palette"]
         )
         null_match = re.search(r"(?m)^\s*\{NULL,\s*0x11FF\}\s*,?", palette_body)
         if not null_match:
@@ -778,7 +793,13 @@ def launch_gui(project_root: Path) -> None:
             self.info_vars = {key: tk.StringVar(value="-") for key in ("type", "frames", "pointer", "data", "frames_addr", "palette")}
             labels = (("Type:","type"),("Frames:","frames"),("Pointer Address:","pointer"),("Data Address:","data"),("Frames Address:","frames_addr"),("Palette ID:","palette"))
             for row,(label,key) in enumerate(labels):
-                ttk.Label(edit,text=label).grid(row=row,column=0,sticky="w",pady=3); ttk.Label(edit,textvariable=self.info_vars[key]).grid(row=row,column=1,sticky="w",pady=3)
+                ttk.Label(edit,text=label).grid(row=row,column=0,sticky="w",pady=3)
+                if key == "palette":
+                    self.palette_var = tk.StringVar(value="Automatic")
+                    ttk.Combobox(edit, textvariable=self.palette_var, values=PALETTE_ID_CHOICES,
+                                 state="readonly").grid(row=row,column=1,sticky="ew",pady=3)
+                else:
+                    ttk.Label(edit,textvariable=self.info_vars[key]).grid(row=row,column=1,sticky="w",pady=3)
             ttk.Separator(edit).grid(row=6,column=0,columnspan=2,sticky="ew",pady=9)
             self.selection_var=tk.StringVar(value="Select an overworld"); ttk.Label(edit,textvariable=self.selection_var).grid(row=7,column=0,columnspan=2,sticky="w")
             self.value_var=tk.StringVar(); self.value_entry=ttk.Entry(edit,textvariable=self.value_var); self.value_entry.grid(row=8,column=0,columnspan=2,sticky="ew",pady=6)
@@ -874,6 +895,8 @@ def launch_gui(project_root: Path) -> None:
             self.animation_var.set(next((label for label, value in ANIMATION_TABLE_CHOICES.items()
                                          if value == animation), "Automatic"))
             self.show_sprite(index)
+            current_palette = self.info_vars["palette"].get()
+            self.palette_var.set(current_palette if current_palette in PALETTE_ID_CHOICES else "Automatic")
 
         @staticmethod
         def decode_4bpp(raw, palette, width, height):
@@ -971,6 +994,10 @@ def launch_gui(project_root: Path) -> None:
             ttk.Label(frame, text="ImageAnimTable:").grid(row=4, column=0, sticky="w", pady=4)
             ttk.Combobox(frame, textvariable=animation, values=tuple(ANIMATION_TABLE_CHOICES),
                          state="readonly", width=25).grid(row=4, column=1, sticky="ew")
+            palette = tk.StringVar(value=self.palette_var.get() if mode == "resize" else "Automatic")
+            ttk.Label(frame, text="Palette ID:").grid(row=5, column=0, sticky="w", pady=4)
+            ttk.Combobox(frame, textvariable=palette, values=PALETTE_ID_CHOICES,
+                         state="readonly").grid(row=5, column=1, sticky="ew")
             def confirm():
                 try:
                     width,height=map(int,size.get().split("x")); count=int(frames.get())
@@ -978,9 +1005,10 @@ def launch_gui(project_root: Path) -> None:
                 except ValueError:
                     messagebox.showerror("Invalid value","Choose between 1 and 32 frames.",parent=dialog); return
                 request=PendingSprite(mode,name.get().strip(),width,height,count,Path(sheet.get()) if sheet.get() else None,*target,
-                                      animation_table=ANIMATION_TABLE_CHOICES[animation.get()])
+                                      animation_table=ANIMATION_TABLE_CHOICES[animation.get()],
+                                      palette_id=None if palette.get() == "Automatic" else int(palette.get(), 16))
                 self.pending.append(request); dialog.destroy(); self.update_pending_status()
-            ttk.Button(frame,text="Add to queue",command=confirm).grid(row=5,column=0,columnspan=3,sticky="ew",pady=(12,0))
+            ttk.Button(frame,text="Add to queue",command=confirm).grid(row=6,column=0,columnspan=3,sticky="ew",pady=(12,0))
             dialog.wait_window()
 
         def add_sheet(self):
@@ -1021,7 +1049,8 @@ def launch_gui(project_root: Path) -> None:
             base=re.sub(r"\W+","_",entry.name).strip("_") or f"Table{self.current_table}_OW{index}"
             name=f"{base}_Sheet_{len(self.pending)+1}"
             self.pending.append(PendingSprite("resize",name,info.width,info.height,info.frames,Path(path),self.current_table,index,
-                                              animation_table=ANIMATION_TABLE_CHOICES[self.animation_var.get()]))
+                                              animation_table=ANIMATION_TABLE_CHOICES[self.animation_var.get()],
+                                              palette_id=None if self.palette_var.get() == "Automatic" else int(self.palette_var.get(), 16)))
             self.update_pending_status()
             messagebox.showinfo("Spritesheet","The new sheet has been assigned to the selection. Use Save changes to apply it.")
 
