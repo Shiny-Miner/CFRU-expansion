@@ -500,18 +500,20 @@ extern u8 gBattlerAttacker;
 #define SE_SELECT 5
 void Cmd_trygivecaughtmonnick(void)
 {
+    u16 directions = gMain.heldKeys & (DPAD_UP | DPAD_DOWN);
+
     if (FlagGet(FLAG_NUZLOCKE)) // ⭐ Nuzlocke Mode: Always nickname
     {
         switch (gBattleCommunication[MULTIUSE_STATE])
         {
         case 0:
-            GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
+            GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
             FreeAllWindowBuffers();
 
             DoNamingScreen(NAMING_SCREEN_CAUGHT_MON, gBattleStruct->caughtMonNick,
-                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_SPECIES, NULL),
-                           GetMonGender(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]]),
-                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_PERSONALITY, NULL),
+                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_SPECIES, NULL),
+                           GetMonGender(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]]),
+                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_PERSONALITY, NULL),
                            BattleMainCB2);
 
             gBattleCommunication[MULTIUSE_STATE]++;
@@ -519,7 +521,7 @@ void Cmd_trygivecaughtmonnick(void)
         case 1:
             if (gMain.callback2 == BattleMainCB2 && !gPaletteFade->active)
             {
-                SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
+                SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
                 gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
             }
             break;
@@ -538,17 +540,20 @@ void Cmd_trygivecaughtmonnick(void)
         BattleCreateYesNoCursorAt(0);
         break;
     case 1:
-        if (JOY_NEW(DPAD_UP) && gBattleCommunication[CURSOR_POSITION] != 0)
+        // This menu does not wrap, so held input moves only once. Accepting
+        // held directions also catches presses made while the box opens.
+        // Ignore opposing directions to avoid moving twice in one frame.
+        if (directions == DPAD_UP && gBattleCommunication[CURSOR_POSITION] != 0)
         {
             PlaySE(SE_SELECT);
-            BattleDestroyYesNoCursorAt(0);
+            BattleDestroyYesNoCursorAt(gBattleCommunication[CURSOR_POSITION]);
             gBattleCommunication[CURSOR_POSITION] = 0;
             BattleCreateYesNoCursorAt(0);
         }
-        if (JOY_NEW(DPAD_DOWN) && gBattleCommunication[CURSOR_POSITION] == 0)
+        else if (directions == DPAD_DOWN && gBattleCommunication[CURSOR_POSITION] == 0)
         {
             PlaySE(SE_SELECT);
-            BattleDestroyYesNoCursorAt(0);
+            BattleDestroyYesNoCursorAt(gBattleCommunication[CURSOR_POSITION]);
             gBattleCommunication[CURSOR_POSITION] = 1;
             BattleCreateYesNoCursorAt(1);
         }
@@ -574,13 +579,13 @@ void Cmd_trygivecaughtmonnick(void)
     case 2:
         if (!gPaletteFade->active)
         {
-            GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
+            GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
             FreeAllWindowBuffers();
 
             DoNamingScreen(NAMING_SCREEN_CAUGHT_MON, gBattleStruct->caughtMonNick,
-                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_SPECIES, NULL),
-                           GetMonGender(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]]),
-                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_PERSONALITY, NULL),
+                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_SPECIES, NULL),
+                           GetMonGender(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]]),
+                           GetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_PERSONALITY, NULL),
                            BattleMainCB2);
 
             gBattleCommunication[MULTIUSE_STATE]++;
@@ -589,12 +594,12 @@ void Cmd_trygivecaughtmonnick(void)
     case 3:
         if (gMain.callback2 == BattleMainCB2 && !gPaletteFade->active)
         {
-            SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker ^ BIT_SIDE]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
+            SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_NICKNAME, gBattleStruct->caughtMonNick);
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
         }
         break;
     case 4:
-        if (CalculatePlayerPartyCount() == PARTY_SIZE)
+        if (CalculatePlayerPartyCount() >= PARTY_SIZE || IsTagBattle())
             gBattlescriptCurrInstr += 5;
         else
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
