@@ -12,6 +12,7 @@ SCRIPT_DIR = str(Path(__file__).resolve().parent)
 if SCRIPT_DIR in sys.path:
     sys.path.remove(SCRIPT_DIR)
 
+
 try:
     from PIL import Image
 except ImportError:
