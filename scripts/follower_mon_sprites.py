@@ -11,7 +11,14 @@ from pathlib import Path
 SCRIPT_DIR = str(Path(__file__).resolve().parent)
 if SCRIPT_DIR in sys.path:
     sys.path.remove(SCRIPT_DIR)
-from PIL import Image
+
+try:
+    from PIL import Image
+except ImportError:
+    print("Pillow is not installed. Installing Pillow...")
+    import subprocess
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
+    from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
