@@ -3,7 +3,11 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 ##### This is CFRU expansion project and not affiliated to the og CFRU, it is going to be levels higher than CFRU. It is adviced to read the wiki [here](https://github.com/Shiny-Miner/CFRU-expansion/wiki) before touching anything read this as well [Guidelines before using](https://github.com/Shiny-Miner/CFRU-expansion/wiki/Must-read-before-you-start-working!).
 #### The new features (after CFRU dev branch):
 - Fixed bugs with dev branch (shiny odds , daycare nidoran breeding)
-- All known bugs fixed (Update April 2025!)
+- All known bugs fixed (Update Oct 2026!)
+- Ability Expansion (Abilties above 255 can be added!)
+- Custom SideQuest Menu added
+- Added Legends ZA Megas in DPE
+- BW music and BW start menu support (Now addable for more info visit disocrd)
 - Last used pokeball by L button
 - Shows enemy team by L button
 - Auto trigger wild battles
@@ -56,7 +60,7 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 - Pokedex : 1025
 - Species : 1439
 - Items : 798
-- Abilities : 288 (254 abilties and 34 Duplicate abilities)
+- Abilities : 288
 
 ##### Introduction to the maintainers
 This fork is made by Tha Code Mining hub to add many corresponding decomps , other fork and our own additions to CFRU , everything here can be used with credits to respective code makers.
