@@ -1,0 +1,53 @@
+#org @gText_MG_Title
+MYSTERY GIFT
+
+#org @gText_MG_Prompt
+Enter the gift code
+
+#org @gText_MG_Hint
+A: select   B: erase   START: OK
+
+#org @gText_MG_Invalid
+Invalid code!
+
+#org @gText_MG_Used
+This gift was already claimed!
+
+#org @gText_MG_Empty
+Enter a code first!
+
+#org @gText_MG_NoRoom
+No room! Free a slot in the PC.
+
+#org @gText_MG_Arrived1
+A mysterious gift
+
+#org @gText_MG_Arrived2
+has arrived for you!
+
+#org @gText_MG_Received
+You received 
+
+#org @gText_MG_Bang
+!
+
+#org @gText_MG_GoodLuck
+Take good care of it!
+
+#org @gText_MG_SentToPC
+It was sent to the PC.
+
+#org @gText_MG_BagFull
+Bag is full! Make some room.
+
+#org @gText_MG_StoredBag
+Stored in your bag.
+
+#org @gText_MG_KeyDel
+DEL
+
+#org @gText_MG_KeyOk
+OK
+
+#org @gText_MG_TimesX
+ x

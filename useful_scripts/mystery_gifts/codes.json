@@ -1,0 +1,116 @@
+{
+  "project": "D:/CFRU-expansion",
+  "flag_base": 2384,
+  "music": 273,
+  "next_slot": 6,
+  "codes": [
+    {
+      "code": "EEVEE001",
+      "species": "EEVEE",
+      "level": 10,
+      "shiny": false,
+      "ha": false,
+      "held": "",
+      "nature": "(random)",
+      "moves": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "reward": "",
+      "qty": 1,
+      "slot": 0
+    },
+    {
+      "code": "DRATINI",
+      "species": "DRATINI",
+      "level": 15,
+      "shiny": true,
+      "ha": false,
+      "held": "",
+      "nature": "(random)",
+      "moves": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "reward": "",
+      "qty": 1,
+      "slot": 1
+    },
+    {
+      "code": "MEWGIFT",
+      "species": "MEW",
+      "level": 30,
+      "shiny": false,
+      "ha": false,
+      "held": "",
+      "nature": "(random)",
+      "moves": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "reward": "",
+      "qty": 1,
+      "slot": 2
+    },
+    {
+      "code": "MOVES001",
+      "species": "PIKACHU",
+      "level": 25,
+      "shiny": false,
+      "ha": false,
+      "held": "LIGHT_BALL",
+      "nature": "(random)",
+      "moves": [
+        "THUNDERBOLT",
+        "QUICKATTACK",
+        "IRONTAIL",
+        "SURF"
+      ],
+      "reward": "",
+      "qty": 1,
+      "slot": 3
+    },
+    {
+      "code": "ITEM0001",
+      "species": "",
+      "level": 5,
+      "shiny": false,
+      "ha": false,
+      "held": "",
+      "nature": "(random)",
+      "moves": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "reward": "MASTER_BALL",
+      "qty": 5,
+      "slot": 4
+    },
+    {
+      "code": "COMBO001",
+      "species": "CHARMANDER",
+      "level": 15,
+      "shiny": false,
+      "ha": false,
+      "held": "",
+      "nature": "ADAMANT",
+      "moves": [
+        "EMBER",
+        "SCRATCH",
+        "SLASH",
+        ""
+      ],
+      "reward": "RARE_CANDY",
+      "qty": 10,
+      "slot": 5
+    }
+  ]
+}

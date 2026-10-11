@@ -1,5 +1,5 @@
 ##
-npc 3 0 1 EventScript_GiveMons_Special
+npc 3 0 1 MysteryGift_Script_Special
 npc 4 3 1 SystemScript_DebugMenu
 npc 4 3 2 EventScript_ChangeTeraTypeNPC
 npc 4 3 0 EventScript_Pallet_AideGuy

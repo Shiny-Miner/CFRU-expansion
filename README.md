@@ -4,10 +4,13 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 #### The new features (after CFRU dev branch):
 - Fixed bugs with dev branch (shiny odds , daycare nidoran breeding)
 - All known bugs fixed (Update Oct 2026!)
+
 - Ability Expansion (Abilties above 255 can be added!)
 - Custom SideQuest Menu added
 - Added Legends ZA Megas in DPE
+- Mystery gifts by Passwords with gift animations
 - BW music and BW start menu support (Now addable for more info visit disocrd)
+
 - Last used pokeball by L button
 - Shows enemy team by L button
 - Auto trigger wild battles
@@ -71,6 +74,12 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 - Zake, (Battle backgrounds help and Following mon code)
 - grilokapu (item expansion, gen 9 moves+abilities, nuzlocke fainting, Terastallization, more)
 - 1RWT16KU1D (Terastallization)
+
+##### Credits for codes used
+- Greenphx (BW EV-IV Screen, Options menu seocnd page, Sandbox mode, Stat editor)
+- YeahPotato,Bakinet,vopipak,Star Dragon + (Shiny Miner's and 1RWTU16KU1D's massive contributions) for Sidequest Menu
+- Jean Stars (Standalone Mystery gifts system)
+
 ##### For queries and support :
 Join us on discord: https://discord.com/invite/axNX3rhR9K
 ##### Useful and Optional Additions:
@@ -90,6 +99,3 @@ Join us on discord: https://discord.com/invite/axNX3rhR9K
 - Please don't try to use leon rombase on it as it already contains items + more
 - Added convienience for compiling, now run a_makepy.bat to make the project (it executes "python scripts//make.py") and run b_cleanpy.bat to clean repo (it runs python scripts//clean.py)
 - Do not talk to Fat guy and Lady in pallet town unless if you're trying to test following pokemon code.
-- The Mid battle evolutions work almost fine but there is a slight error for bulbasaur evolving to ivysaur:
-Going to fight button messes the graphics (it only fixes when you switch pokemon in battle, happens only for bulbasaur)
- 

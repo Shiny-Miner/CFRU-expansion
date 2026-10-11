@@ -186,6 +186,8 @@ sp11C_GiveRaidBattleRewards 081601D0
 
 sp12C_DoEnterPhraseScreen 08160210
 sp12D_CompareEnteredPhrase 08160214
+MysteryGift_Start 081601E8
+## Mystery Gift: special 0x122 (0x0815FD60 + 4*0x122)
 
 sp196_TryCopyTMNameToBuffer1 081603B8
 
