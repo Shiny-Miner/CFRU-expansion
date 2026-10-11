@@ -3879,6 +3879,73 @@ static NPCPtr sOverworldTable6[] =
 		{NULL, 0x11FF}
 	};
 
+#ifdef SIDEQUEST_MENU
+
+// Returns the overworld palette entry matching an EventObjectGraphicsInfo palette tag.
+// Used by the Quest Menu to reuse the existing character/follower overworld palettes.
+const struct SpritePalette *GetQuestOverworldPalette(u16 paletteTag)
+{
+    const struct SpritePalette *table;
+    u8 tableId = (paletteTag >> 8) & 0xFF;
+    u16 i;
+
+    switch (tableId)
+    {
+        case 0x11:
+            table = gObjectEventSpritePalettes11;
+            break;
+
+        case 0x12:
+            table = gObjectEventSpritePalettes12;
+            break;
+
+        case 0x13:
+            table = gObjectEventSpritePalettes13;
+            break;
+
+        case 0x14:
+            table = gObjectEventSpritePalettes14;
+            break;
+
+        case 0x15:
+            table = gObjectEventSpritePalettes15;
+            break;
+
+        case 0x16:
+            table = gObjectEventSpritePalettes16;
+            break;
+
+        case 0x17:
+            table = gObjectEventSpritePalettes17;
+            break;
+
+        case 0x18:
+            table = gObjectEventSpritePalettes18;
+            break;
+
+        case 0x19:
+            table = gObjectEventSpritePalettes19;
+            break;
+
+        case 0x20:
+            table = gObjectEventSpritePalettes20;
+            break;
+
+        default:
+            return NULL;
+    }
+
+    for (i = 0; table[i].data != NULL; i++)
+    {
+        if (table[i].tag == paletteTag)
+            return &table[i];
+    }
+
+    return NULL;
+}
+
+#endif
+
 #ifdef PALETTE_SWAPPER
 	const struct SpritePalette* const gObjectEventSpritePalettesSwitcher[255] =
 	{

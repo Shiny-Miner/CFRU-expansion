@@ -266,8 +266,14 @@ EventScript_Pallet_AideGuy:
         setflag 0x828
         additem 0x306 0x1
         msgbox gText_TestScript2 MSG_NORMAL
-        release
-        end
+    setflag 0xA0E
+    setflag 0xA0F
+    setflag 0xA12
+    setflag 0xA11
+    callasm ShowQuestMenu+1
+    waitstate
+    release
+    end
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -275,6 +281,11 @@ EventScript_Pallet_AideGuy:
 EventScript_GiveMons_Special:
     lock
     faceplayer
-    givepokemon SPECIES_BULBASAUR 15 0 0 0
+    msgbox gText_ChangeTeraTypeNPCAsk MSG_NORMAL
+    setflag 0xA13
+    setflag 0xA14
+    setflag 0xA15
+    setflag 0xA16
+    callasm ShowQuestMenu+1
     release
     end

@@ -1,0 +1,65 @@
+#include "./src/config.h"
+#ifdef SIDEQUEST_MENU
+
+#org @gText_ItemDescriptionNotAvailable
+Description not available[.]
+
+#org @sText_Dash
+-------------
+
+#org @sText_Slash
+/
+
+#org @sText_Percent
+%
+
+#org @gText_QuestGift
+Info
+
+#org @gText_QuestDone
+Done
+
+#org @gText_MenuTitle
+Main Quests
+
+#org @gText_MenuTitle2
+Side Quests
+
+#org @gText_LText
+[L_BUTTON] Left
+
+#org @gText_RText
+[R_BUTTON] Right
+
+#org @gText_GetText
+[A_BUTTON] Get Info
+
+#org @gText_CloseText
+[B_BUTTON] Close
+
+// Quest Items
+#org @gText_QuestItem_1
+Get Pokedex
+
+#org @gText_QuestItem_2
+Boulder Badge
+
+#org @gText_QuestItem_3
+Cascade Badge
+
+#org @gText_QuestItem_4
+Thunder Badge
+
+// Quest Descriptions
+#org @gText_QuestDesc_1
+Location : Pallet Town\nBring Brendan a Mudkip.
+
+#org @gText_QuestDesc_2
+Quest Description 2
+
+#org @gText_QuestDesc_3
+Quest Description 3
+
+#org @gText_QuestDesc_4
+Quest Description 4
+#endif
