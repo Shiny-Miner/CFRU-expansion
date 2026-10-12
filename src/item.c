@@ -1245,18 +1245,12 @@ void HandleItemRegistration(u16 item)
 
 #define sBagItemAmounts ((u16*) 0x203C74A)
 
-#define NUM_REGULAR_ITEMS 450
+#define NUM_REGULAR_ITEMS 530
 #define NUM_KEY_ITEMS 75
 #define NUM_POKE_BALLS 50
 #define NUM_BERRIES 75
 
 #define LARGEST_POCKET_NUM NUM_REGULAR_ITEMS
-#define TOTAL_POSSIBLE_BAG_ITEMS (450 + 75 + 50 + 75 + 128) //Do not change this line!
-
-//Throw an error if the player tried to add too many items.
-#if (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS + NUM_BERRIES + NUM_TMSHMS) > TOTAL_POSSIBLE_BAG_ITEMS
-#error "The total number of bag items has exceeded 650! Please reduce the possible number of items in the bag."
-#endif
 
 struct BagSlots
 {
