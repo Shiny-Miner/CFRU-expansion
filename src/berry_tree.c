@@ -10,18 +10,8 @@
 
 extern u32 __divsi3(u32 dividend, u32 divisor);
 
-struct BerryTreeHack
-{
-    u8 stage:7;
-    u8 berryId;
-    u8 monthPlanted;
-    u8 dayPlanted;
-    u8 hourPlanted;
-    u8 unused;
-};
-
-#define gBerryTrees ((struct BerryTreeHack *) 0x203C000)
-#define BERRY_TREE_COUNT 128 // Adjustable
+#define gBerryTrees (gSaveBlock2->berryTrees)
+#define BERRY_TREE_COUNT 128 // Adjustable, also change in global.h to be safe
 #define minutesPerStage 180  // 3 hoous by stage
 
 void GetTreeData(void)

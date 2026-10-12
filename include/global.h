@@ -699,7 +699,7 @@ struct TrainerNameRecord
 #define EVENT_OBJECTS_COUNT 16
 #define MAP_OBJECTS_COUNT  16
 #define EVENT_OBJECT_TEMPLATES_COUNT 64
-#define BERRY_TREES_COUNT  128
+#define BERRY_TREE_COUNT  128
 #define FLAGS_COUNT        288 // 300
 #define VARS_COUNT         256
 #define MAIL_COUNT         16
@@ -771,6 +771,16 @@ struct SaveBlock1 //0x202552C
 
 extern struct SaveBlock1* gSaveBlock1;
 
+struct BerryTreeHack
+{
+	u8 stage:7;
+	u8 berryId;
+	u8 monthPlanted;
+	u8 dayPlanted;
+	u8 hourPlanted;
+	u8 unused;
+};
+
 struct SaveBlock2 //0x2024588
 {
 	/*0x000*/ u8 playerName[PLAYER_NAME_LENGTH + 1];
@@ -806,7 +816,8 @@ struct SaveBlock2 //0x2024588
 	/*0xAF0*/ struct BerryCrush berryCrush;
 	/*0xB00*/ struct PokemonJumpResults pokeJump;
 	/*0xB10*/ struct BerryPickingResults berryPick;
-	/*0xB20*/ u8 filler_B20[0x400];
+	/*0xB20*/ struct BerryTreeHack berryTrees[BERRY_TREE_COUNT]; // 0x300 bytes
+	/*0xE20*/ u8 filler_E20[0x100];
 	/*0xF20*/ u32 encryptionKey;
 	/*0x???*/ //u16 optionsRButtonMode : 3;
 	/*0x???*/ //u16 optionsBattleMusic;
