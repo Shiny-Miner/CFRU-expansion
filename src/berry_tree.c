@@ -1,147 +1,102 @@
 #include "defines.h"
-#include "../include/berry.h"
-#include "../include/item.h"
-#include "../include/item_menu.h"
-#include "../include/list_menu.h"
 #include "../include/random.h"
 
-#include "../include/constants/songs.h"
-#include "../include/new/Vanilla_functions.h"
-
-extern u32 __divsi3(u32 dividend, u32 divisor);
-
 #define gBerryTrees (gSaveBlock2->berryTrees)
-#define BERRY_TREE_COUNT 128 // Adjustable, also change in global.h to be safe
-#define minutesPerStage 180  // 3 hoous by stage
+#define HOURS_PER_STAGE 12
+
+static u8 DaysInMonth(u16 year, u8 month)
+{
+    static const u8 days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    if (month < 1 || month > 12)
+        return 0;
+    return days[month - 1] + (month == 2 && year % 4 == 0
+        && (year % 100 != 0 || year % 400 == 0));
+}
+
+static s32 DateInDays(u16 year, u8 month, u8 day)
+{
+    s32 result = 365 * (year - 1) + (year - 1) / 4
+        - (year - 1) / 100 + (year - 1) / 400;
+    for (u8 i = 1; i < month; ++i)
+        result += DaysInMonth(year, i);
+    return result + day - 1;
+}
 
 void GetTreeData(void)
 {
-    // Check if baghack is active
-    if (VarGet(Var800F) == 0x7E)
+    // Clear outputs even for invalid IDs, so scripts cannot reuse another tree.
+    Var8005 = Var8006 = Var8007 = Var8008 = 0;
+    Var8009 = Var800A = Var800B = 0;
+    if (Var8002 >= BERRY_TREE_COUNT)
         return;
 
-    u16 TreeID = VarGet(Var8002);
-    struct BerryTreeHack *tree = &gBerryTrees[TreeID];
-
-     // Decrypt the packed byte into separate values
-    u8 packed = tree->stage;
-    VarSet(Var8005, packed >> 5);          // Stage
-    VarSet(Var8006, (packed >> 1) & 0xF);  // Berry ID
-    VarSet(Var8007, packed & 0x1);         // Watered flag
-    
-    // Copy remaining bytes
-    VarSet(Var8008, tree->berryId);
-    VarSet(Var800A, tree->monthPlanted);
-    VarSet(Var800B, tree->dayPlanted);
-    VarSet(Var8009, tree->hourPlanted);
-
-    // Skip if stage is 0
-    if (VarGet(Var8005) == 0)
+    struct BerryTreeHack *tree = &gBerryTrees[Var8002];
+    u8 stage = tree->stage >> 5;
+    if (stage == 0 || stage > 5)
         return;
 
-    u8 planted_month = VarGet(Var800A);
-    u8 current_month = gClock.month;
-    
-    if (current_month != planted_month) {
-        int month_diff = current_month - planted_month;
-        if (month_diff != 1 && month_diff != -11) {
-            // More than 1 month difference
-            VarSet(Var8005, 5);
-            VarSet(Var8007, 0); // Reset watering
-            return;
-        }
-        
-        // Exactly 1 month difference
-        u8 current_day = gClock.day;
-        u8 planted_day = VarGet(Var800B);
-        int day_diff = current_day - planted_day + 30;
-        
-        if (day_diff >= 3) {
-            VarSet(Var8005, 5);
-            VarSet(Var8007, 0);
-            return;
-        }
+    Var8005 = stage;
+    Var8006 = (tree->stage >> 1) & 0xF;
+    Var8007 = tree->stage & 1;
+    Var8008 = tree->berryId;
+    Var8009 = tree->hourPlanted;
+    Var800A = tree->monthPlanted;
+    Var800B = tree->dayPlanted;
 
-    } else {
-        // Same month
-        u8 current_day = gClock.day;
-        u8 planted_day = VarGet(Var800B);
-        int day_diff = current_day - planted_day;
-        
-        if (day_diff >= 3) {
-            VarSet(Var8005, 5);
-            VarSet(Var8007, 0);
-            return;
-        }
-    }
+    u16 year = tree->yearPlanted ? 1999 + tree->yearPlanted : gClock.year;
+    if (!tree->yearPlanted && tree->monthPlanted > gClock.month && year > 0)
+        --year;
+    if (year == 0 || tree->dayPlanted == 0
+        || tree->dayPlanted > DaysInMonth(year, tree->monthPlanted)
+        || tree->hourPlanted > 23 || gClock.year == 0 || gClock.hour > 23
+        || gClock.day == 0 || gClock.day > DaysInMonth(gClock.year, gClock.month))
+        return;
 
-    // Check hours passed
-    u8 current_hour = gClock.hour;
-    u8 planted_hour = VarGet(Var8009);
-    u8 current_day = gClock.day;
-    u8 planted_day = VarGet(Var800B);
-    int day_diff = current_day - planted_day;
-    
-    int hours_passed = current_hour - planted_hour + (day_diff * 24);
-    
-    // Calculate growth stage
-    u8 stage = VarGet(Var8005);
-    u8 time_per_stage = 12; // 12 hours between stages
-    u8 new_stage = stage;
-    
-    for (int i = 0; i < 5; i++) {
-        if (hours_passed < time_per_stage * (i + 1)) {
-            new_stage = i + 1;
-            break;
-        }
-    }
-    
-    if (new_stage > 5) new_stage = 5;
-    
-    if (new_stage != stage) {
-        VarSet(Var8005, new_stage);
-        if (new_stage == 5) {
-            VarSet(Var8007, 0); // Reset watering when fully grown
-        }
+    s32 hours = (DateInDays(gClock.year, gClock.month, gClock.day)
+        - DateInDays(year, tree->monthPlanted, tree->dayPlanted)) * 24
+        + gClock.hour - tree->hourPlanted;
+    if (hours < 0)
+        return;
+    u8 newStage = hours >= 4 * HOURS_PER_STAGE ? 5 : 1 + hours / HOURS_PER_STAGE;
+    // Moving the RTC backwards must not shrink an existing plant.
+    if (newStage > stage)
+    {
+        Var8005 = newStage;
+        Var8007 = 0;
     }
 }
 
 void SetTreeData(void)
 {
-    if (Var800F != 0x7E)
+    if (Var8002 >= BERRY_TREE_COUNT || Var8005 > 5)
         return;
-
-    u16 TreeId = VarGet(Var8002);
-    struct BerryTreeHack *tree = &gBerryTrees[TreeId];
-
-    u8 packed = (VarGet(Var8005) << 5) | 
-                (VarGet(Var8006) << 1) | 
-                VarGet(Var8007);
-
-    tree->stage = packed;
-    tree->berryId = VarGet(Var8008);
-    tree->monthPlanted  = VarGet(Var8009);
-    tree->dayPlanted = VarGet(Var800A);
-    tree->hourPlanted   = VarGet(Var800B);
+    struct BerryTreeHack *tree = &gBerryTrees[Var8002];
+    if (Var8005 == 0)
+    {
+        memset(tree, 0, sizeof(*tree));
+        return;
+    }
+    // Capture the year on planting without changing the six-byte save layout.
+    if ((tree->stage >> 5) == 0)
+        tree->yearPlanted = gClock.year >= 2000 && gClock.year <= 2099
+            ? gClock.year - 1999 : 0;
+    tree->stage = (Var8005 << 5) | (min(Var8006, 4) << 1) | (Var8007 != 0);
+    tree->berryId = Var8008;
+    tree->hourPlanted = Var8009;
+    tree->monthPlanted = Var800A;
+    tree->dayPlanted = Var800B;
 }
 
 void CalculateYield(void)
 {
-    u16 max = VarGet(Var8000);
-    u16 min = VarGet(Var8001);
-    u16 watered_count = VarGet(Var8007);
-
-    if (watered_count > 0)
-        watered_count--;
-
-    u16 randVal = Random();
-    u16 range = max - min;
-    u16 bonus = range * watered_count;
-
-    randVal = umodsi(randVal, 4) + bonus;
-    u16 yield = __divsi3(randVal, 4) + min;
-    
-    VarSet(Var800D, yield);
+    u16 minimum = Var8001;
+    u16 maximum = Var8000;
+    if (maximum < minimum)
+        maximum = minimum;
+    u16 watered = min(Var8006, 4);
+    u32 range = maximum - minimum;
+    u32 bonus = range * watered;
+    Var800D = minimum + (umodsi(Random(), 4) + bonus) / 4;
 }
 
 void SetPlantingTime(void)

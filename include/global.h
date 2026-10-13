@@ -773,12 +773,12 @@ extern struct SaveBlock1* gSaveBlock1;
 
 struct BerryTreeHack
 {
-	u8 stage:7;
+	u8 stage; // Stage (bits 5-7), watering count (bits 1-4), watered (bit 0)
 	u8 berryId;
 	u8 monthPlanted;
 	u8 dayPlanted;
 	u8 hourPlanted;
-	u8 unused;
+	u8 yearPlanted; // RTC year minus 2000, plus 1; zero means legacy data
 };
 
 struct SaveBlock2 //0x2024588

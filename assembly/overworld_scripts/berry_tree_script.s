@@ -30,9 +30,11 @@ EventScript_Plant_Berry_Tree_Start:
     compare 0x8005 4
     if equal _goto EventScript_Plant_Berry_Tree_Blooming
     callasm CalculateYield
-    buffernumber 0x0 LASTRESULT
+    buffernumber 0x0 0x800D
     bufferitem 0x1 0x8008
     additem 0x8008 0x800D
+    compare LASTRESULT FALSE
+    if equal _goto EventScript_Plant_Berry_Tree_End
     msgbox gText_Berry_Received MSG_NORMAL
     setvar 0x8005 0x0
     setvar 0x8006 0x0
@@ -121,10 +123,9 @@ EventScript_Plant_Berry_Tree_LaughAtPlayer:
     end
 
 EventScript_Plant_Berry_Tree_WaterPlant:
-    checkitem ITEM_POKE_BALL 0x1 //Watering item ID
+    checkitem ITEM_WAILMER_PAIL 0x1 // Reusable watering key item
     compare LASTRESULT TRUE
     if lessthan _goto EventScript_Plant_Berry_Tree_End
-    removeitem ITEM_POKE_BALL 0x1 //Watering item ID
     msgbox gText_Berry_Want_Water MSG_YESNO
     compare LASTRESULT 0x0
     if equal _goto EventScript_Plant_Berry_Tree_End
