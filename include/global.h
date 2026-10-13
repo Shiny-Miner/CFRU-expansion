@@ -725,9 +725,9 @@ struct SaveBlock1 //0x202552C
 	/*0x0294*/ u16 coins;
 	/*0x0296*/ u16 oldRegisteredItem; // was SELECT button item
 	/*0x0298*/ struct ItemSlot pcItems[PC_ITEMS_COUNT];
-	/*0x0310*/ u8 dexSeenFlags[(1450 / 8) + 1]; // size = 182
-	/*0x03C6*/ u8 dexCaughtFlags[(1450 / 8) + 1]; // offset 0x03C6 = 0x0310 + 182
-	/*0x0478*/ u8 filler_478[0x40]; // updated filler (if needed to align to next offset)
+	/*0x0310*/ u8 dexSeenFlags[(1500 / 8) + 1];   // size = 188
+	/*0x03CC*/ u8 dexCaughtFlags[(1500 / 8) + 1]; // offset = 0x03CC
+	/*0x0488*/ u8 filler_488[0x34];              // preserves next offset 0x04BC
 	/*0x0458*/ struct BoxPokemon safeBackupParty[PARTY_SIZE]; // the party saved here is safe from tampering
 	/*0x0638*/ u16 trainerRematchStepCounter;
 	/*0x063A*/ bool8 ALIGNED(2) trainerRematches[100];
