@@ -13,6 +13,7 @@ void __attribute__((long_call)) UpdateFollowerMonSprite(void);
 void __attribute__((long_call)) UpdateAutomaticFollowerMon(void);
 bool8 __attribute__((long_call)) HasLeadFollowerMon(void);
 struct Pokemon* GetFirstValidPartyMon(void);
+struct Pokemon* GetFollowerPartyMon(void);
 void SetFollowerMonSpeciesVar(void);
 
 #endif

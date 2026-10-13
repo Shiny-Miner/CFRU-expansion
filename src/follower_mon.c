@@ -128,7 +128,7 @@ void CreateSparkleSprite(void)
 
 u16 GetFollowerMonSprite(void)
 {
-    struct Pokemon *mon = GetFirstValidPartyMon();
+    struct Pokemon *mon = GetFollowerPartyMon();
     if (mon == NULL)
         return 0;
 
@@ -138,7 +138,7 @@ u16 GetFollowerMonSprite(void)
 
 bool8 HasLeadFollowerMon(void)
 {
-    return GetFirstValidPartyMon() != NULL;
+    return GetFollowerPartyMon() != NULL;
 }
 
 void CreateFollowerMonObject(void)
@@ -307,6 +307,40 @@ void Remove_PokemonPic(void)
         DestroyTask(taskId);
     }
 }
+
+// Species that should never be shown as the overworld follower.
+// The next eligible party member follows instead.
+static const u16 sFollowerBlacklist[] =
+{
+    SPECIES_NONE,       // terminator
+};
+
+static bool8 IsSpeciesFollowerBlacklisted(u16 species)
+{
+    for (u32 i = 0; sFollowerBlacklist[i] != SPECIES_NONE; i++)
+    {
+        if (sFollowerBlacklist[i] == species)
+            return TRUE;
+    }
+    return FALSE;
+}
+
+struct Pokemon* GetFollowerPartyMon(void)
+{
+    for (u8 i = 0; i < PARTY_SIZE; ++i)
+    {
+        struct Pokemon *mon = &gPlayerParty[i];
+        u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+
+        if (species != SPECIES_NONE
+         && !GetMonData(mon, MON_DATA_IS_EGG, NULL)
+         && GetMonData(mon, MON_DATA_HP, NULL) > 0
+         && !IsSpeciesFollowerBlacklisted(species))
+            return mon;
+    }
+    return NULL;
+}
+
 struct Pokemon* GetFirstValidPartyMon(void)
 {
     for (u8 i = 0; i < PARTY_SIZE; ++i)
@@ -323,7 +357,7 @@ struct Pokemon* GetFirstValidPartyMon(void)
 
 void SetFollowerMonSpeciesVar(void)
 {
-    struct Pokemon *mon = GetFirstValidPartyMon();
+    struct Pokemon *mon = GetFollowerPartyMon();
     Var8004 = mon == NULL ? SPECIES_NONE : GetMonData(mon, MON_DATA_SPECIES, NULL);
 }
 
@@ -1662,7 +1696,7 @@ void ChangeFollowerPalette(void)
     if (spriteId >= MAX_SPRITES)
         return;
 
-    struct Pokemon* mon = GetFirstValidPartyMon();
+    struct Pokemon* mon = GetFollowerPartyMon();
     if (mon == NULL)
         return;
 

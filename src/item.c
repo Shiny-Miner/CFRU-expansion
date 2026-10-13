@@ -1245,7 +1245,7 @@ void HandleItemRegistration(u16 item)
 
 #define sBagItemAmounts ((u16*) 0x203C74A)
 
-#define NUM_REGULAR_ITEMS 530
+#define NUM_REGULAR_ITEMS 450
 #define NUM_KEY_ITEMS 75
 #define NUM_POKE_BALLS 50
 #define NUM_BERRIES 75
