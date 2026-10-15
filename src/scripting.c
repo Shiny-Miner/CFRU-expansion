@@ -3343,6 +3343,7 @@ void SetTitleScreenScene_Cry(s16 *data)
                 Sav2_ClearSetDefault();
             SetPokemonCryStereo(gSaveBlock2->optionsSound);
             InitHeap(gHeap, HEAP_SIZE);
+            SetMemoryForBagStorage();
             SetMainCallback2(CB2_InitMainMenu);
             DestroyTask(FindTaskIdByFunc(Task_TitleScreenMain));
         }
