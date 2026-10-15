@@ -1243,12 +1243,10 @@ void HandleItemRegistration(u16 item)
 #define sBagTMHM (sBagPokeBalls + NUM_POKE_BALLS)
 #define sBagBerries (sBagTMHM + NUM_TMSHMS)
 
-#define sBagItemAmounts ((u16*) 0x203C74A)
-
-#define NUM_REGULAR_ITEMS 450
-#define NUM_KEY_ITEMS 75
-#define NUM_POKE_BALLS 50
-#define NUM_BERRIES 75
+#define NUM_REGULAR_ITEMS 485
+#define NUM_KEY_ITEMS 73
+#define NUM_POKE_BALLS 27
+#define NUM_BERRIES 67
 
 #define LARGEST_POCKET_NUM NUM_REGULAR_ITEMS
 
@@ -1482,17 +1480,19 @@ void StoreBagItemCount(void)
 				itemAmount = sBagPocketArrangement.pokeBallAmount;
 		}
 
-		for (checkLength = 0; itemMem[checkLength].itemId != ITEM_NONE; ++checkLength);
+		for (checkLength = 0;
+		     checkLength < itemAmount && itemMem[checkLength].itemId != ITEM_NONE;
+		     ++checkLength);
 
 		if (checkLength + 1 < itemAmount && itemMem[checkLength + 1].itemId != ITEM_NONE)
 		{
 			tossed = TRUE;
 			++checkLength;
 
-			for (; itemMem[checkLength].itemId != ITEM_NONE; ++checkLength);
+			for (; checkLength < itemAmount && itemMem[checkLength].itemId != ITEM_NONE; ++checkLength);
 		}
 
-		if (tossed)
+		if (tossed && checkLength != 0)
 			checkLength -= 1;
 
 		sBagItemAmounts[pocket] = checkLength;

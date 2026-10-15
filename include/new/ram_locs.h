@@ -138,7 +138,10 @@
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
 extern u16 gLastUsedBall; //0x203B774
 
-//FREE: 0x203B776
+// Bag runtime state. This range was free and has room for the repel value
+// plus the three pocket item counts.
+#define gLastUsedRepel (*(u16*) 0x203B776)
+#define sBagItemAmounts ((u16*) 0x203B778)
 
 #define gPcSelectionTracker ((u8* 0x203B7AC)	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
@@ -160,8 +163,6 @@ extern u16 gLastUsedBall; //0x203B774
 //extern struct ItemSlot gBagTMHM[128] //0x203C41C
 //extern struct ItemSlot gBagBerries[75] //0x203C61C
 
-#define gLastUsedRepel (*(u16*) 0x203C748)
-//#define sBagItemAmounts ((u16*) 0x203C74A)
 #define gSelectedOrderFromParty ((u8*) 0x203C750)
 extern bool8 gDontFadeWhite; //0x203C756
 #define gWindowsLitUp (*((bool8*) 0x203C757))
