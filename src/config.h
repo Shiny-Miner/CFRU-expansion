@@ -390,6 +390,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define VAR_DEBUG_MENU_SET_CUSTOM_VAR_VALUE 0x5159 // The var that stores the value used for set custom var option in debug menu.
 //#define NEW_MINI_NAME_BOX //New box frame for Mini Name Box
 #define HQ_MUSIC
+#define OW_SHADOWS // if defined, overworld sprites will have shadows.
 
 /* SideQuest Menu */
 

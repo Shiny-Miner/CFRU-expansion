@@ -46,6 +46,10 @@ struct UnkStruct_085094AC
 #define GROUND_EFFECT_FLAG_HOT_SPRINGS           (1 << 18)
 #define GROUND_EFFECT_FLAG_SEAWEED               (1 << 19)
 
+#ifdef OW_SHADOWS
+#define GROUND_EFFECT_FLAG_SHADOW                (1 << 20)
+#endif
+
 struct PairedPalettes
 {
     u16 tag;

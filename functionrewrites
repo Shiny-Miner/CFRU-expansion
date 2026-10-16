@@ -20,3 +20,11 @@ ShowPokemonSummaryScreen 0x081344F8 0 1
 SetTitleScreenScene_Cry 0x080791c0 0 1
 Task_OakSpeech_IsInhabitedFarAndWide 0x0812fa78 0 1
 CreateOakIntroPokemonSprite 0x08130f2c 0 1
+
+#ifdef OW_SHADOWS
+GetAllGroundEffectFlags_OnSpawn 0x08067b34 2 0
+GetAllGroundEffectFlags_OnBeginStep 0x08067b7c 2 0
+GetAllGroundEffectFlags_OnFinishStep 0x08067bd4 2 0
+DoFlaggedGroundEffects 0x0806874c 3 0
+Task_WeatherMainHook 0x08079e0c 1 0
+#endif
