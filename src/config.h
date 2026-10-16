@@ -391,6 +391,7 @@ enum //These vars need to be one after the other (hence the enum)
 //#define NEW_MINI_NAME_BOX //New box frame for Mini Name Box
 #define HQ_MUSIC
 #define OW_SHADOWS // if defined, overworld sprites will have shadows.
+#define OW_SHADOW_OPACITY 8 // Shadow opacity: 0 (invisible) to 16 (opaque).
 
 /* SideQuest Menu */
 

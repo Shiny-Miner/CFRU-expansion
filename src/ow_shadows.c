@@ -2,6 +2,7 @@
 #include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
 #include "../include/field_weather.h"
+#include "../include/gpu_regs.h"
 #include "../include/sprite.h"
 #include "../include/constants/rgb.h"
 #include "../include/metatile_behavior.h"
@@ -224,7 +225,12 @@ static void ApplyShadowColor(struct EventObject *eventObject)
 			{
 				palSlot = LoadSpritePalette(&sShadowSpritePalette); //Returns the existing slot if already loaded
 				if (palSlot != 0xFF)
+				{
 					sprite->oam.paletteNum = palSlot;
+					sprite->oam.objMode = ST_OAM_OBJ_BLEND;
+					SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
+					SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(OW_SHADOW_OPACITY, 16 - OW_SHADOW_OPACITY));
+				}
 				return;
 			}
 		}
