@@ -1237,24 +1237,16 @@ void HandleItemRegistration(u16 item)
 }
 
 //Bag Expansion////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define NUM_REGULAR_ITEMS 528
-#define NUM_LEGACY_REGULAR_ITEMS 485
+#define sBagRegularItems ((struct ItemSlot*) 0x203BB20)
+#define sBagKeyItems (sBagRegularItems + NUM_REGULAR_ITEMS)
+#define sBagPokeBalls (sBagKeyItems + NUM_KEY_ITEMS)
+#define sBagTMHM (sBagPokeBalls + NUM_POKE_BALLS)
+#define sBagBerries (sBagTMHM + NUM_TMSHMS)
+
+#define NUM_REGULAR_ITEMS 485
 #define NUM_KEY_ITEMS 73
 #define NUM_POKE_BALLS 27
 #define NUM_BERRIES 67
-
-#define sBagLegacyRegularItems ((struct ItemSlot*) 0x203BB20)
-#define sBagLegacyKeyItems (sBagLegacyRegularItems + NUM_LEGACY_REGULAR_ITEMS)
-#define sBagLegacyPokeBalls (sBagLegacyKeyItems + NUM_KEY_ITEMS)
-#define sBagLegacyTMHM (sBagLegacyPokeBalls + NUM_POKE_BALLS)
-#define sBagLegacyBerries (sBagLegacyTMHM + NUM_TMSHMS)
-
-static struct ItemSlot* sBagRegularItems = sBagLegacyRegularItems;
-#define sBagKeyItems sBagLegacyKeyItems
-#define sBagPokeBalls sBagLegacyPokeBalls
-#define sBagTMHM sBagLegacyTMHM
-#define sBagBerries sBagLegacyBerries
-#define sBagPocketArrangement (*gBagPockets)
 
 #define LARGEST_POCKET_NUM NUM_REGULAR_ITEMS
 
@@ -1269,34 +1261,23 @@ struct BagSlots
 	u16 pocket;
 };
 
+static const struct BagPockets sBagPocketArrangement =
+{
+	.itemRam = sBagRegularItems,
+	.itemAmount = NUM_REGULAR_ITEMS,
+	.keyItemRam = sBagKeyItems,
+	.keyItemAmount = NUM_KEY_ITEMS,
+	.pokeBallRam = sBagPokeBalls,
+	.pokeBallAmount = NUM_POKE_BALLS,
+	.tmRam = sBagTMHM,
+	.tmAmount = NUM_TMSHMS,
+	.berryRam = sBagBerries,
+	.berryAmount = NUM_BERRIES,
+};
+
 void SetMemoryForBagStorage(void)
 {
-	u32 itemAmount = NUM_LEGACY_REGULAR_ITEMS;
-
-	if (sBagRegularItems == sBagLegacyRegularItems)
-	{
-		struct ItemSlot* expandedItems = Malloc(NUM_REGULAR_ITEMS * sizeof(struct ItemSlot));
-		if (expandedItems != NULL)
-		{
-			Memcpy(expandedItems, sBagLegacyRegularItems, NUM_LEGACY_REGULAR_ITEMS * sizeof(struct ItemSlot));
-			Memset(expandedItems + NUM_LEGACY_REGULAR_ITEMS, 0, (NUM_REGULAR_ITEMS - NUM_LEGACY_REGULAR_ITEMS) * sizeof(struct ItemSlot));
-			sBagRegularItems = expandedItems;
-		}
-	}
-
-	if (sBagRegularItems != sBagLegacyRegularItems)
-		itemAmount = NUM_REGULAR_ITEMS;
-
-	gBagPockets->itemRam = sBagRegularItems;
-	gBagPockets->itemAmount = itemAmount;
-	gBagPockets->keyItemRam = sBagKeyItems;
-	gBagPockets->keyItemAmount = NUM_KEY_ITEMS;
-	gBagPockets->pokeBallRam = sBagPokeBalls;
-	gBagPockets->pokeBallAmount = NUM_POKE_BALLS;
-	gBagPockets->tmRam = sBagTMHM;
-	gBagPockets->tmAmount = NUM_TMSHMS;
-	gBagPockets->berryRam = sBagBerries;
-	gBagPockets->berryAmount = NUM_BERRIES;
+	*gBagPockets = sBagPocketArrangement;
 }
 
 extern void* sBagBgTilemapBuffer;
