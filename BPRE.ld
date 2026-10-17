@@ -2479,3 +2479,22 @@ Task_TitleScreenMain = 0x8078c24 | 1;
 MonSpritesGfxManager_GetSpritePtr = 0x8044e00 | 1;
 GetBattlerForBattleScript = 0x8016e24 | 1;
 gStatuses4 = 0x2022b54;
+
+/* New Bag */
+IsWritingMailAllowed = 0x80BF6D8 | 1;
+CB2_ChooseMonToGiveItem = 0x8126EDC | 1;
+ItemId_GetImportance = 0x809A990 | 1;
+ItemIsMail = 0x80980F8 | 1;
+ItemId_GetBattleFunc = 0x809AA68 | 1;
+MenuHelpers_IsLinkActive = 0x80BF708 | 1;
+/* New Bag: u32-typed aliases (agbcc does not zero-extend u8 returns) */
+NBv_ItemIsMail = 0x80980F8 | 1;
+NBv_LinkActive = 0x80BF708 | 1;
+NBv_InUnionRoom = 0x811B0D0 | 1;
+NBv_Importance = 0x809A990 | 1;
+NBv_PartyCount = 0x8040C3C | 1;
+NBv_ItemType = 0x809A9FC | 1;
+NBv_Pocket = 0x809A9D8 | 1;
+NBv_AddPCItem = 0x809A3C8 | 1;
+InitTMCase = 0x81317F8 | 1;
+InitBerryPouch = 0x813CD50 | 1;

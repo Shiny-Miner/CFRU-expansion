@@ -787,3 +787,11 @@
 0812EE84 00 00 00 00
 0812EE8C 3D F3
 #endif
+
+#ifdef NEW_BAG_UI_EXPANSION
+##New Bag: safe 4-argument hook for DisplayItemMessageInBag (push r4; ldr r4,=fn; mov ip,r4; pop r4; bx ip)
+08108E70 10 B4 02 4C A4 46 10 BC 60 47 00 00
+
+##New Bag: safe hook for GoToBagMenu (push r4; ldr r4,=fn; mov ip,r4; pop r4; bx ip)
+08107DB4 10 B4 02 4C A4 46 10 BC 60 47 00 00
+#endif

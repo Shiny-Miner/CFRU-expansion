@@ -811,3 +811,12 @@ sideway_change_movement_2 080BD3C8 1
 #ifdef SHOW_TERA_TYPE_ICON_ON_SUMMARY_SCREEN
 PrintInfoPage 08136fb0 1
 #endif
+
+#ifdef NEW_BAG_UI_EXPANSION
+##New Bag
+NewBag_ReturnToBagFromContextMenu 810A1F8 1
+NewBag_BerryPouchSetExitCallback 813D934 1
+NewBag_BerryPouchStartFadeToExitCallback 813D808 1
+NewBag_ReturnToTMCaseMenu 8124DA0 0
+NewBag_ReturnToBerryPouchMenu 8124DB0 0
+#endif

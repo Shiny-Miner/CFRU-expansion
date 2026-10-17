@@ -392,6 +392,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define HQ_MUSIC
 #define OW_SHADOWS // if defined, overworld sprites will have shadows.
 #define OW_SHADOW_OPACITY 8 // Shadow opacity: 0 (invisible) to 16 (opaque).
+#define NEW_BAG_UI_EXPANSION //If defined, will use the new bag UI made by us. It also adds new pockets to bag increasing overall capacity. Highly recommended!
 
 /* SideQuest Menu */
 

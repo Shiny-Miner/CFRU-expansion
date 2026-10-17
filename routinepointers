@@ -302,3 +302,8 @@ PlayerTryEvolution 8013D44
 ##Ipatix's HQ Sound Mixer
 SoundMainRAM 81DD0B4
 #endif
+
+#ifdef NEW_BAG_UI_EXPANSION
+NewBag_DisplayItemMessageInBag 8108E7C
+NewBag_GoToBagMenu 8107DC0
+#endif

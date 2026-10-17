@@ -1,0 +1,1 @@
+-gB4 -gzl -p -pn32 -gu8 -pu8 -mzl -mRtpf -mLs -fts
