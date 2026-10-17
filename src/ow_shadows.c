@@ -167,6 +167,31 @@ static bool8 IsShadowAllowedOnMetatile(struct EventObject *eventObject)
 		&& !MetatileBehavior_IsLongGrass(eventObject->currentMetatileBehavior);
 }
 
+void SetEventObjectShadowVisibility(struct EventObject *eventObject, bool8 invisible)
+{
+	u8 i, j;
+
+	for (i = MAX_SPRITES; i > 0; --i)
+	{
+		struct Sprite *sprite = &gSprites[i - 1];
+
+		if (!sprite->inUse
+		|| sprite->data[0] != eventObject->localId
+		|| sprite->data[1] != eventObject->mapNum
+		|| sprite->data[2] != eventObject->mapGroup)
+			continue;
+
+		for (j = FLDEFFOBJ_SHADOW_S; j <= FLDEFFOBJ_SHADOW_XL; ++j)
+		{
+			if (sprite->template == gFieldEffectObjectTemplatePointers[j])
+			{
+				sprite->invisible = invisible;
+				return;
+			}
+		}
+	}
+}
+
 static void GetGroundEffectFlags_Shadow(struct EventObject *eventObject, u32 *flags)
 {
 	if (eventObject->invisible || !eventObject->active

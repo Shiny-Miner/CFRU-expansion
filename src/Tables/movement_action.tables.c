@@ -12,6 +12,10 @@
 #include "../../include/new/follow_me.h"
 #include "../../include/new/movement_action_table.h"
 
+#ifdef OW_SHADOWS
+extern void SetEventObjectShadowVisibility(struct EventObject *eventObject, bool8 invisible);
+#endif
+
 #define JUMP_HALFWAY  1
 #define JUMP_FINISHED ((u8)-1)
 extern struct EventObject gObjectEvents[EVENT_OBJECTS_COUNT];
@@ -341,6 +345,24 @@ static bool8 MovementAction_WalkNormalDownLeft_Left_Step0(struct EventObject *ob
     StartNormalAnim(objectEvent, sprite, DIR_SOUTHWEST);
     return MovementAction_WalkNormalDownLeft_Left_Step1(objectEvent, sprite);
 }
+
+#ifdef OW_SHADOWS
+bool8 MovementAction_SetInvisible_Step0(struct EventObject *objectEvent, struct Sprite *sprite)
+{
+    objectEvent->invisible = TRUE;
+    sprite->data[2] = 1;
+    SetEventObjectShadowVisibility(objectEvent, TRUE);
+    return TRUE;
+}
+
+bool8 MovementAction_SetVisible_Step0(struct EventObject *objectEvent, struct Sprite *sprite)
+{
+    objectEvent->invisible = FALSE;
+    sprite->data[2] = 1;
+    SetEventObjectShadowVisibility(objectEvent, FALSE);
+    return TRUE;
+}
+#endif
 
 bool8 (*const sMovementActionFuncs_WalkNormalDownLeft_FaceLeft[])(struct EventObject *, struct Sprite *) = {
     MovementAction_WalkNormalDownLeft_Left_Step0,

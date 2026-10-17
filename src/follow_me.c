@@ -25,6 +25,10 @@
 #include "../include/new/util.h"
 #include "../include/new/overworld.h"
 
+#ifdef OW_SHADOWS
+void SetEventObjectShadowVisibility(struct EventObject *eventObject, bool8 invisible);
+#endif
+
 /**
  * \file follow_me.c
  * \brief Functions for NPCs following the player.
@@ -175,6 +179,9 @@ void HideFollower(void)
 
 	CreateSparkleSprite();
 	gEventObjects[GetFollowerMapObjId()].invisible = TRUE;
+#ifdef OW_SHADOWS
+	SetEventObjectShadowVisibility(&gEventObjects[GetFollowerMapObjId()], TRUE);
+#endif
 }
 
 void ShowFollower(void)
@@ -182,6 +189,9 @@ void ShowFollower(void)
 	TryCreateFollowerSparkle();
 	ChangeFollowerPalette();
 	gEventObjects[gFollowerState.objId].invisible = FALSE;
+#ifdef OW_SHADOWS
+	SetEventObjectShadowVisibility(&gEventObjects[gFollowerState.objId], FALSE);
+#endif
 }
 
 void IsFollowerStoppingRockClimb(void)
@@ -299,6 +309,9 @@ void FollowMe(struct EventObject* npc, u8 state, bool8 ignoreScriptActive)
 			gFollowerState.comeOutDoorStairs = FALSE;
 
 		follower->invisible = FALSE;
+#ifdef OW_SHADOWS
+		SetEventObjectShadowVisibility(follower, FALSE);
+#endif
 		MoveEventObjectToMapCoords(follower, player->currentCoords.x, player->currentCoords.y);
 		EventObjectTurn(follower, player->facingDirection); //The follower should be facing the same direction as the player when it comes out of hiding
 		FixFollowerMonLocalIdAfterWarp();
@@ -1229,6 +1242,9 @@ static void Task_FollowerOutOfDoor(u8 taskId)
 			if (task->data[1] < 0 || gTasks[task->data[1]].isActive != TRUE) //Door isn't still opening
 			{
 				follower->invisible = FALSE;
+				#ifdef OW_SHADOWS
+				SetEventObjectShadowVisibility(follower, FALSE);
+				#endif
 				EventObjectTurn(follower, DIR_SOUTH); //The follower should be facing down when it comes out the door
 				ChangeFollowerPalette();
 				EventObjectSetHeldMovement(follower, MOVEMENT_ACTION_WALK_NORMAL_DOWN);
@@ -1358,6 +1374,9 @@ static void Task_FollowerHandleEscalatorFinish(u8 taskId)
 			break;
 		case 2:
 			follower->invisible = FALSE;
+#ifdef OW_SHADOWS
+			SetEventObjectShadowVisibility(follower, FALSE);
+#endif
 			CalculateFollowerEscalatorTrajectoryDown(task);
 			task->data[0]++;
 			break;
@@ -1378,6 +1397,9 @@ static void Task_FollowerHandleEscalatorFinish(u8 taskId)
 			break;
 		case 4:
 			follower->invisible = FALSE;
+#ifdef OW_SHADOWS
+			SetEventObjectShadowVisibility(follower, FALSE);
+#endif
 			CalculateFollowerEscalatorTrajectoryUp(task);
 			task->data[0]++;
 			break;

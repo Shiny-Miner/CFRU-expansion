@@ -149,6 +149,10 @@ ItemId_GetName 809A8BC 1
 ItemId_GetHoldEffect 809A924 1
 
 ##Overworld Hooks
+#ifdef OW_SHADOWS
+MovementAction_SetInvisible_Step0 08066900 2
+MovementAction_SetVisible_Step0 08066910 2
+#endif
 SitrusBerryOverworldEffectUpdate 8041C94 1
 GetAdjustedInitialTransitionFlags 8055ACC 3
 Overworld_IsBikingAllowed 8055C9C 0
