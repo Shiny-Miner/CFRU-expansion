@@ -1890,6 +1890,22 @@ static void Task_NB_Input(u8 taskId)
 //---------------------------------------------------------------------------------------------------
 // Screen set up
 //---------------------------------------------------------------------------------------------------
+//Whatever screen opened the bag (overworld, battle, party menu...) can leave the blend / window / mosaic registers dirty.
+//With alpha blending left on, the OBJ layer (backpack, tabs, icons) is mixed 50% with the background and looks washed out.
+static void NB_ResetGpuEffects(void)
+{
+	SetGpuReg(REG_OFFSET_BLDCNT, 0);
+	SetGpuReg(REG_OFFSET_BLDALPHA, 0);
+	SetGpuReg(REG_OFFSET_BLDY, 0);
+	SetGpuReg(REG_OFFSET_WININ, 0);
+	SetGpuReg(REG_OFFSET_WINOUT, 0);
+	SetGpuReg(REG_OFFSET_WIN0H, 0);
+	SetGpuReg(REG_OFFSET_WIN0V, 0);
+	SetGpuReg(REG_OFFSET_WIN1H, 0);
+	SetGpuReg(REG_OFFSET_WIN1V, 0);
+	SetGpuReg(REG_OFFSET_MOSAIC, 0);
+}
+
 static void VBlankCB_NewBag(void)
 {
 	struct NewBag* bag = gNB;
@@ -2080,6 +2096,7 @@ static void CB2_NewBag(void)
 			ChangeBgX(3, 0, 0);
 			ChangeBgY(3, 0, 0);
 			SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_OBJ_1D_MAP);
+			NB_ResetGpuEffects();
 			++gMain.state;
 			break;
 
