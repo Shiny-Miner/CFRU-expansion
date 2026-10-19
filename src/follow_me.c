@@ -1294,6 +1294,19 @@ void StairsMoveFollower(void)
 		CreateTask(Task_FollowerHandleIndoorStairs, 1);
 }
 
+void FollowMe_HidePlayerShadowForStairs(void)
+{
+	#ifdef OW_SHADOWS
+	struct EventObject *player = &gEventObjects[gPlayerAvatar->eventObjectId];
+
+	if (player->hasShadow)
+	{
+		player->hasShadow = FALSE;
+		SetEventObjectShadowVisibility(player, TRUE);
+	}
+	#endif
+}
+
 static void Task_FollowerHandleIndoorStairs(u8 taskId)
 {
 	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];

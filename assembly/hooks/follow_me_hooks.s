@@ -118,6 +118,7 @@ FollowMe_CreateAvatarHook2:
 FollowMe_StairsMoveHook:
 	strh r0, [r7, #0x26]
 	bl StairsMoveFollower
+	bl FollowMe_HidePlayerShadowForStairs
 
 @return:
 	mov r1, r8
