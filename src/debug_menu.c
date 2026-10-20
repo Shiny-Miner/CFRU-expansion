@@ -49,11 +49,13 @@ enum
 	DEBUG_SELECTOR_DIGIT,
 	DEBUG_SELECTOR_WINDOW,
 	DEBUG_SELECTOR_ICON,
+	DEBUG_SELECTOR_ICON_SPECIES, //Species whose palette is currently loaded for the icon
 };
 
 static void Task_DebugMenuPokemonSelector(u8 taskId);
 static void DebugMenu_DrawPokemonSelector(u8 taskId, bool8 updateIcon);
 static void DebugMenu_ClosePokemonSelector(u8 taskId, bool8 confirmed);
+static u8 DebugMenu_CreateSelectorIcon(u16 species);
 
 static const u16 sDebugSelectorSteps[] = {1, 10, 100, 1000};
 static const u8 *const sDebugSelectorStepTexts[] =
@@ -64,6 +66,26 @@ static const u8 *const sDebugSelectorStepTexts[] =
 	gText_DebugSelector_Step1000,
 };
 
+//Loads the icon palette for the species, creates the icon, and makes sure the sprite
+//actually points at the palette slot that holds the right colours.
+static u8 DebugMenu_CreateSelectorIcon(u16 species)
+{
+	u8 palTagIndex = GetValidMonIconPalIndex(species);
+	u8 spriteId;
+
+	LoadMonIconPalette(species);
+	spriteId = CreateMonIcon(species, SpriteCB_PokeIcon, 202, 47, 0, 0, FALSE);
+	if (spriteId < MAX_SPRITES)
+	{
+		u8 palSlot = IndexOfSpritePaletteTag(POKE_ICON_BASE_PAL_TAG + palTagIndex);
+		if (palSlot != 0xFF)
+			gSprites[spriteId].oam.paletteNum = palSlot;
+		gSprites[spriteId].oam.priority = 0;
+		gSprites[spriteId].invisible = FALSE;
+	}
+	return spriteId;
+}
+
 void DebugMenu_StartPokemonSelector(void)
 {
 	u8 taskId = CreateTask(Task_DebugMenuPokemonSelector, 0x50);
@@ -72,13 +94,8 @@ void DebugMenu_StartPokemonSelector(void)
 	task->data[DEBUG_SELECTOR_SPECIES] = 1;
 	task->data[DEBUG_SELECTOR_DIGIT] = 0;
 	task->data[DEBUG_SELECTOR_WINDOW] = CreateWindowFromRect(1, 1, 26, 9);
-	LoadMonIconPalette(1);
-	task->data[DEBUG_SELECTOR_ICON] = CreateMonIcon(1, SpriteCB_PokeIcon, 202, 47, 0, 0, FALSE);
-	if (task->data[DEBUG_SELECTOR_ICON] < MAX_SPRITES)
-	{
-		gSprites[task->data[DEBUG_SELECTOR_ICON]].oam.priority = 0;
-		gSprites[task->data[DEBUG_SELECTOR_ICON]].invisible = FALSE;
-	}
+	task->data[DEBUG_SELECTOR_ICON] = DebugMenu_CreateSelectorIcon(1);
+	task->data[DEBUG_SELECTOR_ICON_SPECIES] = 1;
 	DrawStdWindowFrame(task->data[DEBUG_SELECTOR_WINDOW], TRUE);
 	DebugMenu_DrawPokemonSelector(taskId, FALSE);
 }
@@ -89,15 +106,14 @@ static void DebugMenu_DrawPokemonSelector(u8 taskId, bool8 updateIcon)
 	u16 species = task->data[DEBUG_SELECTOR_SPECIES];
 	u8 windowId = task->data[DEBUG_SELECTOR_WINDOW];
 
-	if (updateIcon && task->data[DEBUG_SELECTOR_ICON] < MAX_SPRITES)
+	if (updateIcon)
 	{
-		DestroyMonIcon(&gSprites[task->data[DEBUG_SELECTOR_ICON]]);
-		task->data[DEBUG_SELECTOR_ICON] = CreateMonIcon(species, SpriteCB_PokeIcon, 202, 47, 0, 0, FALSE);
+		//Destroy the old sprite first, then release its palette, then load the new one
 		if (task->data[DEBUG_SELECTOR_ICON] < MAX_SPRITES)
-		{
-			gSprites[task->data[DEBUG_SELECTOR_ICON]].oam.priority = 0;
-			gSprites[task->data[DEBUG_SELECTOR_ICON]].invisible = FALSE;
-		}
+			DestroyMonIcon(&gSprites[task->data[DEBUG_SELECTOR_ICON]]);
+		SafeFreeMonIconPalette(task->data[DEBUG_SELECTOR_ICON_SPECIES]);
+		task->data[DEBUG_SELECTOR_ICON] = DebugMenu_CreateSelectorIcon(species);
+		task->data[DEBUG_SELECTOR_ICON_SPECIES] = species;
 	}
 
 	FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
@@ -156,9 +172,7 @@ static void Task_DebugMenuPokemonSelector(u8 taskId)
 
 	if (changed)
 	{
-		SafeFreeMonIconPalette(task->data[DEBUG_SELECTOR_SPECIES]);
 		task->data[DEBUG_SELECTOR_SPECIES] = species;
-		SafeLoadMonIconPalette(species);
 		PlaySE(SE_SELECT);
 		DebugMenu_DrawPokemonSelector(taskId, TRUE);
 	}
@@ -171,7 +185,7 @@ static void DebugMenu_ClosePokemonSelector(u8 taskId, bool8 confirmed)
 	gSpecialVar_LastResult = confirmed ? task->data[DEBUG_SELECTOR_SPECIES] : 0;
 	if (task->data[DEBUG_SELECTOR_ICON] < MAX_SPRITES)
 		DestroyMonIcon(&gSprites[task->data[DEBUG_SELECTOR_ICON]]);
-	SafeFreeMonIconPalette(task->data[DEBUG_SELECTOR_SPECIES]);
+	SafeFreeMonIconPalette(task->data[DEBUG_SELECTOR_ICON_SPECIES]);
 	ClearStdWindowAndFrame(task->data[DEBUG_SELECTOR_WINDOW], TRUE);
 	RemoveWindow(task->data[DEBUG_SELECTOR_WINDOW]);
 	DestroyTask(taskId);
