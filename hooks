@@ -824,3 +824,16 @@ NewBag_BerryPouchStartFadeToExitCallback 813D808 1
 NewBag_ReturnToTMCaseMenu 8124DA0 0
 NewBag_ReturnToBerryPouchMenu 8124DB0 0
 #endif
+
+##New Battle Textbox (enabled by "#define NEW_BATTLE_TEXTBOX" in src/config.h)
+#ifdef NEW_BATTLE_TEXTBOX
+BTB_LoadBattleTextboxAndBackground 0800F420 0
+BTB_ActionSelectionCreateCursorAt 08030A54 2
+BTB_ActionSelectionDestroyCursorAt 08030A98 2
+BTB_MoveSelectionCreateCursorAt 080309CC 2
+BTB_BlitMoveInfoIconHook 08107D6C 4
+BTB_UpdateSafariBallsText 08049CAC 1
+BTB_UpdateLeftBallsText 08049D10 1
+BTB_SetHealthboxSpriteVisible 080481D4 1
+BTB_DrawMessageBoxFrame 080EB524 0
+#endif
