@@ -307,3 +307,7 @@ SoundMainRAM 81DD0B4
 NewBag_DisplayItemMessageInBag 8108E7C
 NewBag_GoToBagMenu 8107DC0
 #endif
+
+#ifdef REMOVE_OAKS_INTRO
+RivalNameFix 0812EB54
+#endif

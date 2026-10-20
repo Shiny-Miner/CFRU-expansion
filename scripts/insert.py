@@ -432,7 +432,7 @@ def main():
         if os.path.isfile(FREE_BYTE_REPLACEMENTS):
 
 
-            FREE_BYTE_SEARCH_START = 0x900000  # Adjust to your preferred free space startMore actions
+            FREE_BYTE_SEARCH_START = 0x300000  # Adjust to your preferred free space startMore actions
             MINIMUM_FREE_LENGTH = 0x100        # Minimum space to be considered free
 
             def FindFreeSpace(rom: _io.BufferedReader, length: int, start: int = FREE_BYTE_SEARCH_START) -> int:
@@ -447,7 +447,13 @@ def main():
                 raise Exception(f"No free space found for {length} bytes.")
 
             with open('free_bytereplacements', 'r') as file:
+                definesDict = {}
+                conditionals = []
                 for line in file:
+                    if TryProcessFileInclusion(line, definesDict):
+                        continue
+                    if TryProcessConditionalCompilation(line, definesDict, conditionals):
+                        continue
                     if line.strip().startswith('#') or line.strip() == '':
                         continue
                     try:

@@ -1,3 +1,10 @@
-# Free Byte Replacements is a custom file
-# It adds specific bytes at free space in rom
-# Follower-mon graphics are now built from follower_mon_sprites/.
+## Free Byte Replacements is a custom file
+## It adds specific bytes at free space in rom
+
+#include "src/config.h"
+
+## Fixes Rival name by assigning it one when Oak's intro is removed
+
+#ifdef REMOVE_OAKS_INTRO
+RivalNameFix 00 B5 07 48 00 F0 0A F8 06 48 00 68 06 49 40 18 06 49 01 60 FF 21 01 71 01 BC 00 47 00 47 C0 46 45 66 05 08 08 50 00 03 4C 3A 00 00 C1 BB CC D3
+#endif
