@@ -9,6 +9,9 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 - Custom SideQuest Menu added
 - Added Legends ZA Megas in DPE
 - Mystery gifts by Passwords with gift animations
+- A new bag ui with expanded bag pockets
+- A new battle textbox and engine ui changes
+- Overworld shadows
 - BW music and BW start menu support (Now addable for more info visit disocrd)
 
 - Last used pokeball by L button
