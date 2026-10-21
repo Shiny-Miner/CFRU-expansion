@@ -393,7 +393,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define OW_SHADOWS // if defined, overworld sprites will have shadows.
 #define OW_SHADOW_OPACITY 8 // Shadow opacity: 0 (invisible) to 16 (opaque).
 #define NEW_BAG_UI_EXPANSION //If defined, will use the new bag UI made by us. It also adds new pockets to bag increasing overall capacity. Highly recommended!
-#define REMOVE_OAKS_INTRO //Uncomment this to remove Oak's intro. This is useful if you want to do testing or so.
+//#define REMOVE_OAKS_INTRO //Uncomment this to remove Oak's intro. This is useful if you want to do testing or so.
 
 /* New Battle Textbox */
 #define NEW_BATTLE_TEXTBOX //Dark UI for the battle message box, action menu (FIGHT/BAG/POKEMON/RUN), move menu and Yes/No box. Comment out to use the vanilla look.
