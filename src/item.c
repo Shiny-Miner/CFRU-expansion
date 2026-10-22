@@ -1243,7 +1243,7 @@ void HandleItemRegistration(u16 item)
 #define sBagTMHM (sBagPokeBalls + NUM_POKE_BALLS)
 #define sBagBerries (sBagTMHM + NUM_TMSHMS)
 
-#define NUM_REGULAR_ITEMS 530
+#define NUM_REGULAR_ITEMS 485
 #define NUM_KEY_ITEMS 73
 #define NUM_POKE_BALLS 27
 #define NUM_BERRIES 67
