@@ -12,7 +12,7 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 - A new bag ui with expanded bag pockets
 - A new battle textbox and engine ui changes
 - Overworld shadows
-- BW music and BW start menu support (Now addable for more info visit disocrd)
+- BW music and BW start menu support (Now addable for more info visit discord)
 
 - Last used pokeball by L button
 - Shows enemy team by L button
