@@ -50,7 +50,7 @@ typedef u8 BoxNameT[9];
 #define BOX_22_RAM (BOX_21_RAM + 30) //Should end at 0x203DFA8
 #define BOX_23_RAM ((struct CompressedPokemon*) 0x2027434)
 #define BOX_24_RAM (BOX_23_RAM + 30)
-#define BOX_25_RAM ((struct CompressedPokemon*) 0x2024638)
+//Box 25 was removed: its RAM (0x2024638, 0x6CC bytes) now holds the bag's key item/ball/TM/berry pockets (see item.c)
 
 //#define sPSSData ((struct PokemonStorageSystemData*) *((u32*) 0x20397B0))
 
@@ -82,7 +82,6 @@ struct CompressedPokemon* const sPokemonBoxPtrs[TOTAL_BOXES_COUNT] =
 	BOX_22_RAM,								//Box 22
 	BOX_23_RAM,								//Box 23
 	BOX_24_RAM,								//Box 24
-	BOX_25_RAM,								//Box 25
 };
 
 BoxNameT* const sPokemonBoxNamePtrs[TOTAL_BOXES_COUNT] =
@@ -111,7 +110,6 @@ BoxNameT* const sPokemonBoxNamePtrs[TOTAL_BOXES_COUNT] =
 	ORIGINAL_BOX_NAME_RAM - 8,	//Box 22
 	ORIGINAL_BOX_NAME_RAM - 9,	//Box 23
 	ORIGINAL_BOX_NAME_RAM - 10,	//Box 24
-	ORIGINAL_BOX_NAME_RAM - 11,	//Box 25
 };
 
 //Declaring this as "static" makes it not compile properly for some reason.
@@ -141,7 +139,6 @@ u8* const sPokemonBoxWallpaperPtrs[TOTAL_BOXES_COUNT] =
 	(u8*) (ORIGINAL_BOX_POKEMON_RAM + (30 * 19)) + 7,	//Box 22
 	(u8*) (ORIGINAL_BOX_POKEMON_RAM + (30 * 19)) + 8,	//Box 23
 	(u8*) (ORIGINAL_BOX_POKEMON_RAM + (30 * 19)) + 9,	//Box 24
-	(u8*) (ORIGINAL_BOX_POKEMON_RAM + (30 * 19)) + 10,	//Box 25
 };
 
 #define gTempTeamBackup ((struct CompressedPokemon*) 0x203E1A4)

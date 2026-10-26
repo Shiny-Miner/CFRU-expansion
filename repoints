@@ -340,3 +340,23 @@ Item_StoragePal 0810d7fc
 ##Replace new egg hatch animation
 egg_hatchingTiles 0826011C
 egg_hatchingPal 0826012C
+
+#ifdef NEW_BAG_UI_EXPANSION
+##Bag pocket table: the vanilla bag functions use a table of 5 pockets at 0x203988C. With the new bag there are 7 pockets (Mega Stones and Evolution Items have their own), and
+##the table can't grow in place (variables follow it), so every reference to 0x203988C is pointed to a constant table in the ROM (gBagPocketsRom, see item.c).
+gBagPocketsRom 08099E34
+gBagPocketsRom 08099E84
+gBagPocketsRom 08099EF0
+gBagPocketsRom 08099F2C
+gBagPocketsRom 08099F94
+gBagPocketsRom 0809A054
+gBagPocketsRom 0809A0E0
+gBagPocketsRom 0809A1AC
+gBagPocketsRom 0809A248
+gBagPocketsRom 0809A300
+gBagPocketsRom 0809A7B0
+gBagPocketsRom 0809A7D8
+gBagPocketsRom 0810853C
+gBagPocketsRom 08108E3C
+gBagPocketsRom 0810966C
+#endif

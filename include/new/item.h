@@ -121,6 +121,10 @@ struct BagPockets
 	u32 tmAmount;
 	struct ItemSlot* berryRam;
 	u32 berryAmount;
+	struct ItemSlot* megaRam; //Only used if NEW_BAG_UI_EXPANSION is defined
+	u32 megaAmount;
+	struct ItemSlot* evoRam; //Only used if NEW_BAG_UI_EXPANSION is defined
+	u32 evoAmount;
 };
 
 #define REGISTERED_ITEM_COUNT 6
@@ -129,7 +133,14 @@ struct BagPockets
 #define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
 #define gTutorMoves ((const u16*) *((u32*) 0x8120BE4))
 
+#ifdef NEW_BAG_UI_EXPANSION
+//The pocket table lives in the ROM (it never changes). The vanilla bag functions read it through repoints, see "repoints".
+//It cannot stay at 0x203988C: more than 5 pockets would overwrite other variables that follow it (0x20398B4...).
+extern const struct BagPockets gBagPocketsRom;
+#define gBagPockets (&gBagPocketsRom)
+#else
 #define gBagPockets ((struct BagPockets*) 0x203988C)
+#endif
 
 enum ItemType //Sorted in this order
 {

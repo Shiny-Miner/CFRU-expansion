@@ -157,11 +157,9 @@ extern u16 gLastUsedBall; //0x203B774
 //#define gFollowerState ((struct Follower*) 0x203B818) //Approximately ~20 bytes, use 24 to be safe
 //extern bool8 gIgnoredDNSPalIndices[32][16] //0x203B830
 //extern struct Roamer gRoamers[10] //0x203BA30
-//extern struct ItemSlot gBagRegularItems[450] //0x203BB20
-//extern struct ItemSlot gBagKeyItems[75] //0x203C228
-//extern struct ItemSlot gBagPokeBalls[50] //0x203C354
-//extern struct ItemSlot gBagTMHM[128] //0x203C41C
-//extern struct ItemSlot gBagBerries[75] //0x203C61C
+//Bag (see src/item.c). Block 1: 0x203BB20 - 0x203C750 (780 slots): regular, key, balls, TM/HM, berries - don't go past 0x203C750!
+//Block 2: 0x2024638 - 0x2024D04 (RAM of the removed PC box 25): Mega Stones pocket, then Evolution Items pocket
+//FREE: whatever is left of block 1 after the pockets (see the sizes in src/item.c)
 
 #define gSelectedOrderFromParty ((u8*) 0x203C750)
 extern bool8 gDontFadeWhite; //0x203C756

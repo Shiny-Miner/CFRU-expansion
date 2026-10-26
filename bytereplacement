@@ -789,6 +789,14 @@
 #endif
 
 #ifdef NEW_BAG_UI_EXPANSION
+##New Bag: ClearItemSlots (0809A274) takes the number of slots as a u8, so only (amount % 256) slots of a pocket with more than 255 slots were cleared.
+##"lsls r1, r1, #24; lsrs r1, r1, #24" -> "lsls r1, r1, #16; lsrs r1, r1, #16"
+0809A278 09 04
+0809A27C 09 0C
+
+##New Bag: ClearBag (0809A2DC) clears every pocket of the table: 7 now instead of 5 ("cmp r4, #4" -> "cmp r4, #6")
+0809A2F4 06 2C
+
 ##New Bag: safe 4-argument hook for DisplayItemMessageInBag (push r4; ldr r4,=fn; mov ip,r4; pop r4; bx ip)
 08108E70 10 B4 02 4C A4 46 10 BC 60 47 00 00
 

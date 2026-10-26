@@ -1055,6 +1055,8 @@ enum
 #define POCKET_POKE_BALLS  3
 #define POCKET_TM_CASE     4
 #define POCKET_BERRY_POUCH 5
+#define POCKET_MEGA_STONES 6 //Only used if NEW_BAG_UI_EXPANSION is defined
+#define POCKET_EVO_ITEMS   7 //Only used if NEW_BAG_UI_EXPANSION is defined
 
 // Item type IDs (used to determine the exit callback)
 #define ITEM_USE_MAIL             0

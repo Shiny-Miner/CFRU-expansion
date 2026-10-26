@@ -527,6 +527,7 @@ extern NB_FAR u32 NBv_Importance(u32 item);
 extern NB_FAR u32 NBv_PartyCount(void);
 extern NB_FAR u32 NBv_ItemType(u32 item);
 extern NB_FAR u32 NBv_Pocket(u32 item);
+extern NB_FAR void SetBagItemQuantity(u16* quantity, u16 amount);
 extern NB_FAR u32 NBv_AddPCItem(u32 item, u32 count);
 #define NB_ITEM_IS_MAIL(i)        ((u8) NBv_ItemIsMail(i))
 #define NB_LINK_ACTIVE()          ((u8) NBv_LinkActive())
@@ -554,15 +555,12 @@ static bool8 NB_Active(void)
 //---------------------------------------------------------------------------------------------------
 // Entries
 //---------------------------------------------------------------------------------------------------
-//0 = healing (POTIONS tab), 2 = any other item (ITEMS tab), 4 = mega stones, 5 = evolution items
+//0 = healing (POTIONS tab), 2 = any other item (ITEMS tab). Mega stones and evolution items are NOT in the regular
+//pocket anymore: they have their own pockets (tabs 4 and 5), so they never reach this function.
 static u8 NB_TabForRegularItem(u16 item)
 {
 	u16 t = gItemsByType[item];
 
-	if (t == ITEM_TYPE_MEGA_STONE)
-		return 4;
-	if (t == ITEM_TYPE_EVOLUTION_STONE || t == ITEM_TYPE_EVOLUTION_ITEM)
-		return 5;
 	if (t >= ITEM_TYPE_FULL_RESTORE && t <= ITEM_TYPE_PP_RECOVERY)
 		return 0; //Health recovery, status recovery, PP recovery
 	return 2;
@@ -615,11 +613,11 @@ static void NB_BuildEntries(u8 tab)
 		case 3:
 			NB_AddSlots(bag, gBagPockets->keyItemRam, gBagPockets->keyItemAmount, -1, hideCases, 0);
 			break;
-		case 4:
-			NB_AddSlots(bag, gBagPockets->itemRam, gBagPockets->itemAmount, 4, FALSE, 0);
+		case 4: //Mega stones: a real pocket with its own RAM, no filtering
+			NB_AddSlots(bag, gBagPockets->megaRam, gBagPockets->megaAmount, -1, FALSE, 0);
 			break;
-		case 5:
-			NB_AddSlots(bag, gBagPockets->itemRam, gBagPockets->itemAmount, 5, FALSE, 0);
+		case 5: //Evolution items: a real pocket with its own RAM, no filtering
+			NB_AddSlots(bag, gBagPockets->evoRam, gBagPockets->evoAmount, -1, FALSE, 0);
 			break;
 	}
 }
@@ -1245,6 +1243,38 @@ static void NB_SwitchTab(s8 dir)
 	NB_UpdateTabVisuals();
 	NB_QueueLabelsFor(old, bag->tab);
 	NB_RefreshAll();
+}
+
+//Saves made before the pockets were split (or memory that holds something else) can leave invalid items, or items in the
+//wrong pocket (an old save has the Mega Stones in the regular pocket). Drop what is invalid and move what is misplaced
+//to its own pocket, so every item is where AddBagItem / CheckBagHasItem / RemoveBagItem look for it.
+static void NB_FixPockets(void)
+{
+	u32 p, s;
+	struct ItemSlot* const pockets[] = {gBagPockets->itemRam, gBagPockets->keyItemRam, gBagPockets->pokeBallRam, gBagPockets->tmRam, gBagPockets->berryRam, gBagPockets->megaRam, gBagPockets->evoRam};
+	const u32 amounts[] = {gBagPockets->itemAmount, gBagPockets->keyItemAmount, gBagPockets->pokeBallAmount, gBagPockets->tmAmount, gBagPockets->berryAmount, gBagPockets->megaAmount, gBagPockets->evoAmount};
+
+	for (p = 0; p < 7; ++p)
+	{
+		for (s = 0; s < amounts[p]; ++s)
+		{
+			struct ItemSlot* slot = &pockets[p][s];
+			u16 item = slot->itemId;
+			u16 qty;
+
+			if (item == ITEM_NONE)
+				continue;
+			if (item < ITEMS_COUNT && NB_POCKET(item) == p + 1)
+				continue; //Already in the right pocket
+
+			qty = GetBagItemQuantity(&slot->quantity);
+			slot->itemId = ITEM_NONE;
+			SetBagItemQuantity(&slot->quantity, 0);
+
+			if (item < ITEMS_COUNT && NB_POCKET(item) >= POCKET_ITEMS && NB_POCKET(item) <= POCKET_EVO_ITEMS && qty > 0 && qty <= 999)
+				AddBagItem(item, qty); //Goes to the pocket the item belongs to
+		}
+	}
 }
 
 static void NB_Exit(u8 taskId)
@@ -2201,7 +2231,7 @@ void NewBag_GoToBagMenu(u8 location, u8 pocket, MainCallback bagCallback)
 
 	gTextFlags.autoScroll = FALSE;
 	gSpecialVar_ItemId = ITEM_NONE;
-
+	NB_FixPockets();
 
 	#ifdef NEWBAG_ALLITEMS
 	{

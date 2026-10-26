@@ -1237,16 +1237,50 @@ void HandleItemRegistration(u16 item)
 }
 
 //Bag Expansion////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define sBagRegularItems ((struct ItemSlot*) 0x203BB20)
+/*
+ * Bag RAM layout. Both areas are part of the saved data (see save.c), so the bag is saved and loaded with the game.
+ *
+ *  - Block 1: 0x203BB20 - 0x203C750 (0xC30 bytes = 780 slots). Regular items, Key items, Poke Balls, TMs/HMs and Berries.
+ *    Anything after 0x203C750 belongs to other features (gSelectedOrderFromParty, gWildDataSwitch, gDexNavSearchLevels...),
+ *    so the sum of these pockets must never exceed 780 slots (checked at compile time below).
+ *  - Block 2 (only with NEW_BAG_UI_EXPANSION): 0x2024638 - 0x2024D04 (0x6CC bytes = 435 slots), the RAM of the removed PC
+ *    box 25 (inside SaveBlock2). It holds the Mega Stones pocket and the Evolution Items pocket.
+ *
+ * With NEW_BAG_UI_EXPANSION the Mega Stones and Evolution Items are NOT filtered views of the regular pocket anymore:
+ * they are real pockets (POCKET_MEGA_STONES / POCKET_EVO_ITEMS) with their own RAM, so they don't use up regular slots.
+ */
+#define BAG_BLOCK1_RAM  0x203BB20
+#define BAG_BLOCK1_SIZE 0xC30 //Up to 0x203C750 (gSelectedOrderFromParty)
+
+#define sBagRegularItems ((struct ItemSlot*) BAG_BLOCK1_RAM)
 #define sBagKeyItems (sBagRegularItems + NUM_REGULAR_ITEMS)
 #define sBagPokeBalls (sBagKeyItems + NUM_KEY_ITEMS)
 #define sBagTMHM (sBagPokeBalls + NUM_POKE_BALLS)
 #define sBagBerries (sBagTMHM + NUM_TMSHMS)
 
-#define NUM_REGULAR_ITEMS 485
+#ifdef NEW_BAG_UI_EXPANSION
+	#define BAG_BLOCK2_RAM  0x2024638 //RAM of the removed box 25
+	#define BAG_BLOCK2_SIZE 0x6CC
+
+	#define sBagMegaStones ((struct ItemSlot*) BAG_BLOCK2_RAM)
+	#define sBagEvoItems (sBagMegaStones + NUM_MEGA_STONES)
+
+	//Number of different items that can be in each pocket. Must be at least the number of items with that pocket in gItemData.
+	#define NUM_REGULAR_ITEMS 480 //Everything that is not in another pocket
+	#define NUM_MEGA_STONES 128 //Items with pocket POCKET_MEGA_STONES (ITEM_TYPE_MEGA_STONE)
+	#define NUM_EVO_ITEMS 64 //Items with pocket POCKET_EVO_ITEMS (ITEM_TYPE_EVOLUTION_STONE / ITEM_TYPE_EVOLUTION_ITEM)
+#else
+	#define NUM_REGULAR_ITEMS 485
+#endif
 #define NUM_KEY_ITEMS 73
 #define NUM_POKE_BALLS 27
 #define NUM_BERRIES 67
+
+//Compile error (negative array size) if the pockets grow past the RAM they own
+typedef char BagBlock1FitsInRam[((NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS + NUM_TMSHMS + NUM_BERRIES) * sizeof(struct ItemSlot) <= BAG_BLOCK1_SIZE) ? 1 : -1];
+#ifdef NEW_BAG_UI_EXPANSION
+typedef char BagBlock2FitsInRam[((NUM_MEGA_STONES + NUM_EVO_ITEMS) * sizeof(struct ItemSlot) <= BAG_BLOCK2_SIZE) ? 1 : -1];
+#endif
 
 #define LARGEST_POCKET_NUM NUM_REGULAR_ITEMS
 
@@ -1255,13 +1289,22 @@ struct BagSlots
 	struct ItemSlot bagPocket_Items[NUM_REGULAR_ITEMS];
 	struct ItemSlot bagPocket_KeyItems[NUM_KEY_ITEMS];
 	struct ItemSlot bagPocket_PokeBalls[NUM_POKE_BALLS];
+	#ifdef NEW_BAG_UI_EXPANSION
+	struct ItemSlot bagPocket_MegaStones[NUM_MEGA_STONES];
+	struct ItemSlot bagPocket_EvoItems[NUM_EVO_ITEMS];
+	#endif
 	u16 itemsAbove[3];
 	u16 cursorPos[3];
 	u16 registeredItems[NELEMS(gSaveBlock1->registeredItems)];
 	u16 pocket;
 };
 
+#ifdef NEW_BAG_UI_EXPANSION
+//This table is only read, never written. It is in the ROM and the vanilla bag functions use it through the repoints in "repoints".
+const struct BagPockets gBagPocketsRom =
+#else
 static const struct BagPockets sBagPocketArrangement =
+#endif
 {
 	.itemRam = sBagRegularItems,
 	.itemAmount = NUM_REGULAR_ITEMS,
@@ -1273,11 +1316,23 @@ static const struct BagPockets sBagPocketArrangement =
 	.tmAmount = NUM_TMSHMS,
 	.berryRam = sBagBerries,
 	.berryAmount = NUM_BERRIES,
+	#ifdef NEW_BAG_UI_EXPANSION
+	.megaRam = sBagMegaStones,
+	.megaAmount = NUM_MEGA_STONES,
+	.evoRam = sBagEvoItems,
+	.evoAmount = NUM_EVO_ITEMS,
+	#endif
 };
+#ifdef NEW_BAG_UI_EXPANSION
+#define sBagPocketArrangement gBagPocketsRom
+#endif
 
 void SetMemoryForBagStorage(void)
 {
+	#ifndef NEW_BAG_UI_EXPANSION
 	*gBagPockets = sBagPocketArrangement;
+	#endif
+	//With NEW_BAG_UI_EXPANSION the pocket table is a constant in the ROM, nothing to set
 }
 
 extern void* sBagBgTilemapBuffer;
@@ -1400,6 +1455,10 @@ void BackupPlayerBag(void)
 	Memcpy(sBackupPlayerBag->bagPocket_Items, sBagRegularItems, NUM_REGULAR_ITEMS * sizeof(struct ItemSlot));
 	Memcpy(sBackupPlayerBag->bagPocket_KeyItems, sBagKeyItems, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
 	Memcpy(sBackupPlayerBag->bagPocket_PokeBalls, sBagPokeBalls, NUM_POKE_BALLS * sizeof(struct ItemSlot));
+	#ifdef NEW_BAG_UI_EXPANSION
+	Memcpy(sBackupPlayerBag->bagPocket_MegaStones, sBagMegaStones, NUM_MEGA_STONES * sizeof(struct ItemSlot));
+	Memcpy(sBackupPlayerBag->bagPocket_EvoItems, sBagEvoItems, NUM_EVO_ITEMS * sizeof(struct ItemSlot));
+	#endif
 	Memcpy(sBackupPlayerBag->registeredItems, gSaveBlock1->registeredItems, sizeof(gSaveBlock1->registeredItems));
 	sBackupPlayerBag->pocket = gBagMenuState.pocket;
 	for (i = 0; i < 3; i++)
@@ -1411,6 +1470,10 @@ void BackupPlayerBag(void)
 	Memset(sBagRegularItems, 0, sizeof(struct ItemSlot) * NUM_REGULAR_ITEMS); //Too many to use ClearItemSlots
 	ClearItemSlots(sBagKeyItems, NUM_KEY_ITEMS);
 	ClearItemSlots(sBagPokeBalls, NUM_POKE_BALLS);
+	#ifdef NEW_BAG_UI_EXPANSION
+	ClearItemSlots(sBagMegaStones, NUM_MEGA_STONES);
+	ClearItemSlots(sBagEvoItems, NUM_EVO_ITEMS);
+	#endif
 	Memset(gSaveBlock1->registeredItems, 0, sizeof(gSaveBlock1->registeredItems));
 	ResetBagCursorPositions();
 }
@@ -1422,6 +1485,10 @@ void RestorePlayerBag(void)
 	Memcpy(sBagRegularItems, sBackupPlayerBag->bagPocket_Items, NUM_REGULAR_ITEMS * sizeof(struct ItemSlot));
 	Memcpy(sBagKeyItems, sBackupPlayerBag->bagPocket_KeyItems, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
 	Memcpy(sBagPokeBalls, sBackupPlayerBag->bagPocket_PokeBalls, NUM_POKE_BALLS * sizeof(struct ItemSlot));
+	#ifdef NEW_BAG_UI_EXPANSION
+	Memcpy(sBagMegaStones, sBackupPlayerBag->bagPocket_MegaStones, NUM_MEGA_STONES * sizeof(struct ItemSlot));
+	Memcpy(sBagEvoItems, sBackupPlayerBag->bagPocket_EvoItems, NUM_EVO_ITEMS * sizeof(struct ItemSlot));
+	#endif
 	Memcpy(gSaveBlock1->registeredItems, sBackupPlayerBag->registeredItems, sizeof(gSaveBlock1->registeredItems));
 	gBagMenuState.pocket = sBackupPlayerBag->pocket;
 	for (i = 0; i < 3; i++)
