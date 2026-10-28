@@ -66,6 +66,8 @@ static void PokeSum_PrintRightPaneText(void);
 static void PrintSkillsPage(void);
 static void PrintMovesPage(void);
 static void PokeSum_FinishSetup(void);
+static void Task_PSSFx(u8 taskId);
+static void PSSFx_OnExit(void);
 static void Task_InputHandler_SelectOrForgetMove(u8 taskId);
 static void PokeSum_PrintBottomPaneText(void);
 static void PokeSum_PrintTrainerMemo(void);
@@ -1566,7 +1568,10 @@ static void Task_InputHandler_Info(u8 taskId)
         break;
     default:
         if (!gPaletteFade->active)
+        {
+            PSSFx_OnExit();
             Task_DestroyResourcesOnExit(taskId);
+        }
 
         break;
     }
@@ -2406,7 +2411,10 @@ static void Task_InputHandler_SelectOrForgetMove(u8 taskId)
         break;
     default:
         if (!gPaletteFade->active)
+        {
+            PSSFx_OnExit();
             Task_DestroyResourcesOnExit(taskId);
+        }
         break;
     }
 }
@@ -2417,6 +2425,9 @@ static void PokeSum_FinishSetup(void)
         sMonSummaryScreen->inputHandlerTaskId = CreateTask(Task_InputHandler_SelectOrForgetMove, 0);
     else
         sMonSummaryScreen->inputHandlerTaskId = CreateTask(Task_InputHandler_Info, 0);
+
+    if (!FuncIsActiveTask(Task_PSSFx))
+        CreateTask(Task_PSSFx, 254); //Runs after every other summary task each frame
 
     SetMainCallback2(CB2_RunPokemonSummaryScreen);
 }
@@ -2838,6 +2849,383 @@ static bool8 HasOnlyOneMon(void)
         }
         return (count <= 1);
     }
+}
+
+
+// Everything below is optional and purely visual. Each effect can be turned
+// off by defining it as 0 (e.g. in config.h) before this file is compiled.
+// There are no writable globals (CFRU places .data/.bss in ROM), so all
+// state lives in the task's data[] array:
+//   data[0] pic entrance frame   data[1] alpha ripple frame (0 = idle)
+//   data[2] flip task was active data[3] switch task was active
+//   data[4] star phase           data[5] pic breathing phase
+//   data[6] cursor pulse phase (0 = not pulsing)
+//   data[8] background scroll frame   data[9] picture hop y nudge
+//   data[10]/[11] last pos2 x/y of the picture   data[12] frames since the vanilla bounce last moved it
+//--------------------------------------------------------------------------
+#ifndef PSS_FX_PIC_AFFINE
+#define PSS_FX_PIC_AFFINE 0     //Pokemon picture animation (pop-in + hop). OFF: the picture is left completely vanilla
+#endif
+#ifndef PSS_FX_PIC_FLASH
+#define PSS_FX_PIC_FLASH 0      //White flash on the picture (only used when PSS_FX_PIC_AFFINE is 1)
+#endif
+//Pulse timing for the picture (same meaning as the TITLE_MON_* knobs of the title screen).
+//It idles at an exact 1:1 matrix (crisp pixels) and only moves during a short pulse.
+#ifndef PSS_FX_PIC_BREATHE
+#define PSS_FX_PIC_BREATHE 10        //squash/stretch at the pulse peak, in 1/256ths (10 = about 4%)
+#endif
+#ifndef PSS_FX_PIC_SWAY
+#define PSS_FX_PIC_SWAY 0            //rotation at the pulse peak, in 1/256ths of a turn (0 = off: rotating pixel art shimmers at 1x speed)
+#endif
+#ifndef PSS_FX_PIC_BOB
+#define PSS_FX_PIC_BOB 3             //hop height in pixels
+#endif
+#ifndef PSS_FX_PIC_PULSE_PERIOD
+#define PSS_FX_PIC_PULSE_PERIOD 72   //frames between pulses
+#endif
+#ifndef PSS_FX_PIC_PULSE_START
+#define PSS_FX_PIC_PULSE_START 44    //frame within the period where the pulse begins
+#endif
+#ifndef PSS_FX_PIC_PULSE_LEN
+#define PSS_FX_PIC_PULSE_LEN 20      //how long the pulse lasts, in frames (short = snappy at normal speed)
+#endif
+#ifndef PSS_FX_STAR_AFFINE
+#define PSS_FX_STAR_AFFINE 1    //Shiny star sways and pulses
+#endif
+#ifndef PSS_FX_CURSOR_PULSE
+#define PSS_FX_CURSOR_PULSE 1   //Move selection cursor glows
+#endif
+#ifndef PSS_FX_BG_SCROLL
+#define PSS_FX_BG_SCROLL 1      //Background tile pattern (BG2) drifts diagonally forever
+#endif
+#ifndef PSS_FX_BG_SPEED
+#define PSS_FX_BG_SPEED 0x40    //8.8 fixed point pixels per frame (0x40 = 0.25px). Must divide 0x2000 evenly.
+#endif
+#ifndef PSS_FX_ALPHA_RIPPLE
+#define PSS_FX_ALPHA_RIPPLE 1   //Page layer alpha dips and recovers on page flip / Pokemon switch
+#endif
+
+#define PSSFX_PIC_X 204 //Must match PokeSum_CreateMonPicSprite
+#define PSSFX_PIC_Y 78
+#define PSSFX_WHITE 0x7FFF
+#define PSSFX_BASE_EVA 13 //Must match PokeSum_Setup_InitGpu's BLDALPHA_BLEND(13, 16)
+#define PSSFX_BASE_EVB 16
+
+//Marker table: a sprite whose affineAnims points here has been prepared by this effect.
+//The animation itself just holds the identity matrix; the real matrix is set every frame.
+static const union AffineAnimCmd sPSSFx_AffineAnim_Hold[] =
+{
+    AFFINEANIMCMD_FRAME(0x100, 0x100, 0, 1),
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sPSSFx_AffineAnimTable[] =
+{
+    sPSSFx_AffineAnim_Hold,
+};
+
+//One sine period in 32 steps, amplitude 16
+static const s8 sPSSFx_Wave[32] = {0, 3, 6, 9, 11, 13, 15, 16, 16, 16, 15, 13, 11, 9, 6, 3, 0, -3, -6, -9, -11, -13, -15, -16, -16, -16, -15, -13, -11, -9, -6, -3};
+
+#if PSS_FX_PIC_AFFINE
+//Entrance: shrink -> overshoot wide/squashed -> stretch tall -> settle
+static const u16 sPSSFx_PopScaleX[] = {0xB0, 0xD0, 0xF0, 0x118, 0x120, 0x110, 0xF8, 0xF0, 0xF8, 0x100, 0x104, 0xFE, 0x100, 0x100};
+static const u16 sPSSFx_PopScaleY[] = {0xB0, 0xD0, 0xF0, 0xE8, 0xE0, 0xF0, 0x110, 0x120, 0x114, 0x108, 0xFC, 0x100, 0x100, 0x100};
+#define PSSFX_POP_LENGTH (sizeof(sPSSFx_PopScaleX) / sizeof(sPSSFx_PopScaleX[0]))
+
+//White blend coefficient (0-16) applied to the picture palette during the entrance
+static const u8 sPSSFx_FlashCoeff[] = {16, 13, 10, 8, 6, 4, 3, 2, 1, 0};
+#define PSSFX_FLASH_LENGTH (sizeof(sPSSFx_FlashCoeff) / sizeof(sPSSFx_FlashCoeff[0]))
+#endif
+
+//BLDALPHA EVA values for the page layer (EVB stays 16). Starts and ends at the base value.
+static const u8 sPSSFx_AlphaRipple[] = {13, 11, 9, 7, 6, 6, 7, 8, 9, 10, 11, 12, 13};
+#define PSSFX_RIPPLE_LENGTH (sizeof(sPSSFx_AlphaRipple) / sizeof(sPSSFx_AlphaRipple[0]))
+
+#if PSS_FX_PIC_AFFINE || PSS_FX_STAR_AFFINE
+//Turns a normal sprite into a double-size affine sprite. Safe to call every frame.
+static void PSSFx_PrepareAffineSprite(struct Sprite* sprite)
+{
+    if (sprite->affineAnims == sPSSFx_AffineAnimTable)
+        return;
+
+    sprite->affineAnims = sPSSFx_AffineAnimTable;
+    sprite->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
+    CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+    InitSpriteAffineAnim(sprite);
+    sprite->affineAnimPaused = TRUE; //We drive the matrix ourselves
+    sprite->affineAnimEnded = TRUE;
+}
+
+//Builds the OAM matrix directly so the units are unambiguous (same method as the title screen):
+//  zoomX/zoomY: 0x100 = 100%, 0x200 = 200%, 0x80 = 50% (must not be 0)
+//  rot:         0-255 per full turn
+//The hardware matrix maps screen -> texture, so it holds the INVERSE of the zoom.
+//Affine sprites ignore hFlip, so a flipped sprite gets a mirrored X axis instead.
+static void PSSFx_SetSpriteMatrix(struct Sprite* sprite, s16 zoomX, s16 zoomY, s16 rot)
+{
+    s32 invX, invY, sin, cos;
+    bool8 flip = sprite->hFlip;
+
+    if (zoomX == 0x100 && zoomY == 0x100 && rot == 0)
+    {
+        //Identity: exact 1:1 pixels (nearest-neighbour resampling at ~1.0 would drop/duplicate rows)
+        SetOamMatrix(sprite->oam.matrixNum, flip ? -0x100 : 0x100, 0, 0, 0x100);
+        return;
+    }
+
+    invX = 0x10000 / zoomX;
+    invY = 0x10000 / zoomY;
+    if (flip)
+    {
+        invX = -invX;
+        rot = -rot;
+    }
+
+    sin = Sine(rot & 0xFF, 256);
+    cos = Sine((rot + 64) & 0xFF, 256);
+    SetOamMatrix(sprite->oam.matrixNum,
+                 (cos * invX) >> 8,
+                 (sin * invX) >> 8,
+                 (-sin * invY) >> 8,
+                 (cos * invY) >> 8);
+}
+#endif
+
+#if PSS_FX_ALPHA_RIPPLE
+static void PSSFx_UpdateAlphaRipple(s16* data)
+{
+    bool8 flipActive = FuncIsActiveTask(Task_PokeSum_FlipPages);
+    bool8 switchActive = FuncIsActiveTask(Task_PokeSum_SwitchDisplayedPokemon);
+
+    if ((flipActive && !data[2]) || (switchActive && !data[3]))
+        data[1] = 1; //(Re)start the ripple
+
+    data[2] = flipActive;
+    data[3] = switchActive;
+
+    if (data[1] == 0)
+        return;
+
+    //Only touch the blend if the screen is still using the BG1/BG2 blend from InitGpu
+    if ((GetGpuReg(REG_OFFSET_BLDCNT) & 0xC0) != BLDCNT_EFFECT_BLEND)
+    {
+        data[1] = 0;
+        return;
+    }
+
+    if (data[1] > (s16) PSSFX_RIPPLE_LENGTH)
+    {
+        SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(PSSFX_BASE_EVA, PSSFX_BASE_EVB));
+        data[1] = 0;
+    }
+    else
+    {
+        SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(sPSSFx_AlphaRipple[data[1] - 1], PSSFX_BASE_EVB));
+        ++data[1];
+    }
+}
+#endif
+
+#if PSS_FX_PIC_AFFINE
+static void PSSFx_UpdatePic(s16* data)
+{
+    struct Sprite* sprite = &gSprites[sMonSummaryScreen->monPicSpriteId];
+    s16 zoomX = 0x100;
+    s16 zoomY = 0x100;
+    s16 sway = 0;
+    s16 hop = 0;
+    s16 t, u, half;
+    u8 frame;
+
+    if (!sprite->inUse)
+        return; //Pic is being destroyed/recreated (Pokemon switch)
+
+    if (sprite->affineAnims != sPSSFx_AffineAnimTable)
+    {
+        //Make sure this really is the freshly created picture and not a reused sprite slot
+        if (sprite->pos1.x != PSSFX_PIC_X || sprite->pos1.y != PSSFX_PIC_Y || sprite->oam.shape != ST_OAM_SQUARE)
+            return;
+
+        PSSFx_PrepareAffineSprite(sprite);
+        data[0] = 0;
+        data[5] = 0;
+        data[9] = 0;
+        data[10] = sprite->pos2.x;
+        data[11] = sprite->pos2.y;
+        data[12] = 0;
+    }
+
+    if (data[0] < (s16) PSSFX_POP_LENGTH)
+    {
+        frame = data[0];
+
+        if (gPaletteFade->active)
+        {
+            //Hold the first (small) frame until the screen has faded in
+            frame = 0;
+            data[0] = 0;
+        }
+        else
+        {
+            #if PSS_FX_PIC_FLASH
+            if (frame < (u8) PSSFX_FLASH_LENGTH)
+                BlendPalette(0x100 + sprite->oam.paletteNum * 16, 16, sPSSFx_FlashCoeff[frame], PSSFX_WHITE);
+            #endif
+            ++data[0];
+        }
+
+        zoomX = sPSSFx_PopScaleX[frame];
+        zoomY = sPSSFx_PopScaleY[frame];
+    }
+    else
+    {
+        //The vanilla cry bounce moves the picture through pos2. Don't stack our hop on top of it:
+        //stay at the exact 1:1 matrix until it has been still for a while.
+        if (sprite->pos2.x != data[10] || sprite->pos2.y != data[11])
+            data[12] = 30;
+        else if (data[12] > 0)
+            --data[12];
+        data[10] = sprite->pos2.x;
+        data[11] = sprite->pos2.y;
+
+        //Idle at an exact 1:1 matrix, then a short hop/squash once per period
+        t = data[5];
+        if (data[12] > 0)
+            t = 0;
+        else if (t >= PSS_FX_PIC_PULSE_START && t < PSS_FX_PIC_PULSE_START + PSS_FX_PIC_PULSE_LEN)
+        {
+            u = t - PSS_FX_PIC_PULSE_START;
+            half = Sine((u * 128) / PSS_FX_PIC_PULSE_LEN, 256); //0 -> 256 -> 0
+
+            zoomX += (half * PSS_FX_PIC_BREATHE) >> 8;
+            zoomY -= (half * PSS_FX_PIC_BREATHE) >> 8;
+            hop = (half * PSS_FX_PIC_BOB) >> 8;
+            sway = Sine((u * 256) / PSS_FX_PIC_PULSE_LEN, PSS_FX_PIC_SWAY);
+        }
+
+        data[5] = (t + 1 >= PSS_FX_PIC_PULSE_PERIOD) ? 0 : t + 1;
+    }
+
+    //Hop by nudging pos1.y relative to our own last nudge, so the vanilla cry bounce stays untouched
+    sprite->pos1.y += -hop - data[9];
+    data[9] = -hop;
+
+    PSSFx_SetSpriteMatrix(sprite, zoomX, zoomY, sway);
+}
+#endif
+
+#if PSS_FX_STAR_AFFINE
+static void PSSFx_UpdateShinyStar(s16* data)
+{
+    struct Sprite* sprite;
+    s8 wave;
+
+    if (sShinyStarObjData == NULL || sShinyStarObjData->sprite == NULL)
+        return;
+
+    sprite = sShinyStarObjData->sprite;
+    if (!sprite->inUse || sprite->invisible)
+        return;
+
+    PSSFx_PrepareAffineSprite(sprite);
+    ++data[4];
+    wave = sPSSFx_Wave[(data[4] >> 1) & 31];
+    PSSFx_SetSpriteMatrix(sprite, 0x100 + wave * 3, 0x100 + wave * 3, wave); //Pulse + sway about +-22 degrees
+}
+#endif
+
+#if PSS_FX_CURSOR_PULSE
+static void PSSFx_UpdateMoveCursor(s16* data)
+{
+    struct Sprite* sprite;
+    u16 palOffset;
+
+    if (sMoveSelectionCursorObjs[0] == NULL || gPaletteFade->active)
+        return;
+
+    sprite = sMoveSelectionCursorObjs[0]->sprite;
+    if (sprite == NULL || !sprite->inUse)
+        return;
+
+    palOffset = 0x100 + sprite->oam.paletteNum * 16;
+
+    if (sprite->invisible)
+    {
+        if (data[6] != 0)
+        {
+            BlendPalette(palOffset, 16, 0, PSSFX_WHITE); //Restore the real colours
+            data[6] = 0;
+        }
+        return;
+    }
+
+    data[6] = (data[6] % 64) + 1; //Never 0 while pulsing
+    BlendPalette(palOffset, 16, (sPSSFx_Wave[(data[6] >> 1) & 31] + 16) / 6, PSSFX_WHITE); //0-5 out of 16
+}
+#endif
+
+#if PSS_FX_BG_SCROLL
+//BG2 is the static background grid. Its map repeats every 4 tiles (32px) both ways,
+//so after exactly one period the scroll wraps with no visible jump.
+#define PSSFX_BG_PERIOD (0x2000 / PSS_FX_BG_SPEED)
+
+static void PSSFx_UpdateBgScroll(s16* data)
+{
+    u32 offset = data[8] * PSS_FX_BG_SPEED;
+
+    ChangeBgX(2, offset, 0);
+    ChangeBgY(2, offset, 0);
+
+    if (++data[8] >= PSSFX_BG_PERIOD)
+        data[8] = 0;
+}
+#endif
+
+//Called right before the vanilla exit code frees the screen (the display is already faded out)
+static void PSSFx_OnExit(void)
+{
+    #if PSS_FX_BG_SCROLL
+    ChangeBgX(2, 0, 0);
+    ChangeBgY(2, 0, 0);
+    #endif
+}
+
+static void Task_PSSFx(u8 taskId)
+{
+    s16* data = gTasks[taskId].data;
+    u8 state;
+
+    //Summary screen is gone (or about to be): never touch freed data
+    if (gMain.callback2 != CB2_RunPokemonSummaryScreen || sMonSummaryScreen == NULL)
+    {
+        DestroyTask(taskId);
+        return;
+    }
+
+    #if PSS_FX_BG_SCROLL
+    PSSFx_UpdateBgScroll(data); //Keeps drifting during the exit fade
+    #endif
+
+    //Leave the blend registers and palettes alone once the exit has started
+    state = sMonSummaryScreen->state3270;
+    if (state == PSS_STATE3270_ATEXIT_FADEOUT
+    ||  state == PSS_STATE3270_ATEXIT_WAITLINKDELAY
+    ||  state == PSS_STATE3270_ATEXIT_WAITFADE)
+        return;
+
+    #if PSS_FX_ALPHA_RIPPLE
+    PSSFx_UpdateAlphaRipple(data);
+    #endif
+    #if PSS_FX_PIC_AFFINE
+    PSSFx_UpdatePic(data);
+    #endif
+    #if PSS_FX_STAR_AFFINE
+    PSSFx_UpdateShinyStar(data);
+    #endif
+    #if PSS_FX_CURSOR_PULSE
+    PSSFx_UpdateMoveCursor(data);
+    #endif
 }
 
 #endif
