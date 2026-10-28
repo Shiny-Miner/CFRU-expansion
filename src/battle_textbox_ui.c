@@ -42,6 +42,39 @@ typedef void (*VoidFn)(void);
 typedef void (*TilemapCopyFn)(u8 bg, const void* src, u16 mode, u16 offset);
 typedef void (*CompPalFn)(const void* src, u16 offset, u16 size);
 
+//---------------------------------------------------------------------------------------------------------------------
+// FIX (Safari Zone): corrupted opponent health box
+// The vanilla Safari health box sprite sheet (tag 0xD70B) is only used by the Safari counter box, which this feature hides and
+// replaces. Older versions repointed that sheet entry to the fixed address 0x0880A020, which is only a valid compressed image
+// in one specific ROM. In any other ROM the game decompressed random data into the heap, corrupting the health box graphics.
+// This is a valid LZ77 image (0x1000 bytes of zeros) that lives inside the build, so it works in every ROM. 'repoints' points
+// the one place that loads the sheet (literal at 0x0803488C) to this struct.
+//---------------------------------------------------------------------------------------------------------------------
+static const u32 sBTBSafariHealthboxSheetLZ[] =
+{
+	0x00100010,0x00F0007F,0x00F000F0,0x00F000F0,0x00F000F0,0xF000F0FF,0xF000F000,0xF000F000,
+	0xF000F000,0x00F0FF00,0x00F000F0,0x00F000F0,0x00F000F0,0xF0FF00F0,0xF000F000,0xF000F000,
+	0xF000F000,0xFF00F000,0x00F000F0,0x00F000F0,0x00F000F0,0x00F000F0,0xF000F0FF,0xF000F000,
+	0xF000F000,0xF000F000,0x00F0FF00,0x00F000F0,0x00F000F0,0x00F000F0,0xF0FF00F0,0xF000F000,
+	0xF000F000,0xF000F000,0xFF00F000,0x00F000F0,0x00F000F0,0x00F000F0,0x00F000F0,0xF000F0FF,
+	0xF000F000,0xF000F000,0xF000F000,0x00F0FF00,0x00F000F0,0x00F000F0,0x00F000F0,0xF0FF00F0,
+	0xF000F000,0xF000F000,0xF000F000,0xFF00F000,0x00F000F0,0x00F000F0,0x00F000F0,0x00F000F0,
+	0xF000F0FF,0xF000F000,0xF000F000,0xF000F000,0x00F0FF00,0x00F000F0,0x00F000F0,0x00F000F0,
+	0xF0FF00F0,0xF000F000,0xF000F000,0xF000F000,0xFF00F000,0x00F000F0,0x00F000F0,0x00F000F0,
+	0x00F000F0,0xF000F0FF,0xF000F000,0xF000F000,0xF000F000,0x00F0FF00,0x00F000F0,0x00F000F0,
+	0x00F000F0,0xF0FF00F0,0xF000F000,0xF000F000,0xF000F000,0xFF00F000,0x00F000F0,0x00F000F0,
+	0x00F000F0,0x00F000F0,0xF000F0FF,0xF000F000,0xF000F000,0xF000F000,0x00F0FF00,0x00F000F0,
+	0x00F000F0,0x00F000F0,0xF0FF00F0,0xF000F000,0xF000F000,0xF000F000,0xFF00F000,0x00F000F0,
+	0x00F000F0,0x00F000F0,0x00F000F0,0xF000F0FF,0xF000F000,0xF000F000,0xF000F000,0x00F0FF00,
+	0x00F000F0,0x00F000F0,0x00F000F0,0xF0FF00F0,0xF000F000,0xF000F000,0xF000F000,0xF800F000,
+	0x00F000F0,0x00F000F0,0x00000060,
+};
+
+const struct CompressedSpriteSheet gBTBSafariHealthboxSheet =
+{
+	(const u8*) sBTBSafariHealthboxSheetLZ, 0x1000, 0xD70B
+};
+
 static void BTB_SetPal(u8 slot, u8 idx, u16 colour)
 {
 	BTB_PLTT_UNFADED[slot * 16 + idx] = colour;

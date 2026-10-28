@@ -360,3 +360,8 @@ gBagPocketsRom 0810853C
 gBagPocketsRom 08108E3C
 gBagPocketsRom 0810966C
 #endif
+
+##New Battle Textbox - Safari Zone health box fix (enabled by "#define NEW_BATTLE_TEXTBOX" in src/config.h)
+#ifdef NEW_BATTLE_TEXTBOX
+gBTBSafariHealthboxSheet 0803488C
+#endif
