@@ -397,7 +397,7 @@ enum //These vars need to be one after the other (hence the enum)
 
 /* New Battle Textbox */
 #define NEW_BATTLE_TEXTBOX //Dark UI for the battle message box, action menu (FIGHT/BAG/POKEMON/RUN), move menu and Yes/No box. Comment out to use the vanilla look.
-
+#define BW_SAVING_SCREEN //Makes the saving menu BW style and fullscreen.
 
 /* SideQuest Menu */
 

@@ -6,6 +6,7 @@
 #include "../include/rtc.h"
 #include "../include/safari_zone.h"
 #include "../include/save_menu_util.h"
+#include "../include/new/save_screen.h"
 #include "../include/script.h"
 #include "../include/start_menu.h"
 #include "../include/item_menu.h"
@@ -144,7 +145,11 @@ const struct MenuAction sStartMenuActionTable[] =
 	[STARTMENU_POKEMON] = {gText_MenuPokemon, {.u8_void = StartMenuPokemonCallback}},
 	[STARTMENU_BAG] = {gText_MenuBag, {.u8_void = StartMenuBagCallback}},
 	[STARTMENU_PLAYER] = {gText_MenuPlayer, {.u8_void = StartMenuPlayerCallback}},
+#ifdef BW_SAVING_SCREEN
+	[STARTMENU_SAVE] = {gText_MenuSave, {.u8_void = StartMenuSaveScreenCallback}}, //Gen-5 style save screen call
+#else
 	[STARTMENU_SAVE] = {gText_MenuSave, {.u8_void = StartMenuSaveCallback}},
+#endif
 	[STARTMENU_OPTION] = {gText_MenuOption, {.u8_void = StartMenuOptionCallback}},
 	[STARTMENU_EXIT] = {gText_MenuExit, {.u8_void = StartMenuExitCallback}},
 	[STARTMENU_RETIRE_SAFARI] = {gText_MenuRetire, {.u8_void = StartMenuSafariZoneRetireCallback}},
@@ -353,8 +358,13 @@ bool8 StartCB_HandleInput(void)
 		sStartMenuCallback = sStartMenuActionTable[sStartMenuOrder[sStartMenuCursorPos]].func.u8_void; 
 		StartMenu_FadeScreenIfLeavingOverworld();
 		// Only remove follower for certain actions
+#ifdef BW_SAVING_SCREEN
+		if (sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT &&
+			sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT_LEFT && sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT_RIGHT)
+#else
 		if (sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_SAVE && sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT &&
 			sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT_LEFT && sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT_RIGHT)
+#endif
 		{
 			RemoveFollowerBeforeBattle();
 		}
@@ -366,8 +376,13 @@ bool8 StartCB_HandleInput(void)
 		RemoveTimeBox();
 		DestroyHelpMessageWindow_();
 		// Only remove follower for certain actions
+#ifdef BW_SAVING_SCREEN
+		if (sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT &&
+			sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT_LEFT && sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT_RIGHT)
+#else
 		if (sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_SAVE && sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT &&
 			sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT_LEFT && sStartMenuOrder[sStartMenuCursorPos] != STARTMENU_EXIT_RIGHT)
+#endif
 		{
 			RestoreFollowerAfterMenu(); //Restore follower without the spawn effect after exiting a menu
 			ChangeFollowerPalette();
@@ -375,8 +390,8 @@ bool8 StartCB_HandleInput(void)
 		CloseStartMenu();
 		return TRUE;
 	}
-	else if (JOY_NEW(R_BUTTON))
-        return StartCB_SelectOption(STARTMENU_SAVE);
+	else if (JOY_NEW(R_BUTTON) && StartMenuHasOption(STARTMENU_SAVE))
+		return StartCB_SelectOption(STARTMENU_SAVE);
 	return FALSE;
 }
 
@@ -399,6 +414,13 @@ bool8 StartMenuHasOption(u8 option)
          return FALSE;
      sStartMenuCallback = sStartMenuActionTable[option].func.u8_void;
      StartMenu_FadeScreenIfLeavingOverworld();
+#ifdef BW_SAVING_SCREEN
+     if (option == STARTMENU_SAVE) //The save screen leaves the overworld like any other menu
+     {
+         RemoveFollowerBeforeBattle();
+         RemoveTimeBox();
+     }
+#endif
      return FALSE;
  }
 

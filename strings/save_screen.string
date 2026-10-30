@@ -1,0 +1,38 @@
+#org @gText_SaveScreen_Confirm
+Would you like to save the game?
+
+#org @gText_SaveScreen_Saving1
+Saving.\nDon't turn off the power.
+
+#org @gText_SaveScreen_Saving2
+Saving..\nDon't turn off the power.
+
+#org @gText_SaveScreen_Saving3
+Saving...\nDon't turn off the power.
+
+#org @gText_SaveScreen_Saved
+[PLAYER] saved the game.
+
+#org @gText_SaveScreen_Error
+Save error.\nPlease exchange the backup memory.
+
+#org @gText_SaveScreen_Badges
+Gym Badges:
+
+#org @gText_SaveScreen_Pokedex
+Pokédex:
+
+#org @gText_SaveScreen_Time
+Time:
+
+#org @gText_SaveScreen_Yes
+YES
+
+#org @gText_SaveScreen_No
+NO
+
+#org @gText_SaveScreen_NoDate
+--/--/----
+
+#org @gText_SaveScreen_NoClock
+--:--
