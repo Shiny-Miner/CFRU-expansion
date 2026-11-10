@@ -25,6 +25,12 @@ Auto-run has been [GREEN]enabled[BLACK].
 #org @gText_AutoRunDisable
 Auto-run has been [GREEN]disabled[BLACK].
 
+#org @gText_FastForwardEnable
+Fast forward has been [GREEN]enabled[BLACK].
+
+#org @gText_FastForwardDisable
+Fast forward has been [GREEN]disabled[BLACK].
+
 #org @gText_BikeTurboBoostEnable
 Turbo boost has been [GREEN]activated[BLACK].
 

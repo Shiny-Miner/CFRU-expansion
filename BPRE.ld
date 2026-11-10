@@ -2499,3 +2499,4 @@ SetBagItemQuantity = 0x8099DBC | 1;
 NBv_AddPCItem = 0x809A3C8 | 1;
 InitTMCase = 0x81317F8 | 1;
 InitBerryPouch = 0x813CD50 | 1;
+gWirelessCommType = 0x03003f3c;

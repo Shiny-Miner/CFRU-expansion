@@ -837,3 +837,5 @@ BTB_UpdateLeftBallsText 08049D10 1
 BTB_SetHealthboxSpriteVisible 080481D4 1
 BTB_DrawMessageBoxFrame 080EB524 0
 #endif
+
+WaitForVBlankHook 08000890 0 

@@ -38,6 +38,27 @@ SystemScript_DisableAutoRun:
 	releaseall
 	end
 
+.global SystemScript_EnableFastForward
+SystemScript_EnableFastForward:
+	lockall
+	special SPECIAL_STOP_SOUNDS
+	sound 0x2
+	signmsg
+	msgboxsign
+	msgbox gText_FastForwardEnable MSG_SIGN
+	releaseall
+	end
+
+.global SystemScript_DisableFastForward
+SystemScript_DisableFastForward:
+	lockall
+	special SPECIAL_STOP_SOUNDS
+	sound 0x3
+	msgboxsign
+	msgbox gText_FastForwardDisable MSG_SIGN
+	releaseall
+	end
+
 .global SystemScript_EnableBikeTurboBoost
 SystemScript_EnableBikeTurboBoost:
 	lockall
