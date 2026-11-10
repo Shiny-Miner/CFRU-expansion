@@ -2,6 +2,7 @@
 #include "../include/bg.h"
 #include "../include/event_object_movement.h"
 #include "../include/link.h"
+#include "../include/field_control_avatar.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_weather.h"
 #include "../include/item_menu.h"
@@ -305,6 +306,48 @@ bool8 TryToggleFastForward(void)
 	//Consume the combo so the silent toggle in ShouldSkipVBlankWait (fast_forward.c) doesn't flip it back
 	gMain.newKeysRaw &= ~(L_BUTTON | R_BUTTON);
 	return TRUE;
+}
+
+//L and R both have their own field functions (turbo boost / auto-run / second registered item on L,
+//bag / party / DexNav / etc. on R). Pressing L + R together for fast forward used to fire whichever
+//of the two was pressed first, e.g. toggling Surf turbo boost off. So a lone L or R press is only
+//acted on when that button is RELEASED without the other one having joined in.
+//Returns bit 0 = run L's function, bit 1 = run R's function.
+u8 HandleDeferredLRActions(struct FieldInput* input)
+{
+	u8 actions = 0;
+	u16 held = gMain.heldKeysRaw;
+
+	FF_LR_PENDING &= 3;
+
+	//The game only sets these in frames where the player is ready for input
+	if (input->pressedLButton)
+		FF_LR_PENDING |= 1;
+	if (input->pressedRButton && JOY_NEW(R_BUTTON)) //Not when held!
+		FF_LR_PENDING |= 2;
+
+	if ((held & (L_BUTTON | R_BUTTON)) == (L_BUTTON | R_BUTTON))
+	{
+		FF_LR_PENDING = 0; //That's the fast forward combo, neither button acts on its own
+		return 0;
+	}
+
+	if (gPlayerAvatar->tileTransitionState == T_TILE_TRANSITION)
+		return 0; //Mid step, stays pending until the player is ready for input again
+
+	if ((FF_LR_PENDING & 1) && !(held & L_BUTTON))
+	{
+		FF_LR_PENDING &= ~1;
+		actions |= 1;
+	}
+
+	if ((FF_LR_PENDING & 2) && !(held & R_BUTTON))
+	{
+		FF_LR_PENDING &= ~2;
+		actions |= 2;
+	}
+
+	return actions;
 }
 #endif
 

@@ -2868,6 +2868,12 @@ bool8 ProcessNewFieldPlayerInput(struct FieldInput* input)
 	if (IsDexNavHudActive())
 		return FALSE; //Can't force close this
 
+	#ifdef FLAG_FAST_FORWARD
+	u8 lrActions = HandleDeferredLRActions(input); //L / R act on release so L + R (fast forward) doesn't also fire them
+	#else
+	u8 lrActions = (input->pressedLButton ? 1 : 0) | ((input->pressedRButton && JOY_NEW(R_BUTTON)) ? 2 : 0);
+	#endif
+
 	#ifdef DEBUG_OVERWORLD_MENU
 	if (DebugMenuComboPressed()
 	&& !ScriptContext2_IsEnabled() && !gPaletteFade->active && !InUnionRoom())
@@ -2891,13 +2897,13 @@ bool8 ProcessNewFieldPlayerInput(struct FieldInput* input)
         return TRUE;
     }
 
-	if (input->pressedLButton && StartLButtonFunc())
+	if ((lrActions & 1) && StartLButtonFunc())
 	{
 		gInputToStoreInQuestLogMaybe.pressedRButton = TRUE;
 		return TRUE;
 	}
 
-	if (input->pressedRButton && JOY_NEW(R_BUTTON) //Not when held!
+	if ((lrActions & 2) //Not when held!
 	&& StartRButtonFunc())
 	{
 		gInputToStoreInQuestLogMaybe.pressedRButton = TRUE;

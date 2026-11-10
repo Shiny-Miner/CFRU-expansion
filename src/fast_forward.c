@@ -2,6 +2,9 @@
 #include "../include/event_data.h"
 #include "../include/link.h"
 #include "../include/main.h"
+#include "../include/field_player_avatar.h"
+#include "../include/overworld.h"
+#include "../include/script.h"
 #include "../include/new/read_keys.h"
 
 /*
@@ -20,6 +23,10 @@ fast_forward.c
 
 // Uncomment to never fast forward during battles (L + R still toggles the flag there).
 //#define FF_DISABLE_IN_BATTLE
+
+// Stopgap: run at normal speed while surfing in the overworld. The toggle stays on, so fast forward
+// resumes as soon as you leave the water. Comment this out to fast forward while surfing as well.
+#define FF_PAUSE_WHILE_SURFING
 
 // Extra 1: don't fast forward while a map is being loaded (warp garbled-screen fix attempt).
 // Needs in BPRE.ld:  CB2_LoadMap2 = 0x805674C | 1;
@@ -44,6 +51,13 @@ void CB2_LoadMap2(void);
 // Called (via the asm hook) from AgbMain only. Returns TRUE to skip this frame's VBlank wait.
 bool8 ShouldSkipVBlankWait(void)
 {
+	// A lone L / R press waits for release (see HandleDeferredLRActions). Drop it if the player
+	// lost control in the meantime, so it can't fire later out of nowhere.
+	#ifdef FLAG_FAST_FORWARD
+	if (FF_LR_PENDING && (gMain.callback2 != CB2_Overworld || ScriptContext2_IsEnabled()))
+		FF_LR_PENDING = 0;
+	#endif
+
 	// Never speed up link/wireless: both sides must stay in lockstep.
 	if (gReceivedRemoteLinkPlayers || gWirelessCommType)
 		return FALSE;
@@ -70,6 +84,11 @@ bool8 ShouldSkipVBlankWait(void)
 		return FALSE;
 	#else
 	return FALSE;
+	#endif
+
+	#ifdef FF_PAUSE_WHILE_SURFING
+	if (gMain.callback2 == CB2_Overworld && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+		return FALSE;
 	#endif
 
 	#ifdef FF_SKIP_DURING_MAP_LOAD
