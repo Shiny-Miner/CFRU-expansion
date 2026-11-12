@@ -1363,7 +1363,7 @@ bool8 AllocateBagItemListBuffers(void)
 extern struct ListMenuItem* sBerryPouchListMenuItems;
 bool8 AllocateBerryPouchListBuffers(void)
 {
-	sBerryPouchListMenuItems = Malloc(NUM_BERRIES * sizeof(struct ListMenuItem));
+	sBerryPouchListMenuItems = Malloc((NUM_BERRIES + 1) * sizeof(struct ListMenuItem));
 	if (sBerryPouchListMenuItems == NULL)
 		return FALSE;
 
