@@ -46,7 +46,7 @@ struct PalRef
 static u16 TintColor(u16 color);
 static u8 GetPalTypeByPalTag(u16 palTag);
 static u8 FindPalTag(u16 PalTag);
-static u8 PalRefIncreaseCount(u8 palSlot);
+u8 PalRefIncreaseCount(u8 palSlot);
 static void BrightenReflection(u8 palSlot);
 static u8 AddPalTag(u16 palTag);
 static void MaskPaletteIfFadingIn(u8 palSlot);
@@ -203,7 +203,7 @@ u8 FindPalette(u16 palTag) //Hook at 0x80089E8 via r1
 	return FindPalTag(palTag);
 }
 
-static u8 PalRefIncreaseCount(u8 palSlot)
+u8 PalRefIncreaseCount(u8 palSlot)
 {
 	sPalRefs[palSlot].Count++;
 	return palSlot;

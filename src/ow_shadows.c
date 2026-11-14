@@ -12,6 +12,7 @@
 
 #include "../include/new/character_customization.h"
 #include "../include/new/follow_me.h"
+#include "../include/new/dynamic_ow_pals.h"
 
 #ifdef OW_SHADOWS
 
@@ -289,6 +290,8 @@ static void ApplyShadowColor(struct EventObject *eventObject)
 				palSlot = LoadSpritePalette(&sShadowSpritePalette); //Returns the existing slot if already loaded
 				if (palSlot != 0xFF)
 				{
+					PalRefDecreaseCount(sprite->oam.paletteNum); //Release the vanilla shadow palette
+					PalRefIncreaseCount(palSlot);                //This shadow sprite now owns the shadow palette
 					sprite->oam.paletteNum = palSlot;
 					sprite->oam.objMode = ST_OAM_OBJ_BLEND;
 					SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
