@@ -14,6 +14,7 @@
 #include "../include/trainer_pokemon_sprites.h"
 #include "../include/window.h"
 #include "../include/field_effect.h"
+#include "../include/new/follower_emotes.h"
 
 
 extern u8 SparkleTiles[];
@@ -301,6 +302,12 @@ void ShowFollowerEmote(void)
     follower = &gEventObjects[gFollowerState.objId];
     if (follower->invisible)
         return;
+
+    if (Var8005 >= FOLLOWER_EMOTE_FIRST)
+    {
+        CreateFollowerEmote(Var8005 - FOLLOWER_EMOTE_FIRST);
+        return;
+    }
 
     gFieldEffectArguments[0] = follower->localId;
     gFieldEffectArguments[1] = follower->mapNum;

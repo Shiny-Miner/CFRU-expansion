@@ -304,6 +304,126 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Idle_36
 [BUFFER1] takes a deep breath of\nfresh air.
 
+#org @sText_FM_Idle_37
+[BUFFER1] seems to be\ndaydreaming.
+
+#org @sText_FM_Idle_38
+[BUFFER1] sniffs your pocket\nhopefully.
+
+#org @sText_FM_Idle_39
+[BUFFER1] sneezes and looks\nsurprised.
+
+#org @sText_FM_Idle_40
+[BUFFER1] is watching your feet\nas you walk.
+
+#org @sText_FM_Idle_41
+[BUFFER1] found something\ninteresting on the ground.
+
+#org @sText_FM_Idle_42
+[BUFFER1] playfully tugs at your\nbag.
+
+#org @sText_FM_Idle_43
+[BUFFER1] looks up at the sky and\nsighs happily.
+
+#org @sText_FM_Idle_44
+[BUFFER1] gently bumps against\nyour hand.
+
+#org @sText_FM_Idle_45
+[BUFFER1] seems to be listening\nto something.
+
+#org @sText_FM_Idle_46
+[BUFFER1] is moving in perfect\nstep with you.
+
+#org @sText_FM_Idle_47
+[BUFFER1] looks around as if it\nheard a noise.
+
+#org @sText_FM_Idle_48
+[BUFFER1] blinks slowly at you.
+
+#org @sText_FM_Idle_49
+[BUFFER1] seems to be in a very\ngood mood.
+
+#org @sText_FM_Idle_50
+[BUFFER1] is practicing a funny\nwalk.
+
+#org @sText_FM_Idle_51
+[BUFFER1] follows a leaf as it\ndrifts by.
+
+#org @sText_FM_Idle_52
+[BUFFER1] wiggles with\nexcitement!
+
+#org @sText_FM_Idle_53
+[BUFFER1] seems to be waiting for\na treat.
+
+#org @sText_FM_Idle_54
+[BUFFER1] pauses to smell\nsomething nice.
+
+#org @sText_FM_Idle_55
+[BUFFER1] looks proud of how far\nyou've come.
+
+#org @sText_FM_Idle_56
+[BUFFER1] is humming along with\nthe wind.
+
+#org @sText_FM_Idle_57
+[BUFFER1] tries to look tough,\nbut it's adorable.
+
+#org @sText_FM_Idle_58
+[BUFFER1] rubs its eyes and\nstretches.
+
+#org @sText_FM_Idle_59
+[BUFFER1] seems to be inventing a\nnew game.
+
+#org @sText_FM_Idle_60
+[BUFFER1] steps carefully around\na puddle.
+
+#org @sText_FM_Idle_61
+[BUFFER1] glances at you and\ngrins.
+
+#org @sText_FM_Idle_62
+[BUFFER1] kicks a pebble ahead of\nyou.
+
+#org @sText_FM_Idle_63
+[BUFFER1] is keeping a close eye\non the road.
+
+#org @sText_FM_Idle_64
+[BUFFER1] seems to have forgotten\nwhat it was doing.
+
+#org @sText_FM_Idle_65
+[BUFFER1] tilts its head the\nother way.
+
+#org @sText_FM_Idle_66
+[BUFFER1] waves at nothing in\nparticular.
+
+#org @sText_FM_Idle_67
+[BUFFER1] is feeling adventurous!
+
+#org @sText_FM_Idle_68
+[BUFFER1] bounces a little as it\nwalks.
+
+#org @sText_FM_Idle_69
+[BUFFER1] looks like it's\nplanning something.
+
+#org @sText_FM_Idle_70
+[BUFFER1] makes a small,\nsatisfied sound.
+
+#org @sText_FM_Idle_71
+[BUFFER1] is trying to match your\nwalking speed.
+
+#org @sText_FM_Idle_72
+[BUFFER1] takes a moment to catch\nits breath.
+
+#org @sText_FM_Idle_73
+[BUFFER1] sits down for a second,\nthen hurries back.
+
+#org @sText_FM_Idle_74
+[BUFFER1] seems fascinated by a\nbug.
+
+#org @sText_FM_Idle_75
+[BUFFER1] gives a determined nod.
+
+#org @sText_FM_Idle_76
+[BUFFER1] is humming off-key.
+
 #org @sText_FM_Happy_1
 [BUFFER1] snuggles up to [PLAYER]!
 
@@ -328,6 +448,36 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Happy_8
 [BUFFER1] rubs against you\nlovingly.
 
+#org @sText_FM_Happy_9
+[BUFFER1] nuzzles your hand.
+
+#org @sText_FM_Happy_10
+[BUFFER1] is clearly having the\ntime of its life!
+
+#org @sText_FM_Happy_11
+[BUFFER1] bounces around you in\ncircles.
+
+#org @sText_FM_Happy_12
+[BUFFER1] looks completely at\nease with you.
+
+#org @sText_FM_Happy_13
+[BUFFER1] gazes up at you fondly.
+
+#org @sText_FM_Happy_14
+[BUFFER1] seems to want a pat on\nthe head.
+
+#org @sText_FM_Happy_15
+[BUFFER1] is so happy it did a\nflip!
+
+#org @sText_FM_Happy_16
+[BUFFER1] cries out joyfully!
+
+#org @sText_FM_Happy_17
+[BUFFER1] can't stop wiggling\nwith joy!
+
+#org @sText_FM_Happy_18
+[BUFFER1] treasures every moment\nwith [PLAYER].
+
 #org @sText_FM_Lonely_1
 [BUFFER1] keeps a little\ndistance, watching you.
 
@@ -343,6 +493,30 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Lonely_5
 [BUFFER1] sighs quietly.
 
+#org @sText_FM_Lonely_6
+[BUFFER1] seems a little lost in\nthought.
+
+#org @sText_FM_Lonely_7
+[BUFFER1] glances at you, then\nlooks away.
+
+#org @sText_FM_Lonely_8
+[BUFFER1] is walking a few steps\nbehind.
+
+#org @sText_FM_Lonely_9
+[BUFFER1] seems to be waiting for\nyou to notice it.
+
+#org @sText_FM_Lonely_10
+[BUFFER1] looks like it needs\nsome kindness.
+
+#org @sText_FM_Lonely_11
+[BUFFER1] hesitates, then slowly\nsteps closer.
+
+#org @sText_FM_Lonely_12
+[BUFFER1] doesn't seem to know\nwhat to do.
+
+#org @sText_FM_Lonely_13
+[BUFFER1] stares at the ground\nquietly.
+
 #org @sText_FM_LowHp_1
 [BUFFER1] is panting softly.
 
@@ -355,11 +529,44 @@ Nothing seems out of the ordinary.
 #org @sText_FM_LowHp_4
 [BUFFER1] winces, but tries to\nlook brave.
 
+#org @sText_FM_LowHp_5
+[BUFFER1] is moving slowly,\ntrying not to complain.
+
+#org @sText_FM_LowHp_6
+[BUFFER1] looks worn out.
+
+#org @sText_FM_LowHp_7
+[BUFFER1] sits down to rest for a\nmoment.
+
+#org @sText_FM_LowHp_8
+[BUFFER1] could really use a\nPotion.
+
+#org @sText_FM_LowHp_9
+[BUFFER1] is breathing heavily.
+
+#org @sText_FM_LowHp_10
+[BUFFER1] stumbles a little.
+
+#org @sText_FM_LowHp_11
+[BUFFER1] glances at you for\nhelp.
+
+#org @sText_FM_LowHp_12
+[BUFFER1] could use a trip to the\nPokémon Center.
+
 #org @sText_FM_Asleep_1
 [BUFFER1] is nodding off while\nwalking.
 
 #org @sText_FM_Asleep_2
 [BUFFER1] is snoring softly.
+
+#org @sText_FM_Asleep_3
+[BUFFER1] is sleepwalking along.
+
+#org @sText_FM_Asleep_4
+[BUFFER1] mumbles something in\nits sleep.
+
+#org @sText_FM_Asleep_5
+[BUFFER1]'s eyes keep drooping.
 
 #org @sText_FM_Poison_1
 [BUFFER1] looks a little pale.
@@ -367,11 +574,29 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Poison_2
 [BUFFER1] is moving unsteadily.
 
+#org @sText_FM_Poison_3
+[BUFFER1] looks sick and\nunsteady.
+
+#org @sText_FM_Poison_4
+[BUFFER1] is sweating a lot.
+
+#org @sText_FM_Poison_5
+[BUFFER1] could use an Antidote.
+
 #org @sText_FM_Paralyzed_1
 [BUFFER1] twitches uncomfortably.
 
 #org @sText_FM_Paralyzed_2
 [BUFFER1]'s legs keep trembling.
+
+#org @sText_FM_Paralyzed_3
+[BUFFER1] can barely move.
+
+#org @sText_FM_Paralyzed_4
+[BUFFER1] shudders and sparks\nfaintly.
+
+#org @sText_FM_Paralyzed_5
+[BUFFER1] could use a Paralyze\nHeal.
 
 #org @sText_FM_Burned_1
 [BUFFER1] is blowing on its sore\nspot.
@@ -379,11 +604,29 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Burned_2
 [BUFFER1] winces at the burn.
 
+#org @sText_FM_Burned_3
+[BUFFER1] keeps fanning its burn.
+
+#org @sText_FM_Burned_4
+[BUFFER1] winces with every step.
+
+#org @sText_FM_Burned_5
+[BUFFER1] could use a Burn Heal.
+
 #org @sText_FM_Frozen_1
 [BUFFER1] shivers in place.
 
 #org @sText_FM_Frozen_2
 [BUFFER1] is moving very stiffly.
+
+#org @sText_FM_Frozen_3
+[BUFFER1] is stiff as a board.
+
+#org @sText_FM_Frozen_4
+[BUFFER1] has frost on its body.
+
+#org @sText_FM_Frozen_5
+[BUFFER1] could use an Ice Heal.
 
 #org @sText_FM_Rain_0
 [BUFFER1] is splashing in the\npuddles!
@@ -400,6 +643,21 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Rain_4
 [BUFFER1] is trying to catch\nraindrops.
 
+#org @sText_FM_Rain_5
+[BUFFER1] lifts its face to the\nrain.
+
+#org @sText_FM_Rain_6
+[BUFFER1] hops from puddle to\npuddle.
+
+#org @sText_FM_Rain_7
+[BUFFER1] seems to like the smell\nof rain.
+
+#org @sText_FM_Rain_8
+[BUFFER1] is dripping wet and\nhappy.
+
+#org @sText_FM_Rain_9
+[BUFFER1] tries to hide from the\nraindrops.
+
 #org @sText_FM_Snow_0
 [BUFFER1] is trying to catch\nsnowflakes.
 
@@ -411,6 +669,18 @@ Nothing seems out of the ordinary.
 
 #org @sText_FM_Snow_3
 [BUFFER1] watches the snow drift\ndown.
+
+#org @sText_FM_Snow_4
+[BUFFER1] has snow on its head.
+
+#org @sText_FM_Snow_5
+[BUFFER1] plays in the fresh\nsnow.
+
+#org @sText_FM_Snow_6
+[BUFFER1] sniffs a snowflake.
+
+#org @sText_FM_Snow_7
+[BUFFER1] huffs out little clouds\nof breath.
 
 #org @sText_FM_Sunny_0
 [BUFFER1] is soaking up the\nsunshine.
@@ -424,6 +694,18 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Sunny_3
 [BUFFER1] is chasing its own\nshadow.
 
+#org @sText_FM_Sunny_4
+[BUFFER1] basks in the warm sun.
+
+#org @sText_FM_Sunny_5
+[BUFFER1] feels fantastic in this\nweather!
+
+#org @sText_FM_Sunny_6
+[BUFFER1] looks sleepy in the\nwarm light.
+
+#org @sText_FM_Sunny_7
+[BUFFER1] shields its eyes from\nthe sun.
+
 #org @sText_FM_Sand_0
 [BUFFER1] squints against the\nblowing sand.
 
@@ -433,6 +715,15 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Sand_2
 [BUFFER1] coughs and shakes sand\noff.
 
+#org @sText_FM_Sand_3
+[BUFFER1] spits out some sand.
+
+#org @sText_FM_Sand_4
+[BUFFER1] keeps its eyes shut\ntight.
+
+#org @sText_FM_Sand_5
+[BUFFER1] stays close to avoid\nthe sand.
+
 #org @sText_FM_Fog_0
 [BUFFER1] stays close in the\nthick fog.
 
@@ -441,6 +732,15 @@ Nothing seems out of the ordinary.
 
 #org @sText_FM_Fog_2
 [BUFFER1] seems a little uneasy\nin the fog.
+
+#org @sText_FM_Fog_3
+[BUFFER1] seems nervous in the\nfog.
+
+#org @sText_FM_Fog_4
+[BUFFER1] can barely see the\npath.
+
+#org @sText_FM_Fog_5
+[BUFFER1] disappears into the\nmist, then pops back.
 
 #org @sText_FM_Cave_0
 [BUFFER1] listens to the echoes.
@@ -454,6 +754,21 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Cave_3
 [BUFFER1] cries out and hears it\necho back!
 
+#org @sText_FM_Cave_4
+[BUFFER1] sniffs the damp air.
+
+#org @sText_FM_Cave_5
+[BUFFER1] keeps an eye on the\ndark.
+
+#org @sText_FM_Cave_6
+[BUFFER1] steps carefully on the\nrocks.
+
+#org @sText_FM_Cave_7
+[BUFFER1] seems unsettled by the\ndark.
+
+#org @sText_FM_Cave_8
+[BUFFER1] listens to the drips\nechoing.
+
 #org @sText_FM_Indoor_0
 [BUFFER1] looks around the room\ncuriously.
 
@@ -465,6 +780,21 @@ Nothing seems out of the ordinary.
 
 #org @sText_FM_Indoor_3
 [BUFFER1] is on its best indoor\nbehavior.
+
+#org @sText_FM_Indoor_4
+[BUFFER1] glances around\nnervously.
+
+#org @sText_FM_Indoor_5
+[BUFFER1] sniffs a table leg.
+
+#org @sText_FM_Indoor_6
+[BUFFER1] seems to like it\nindoors.
+
+#org @sText_FM_Indoor_7
+[BUFFER1] wants to explore every\nroom.
+
+#org @sText_FM_Indoor_8
+[BUFFER1] is acting very polite.
 
 #org @sText_FM_Town_0
 [BUFFER1] watches the people walk\nby.
@@ -478,6 +808,21 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Town_3
 [BUFFER1] sticks close in the\nbusy streets.
 
+#org @sText_FM_Town_4
+[BUFFER1] looks at the shop\nwindows.
+
+#org @sText_FM_Town_5
+[BUFFER1] watches a child run\npast.
+
+#org @sText_FM_Town_6
+[BUFFER1] seems excited by the\ncrowd.
+
+#org @sText_FM_Town_7
+[BUFFER1] sniffs the smell of\nfood.
+
+#org @sText_FM_Town_8
+[BUFFER1] is on its best behavior\nin town.
+
 #org @sText_FM_Route_0
 [BUFFER1] eyes the tall grass\nwith interest.
 
@@ -490,6 +835,21 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Route_3
 [BUFFER1] sniffs the path ahead.
 
+#org @sText_FM_Route_4
+[BUFFER1] seems ready for a\nbattle.
+
+#org @sText_FM_Route_5
+[BUFFER1] is excited about new\nplaces.
+
+#org @sText_FM_Route_6
+[BUFFER1] peeks into the tall\ngrass.
+
+#org @sText_FM_Route_7
+[BUFFER1] looks at you, waiting\nfor a plan.
+
+#org @sText_FM_Route_8
+[BUFFER1] seems to enjoy the open\nroad.
+
 #org @sText_FM_Morning_1
 [BUFFER1] is full of morning\nenergy!
 
@@ -499,11 +859,41 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Morning_3
 [BUFFER1] seems well rested\ntoday.
 
+#org @sText_FM_Morning_4
+[BUFFER1] greets the sun with a\ncry!
+
+#org @sText_FM_Morning_5
+[BUFFER1] is bright-eyed this\nmorning.
+
+#org @sText_FM_Morning_6
+[BUFFER1] looks eager to start\nthe day.
+
+#org @sText_FM_Morning_7
+[BUFFER1] takes in the fresh\nmorning air.
+
+#org @sText_FM_Morning_8
+[BUFFER1] is bursting with energy\nthis morning.
+
 #org @sText_FM_Day_1
 [BUFFER1] is in great spirits\ntoday!
 
 #org @sText_FM_Day_2
 [BUFFER1] bounces along in the\ndaylight.
+
+#org @sText_FM_Day_3
+[BUFFER1] is enjoying the\ndaylight.
+
+#org @sText_FM_Day_4
+[BUFFER1] seems full of life\ntoday.
+
+#org @sText_FM_Day_5
+[BUFFER1] strolls along happily.
+
+#org @sText_FM_Day_6
+[BUFFER1] is in no rush today.
+
+#org @sText_FM_Day_7
+[BUFFER1] looks content in the\nsunshine.
 
 #org @sText_FM_Evening_0
 [BUFFER1] watches the sunset with\nyou.
@@ -517,6 +907,21 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Evening_3
 [BUFFER1] casts a long shadow in\nthe evening light.
 
+#org @sText_FM_Evening_4
+[BUFFER1] watches the sky turn\norange.
+
+#org @sText_FM_Evening_5
+[BUFFER1] seems a little tired\nfrom the day.
+
+#org @sText_FM_Evening_6
+[BUFFER1] looks happy and\nrelaxed.
+
+#org @sText_FM_Evening_7
+[BUFFER1] is thinking about\ndinner.
+
+#org @sText_FM_Evening_8
+[BUFFER1] walks slowly in the\nfading light.
+
 #org @sText_FM_Night_1
 [BUFFER1] is gazing up at the\nstars.
 
@@ -528,6 +933,24 @@ Nothing seems out of the ordinary.
 
 #org @sText_FM_Night_4
 [BUFFER1] sticks close to you in\nthe night.
+
+#org @sText_FM_Night_5
+[BUFFER1] is wide awake in the\ndark.
+
+#org @sText_FM_Night_6
+[BUFFER1] looks at the moon.
+
+#org @sText_FM_Night_7
+[BUFFER1] seems calm under the\nnight sky.
+
+#org @sText_FM_Night_8
+[BUFFER1] can see well in the\ndark.
+
+#org @sText_FM_Night_9
+[BUFFER1] is full of nighttime\nenergy!
+
+#org @sText_FM_Night_10
+[BUFFER1] stays close and keeps\nwatch.
 
 #org @sText_FM_Buddy_0
 [BUFFER1] glances back, thinking\nof [BUFFER2].
@@ -544,6 +967,24 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Buddy_4
 [BUFFER1] wants to show [BUFFER2]\na new trick.
 
+#org @sText_FM_Buddy_5
+[BUFFER1] misses [BUFFER2] a\nlittle.
+
+#org @sText_FM_Buddy_6
+[BUFFER1] glances at [BUFFER2]'s\nBall.
+
+#org @sText_FM_Buddy_7
+[BUFFER1] seems to be talking\nwith [BUFFER2].
+
+#org @sText_FM_Buddy_8
+[BUFFER1] is proud to be\nteammates with [BUFFER2].
+
+#org @sText_FM_Buddy_9
+[BUFFER1] wonders what [BUFFER2]\nis dreaming about.
+
+#org @sText_FM_Buddy_10
+[BUFFER1] seems to want [BUFFER2]\nto come out.
+
 #org @sText_FM_Shiny_0
 [BUFFER1] sparkles in the light!
 
@@ -556,6 +997,21 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Shiny_3
 [BUFFER1]'s dazzling color\ncatches every eye.
 
+#org @sText_FM_Shiny_4
+[BUFFER1] is dazzling in the\nlight!
+
+#org @sText_FM_Shiny_5
+[BUFFER1] sparkles at every step.
+
+#org @sText_FM_Shiny_6
+[BUFFER1] seems to enjoy the\nattention.
+
+#org @sText_FM_Shiny_7
+People would stop to stare at\n[BUFFER1].
+
+#org @sText_FM_Shiny_8
+[BUFFER1]'s color is truly one of\na kind.
+
 #org @sText_FM_LevelHigh_0
 [BUFFER1] carries itself like a\nveteran.
 
@@ -564,6 +1020,18 @@ Nothing seems out of the ordinary.
 
 #org @sText_FM_LevelHigh_2
 [BUFFER1] has clearly seen many\nbattles.
+
+#org @sText_FM_LevelHigh_3
+[BUFFER1] has an air of\nexperience.
+
+#org @sText_FM_LevelHigh_4
+[BUFFER1] stands firm like a\nseasoned fighter.
+
+#org @sText_FM_LevelHigh_5
+[BUFFER1] looks calm and\npowerful.
+
+#org @sText_FM_LevelHigh_6
+[BUFFER1] seems to remember every\nbattle.
 
 #org @sText_FM_LevelLow_0
 [BUFFER1] is full of a beginner's\nenergy!
@@ -574,11 +1042,35 @@ Nothing seems out of the ordinary.
 #org @sText_FM_LevelLow_2
 [BUFFER1] is eager to get\nstronger!
 
+#org @sText_FM_LevelLow_3
+[BUFFER1] looks up to you\neagerly.
+
+#org @sText_FM_LevelLow_4
+[BUFFER1] is dreaming of getting\nstrong.
+
+#org @sText_FM_LevelLow_5
+[BUFFER1] is trying hard to keep\nup.
+
+#org @sText_FM_LevelLow_6
+[BUFFER1] is thrilled by\neverything it sees.
+
 #org @sText_FM_OtherTrainer_1
 [BUFFER1] sometimes gazes at the\nhorizon.
 
 #org @sText_FM_OtherTrainer_2
 [BUFFER1] is getting used to its\nnew Trainer.
+
+#org @sText_FM_OtherTrainer_3
+[BUFFER1] sometimes looks back as\nif remembering.
+
+#org @sText_FM_OtherTrainer_4
+[BUFFER1] is slowly warming up to\nyou.
+
+#org @sText_FM_OtherTrainer_5
+[BUFFER1] seems to wonder about\nits past.
+
+#org @sText_FM_OtherTrainer_6
+[BUFFER1] is trying to trust you.
 
 #org @sText_FM_HighIv_1
 [BUFFER1] strikes a pose, full of\npower!
@@ -586,11 +1078,32 @@ Nothing seems out of the ordinary.
 #org @sText_FM_HighIv_2
 [BUFFER1] seems very sure of its\nstrength.
 
+#org @sText_FM_HighIv_3
+[BUFFER1] tests its strength on a\nrock.
+
+#org @sText_FM_HighIv_4
+[BUFFER1] seems very confident\ntoday.
+
+#org @sText_FM_HighIv_5
+[BUFFER1] is bursting with power!
+
+#org @sText_FM_HighIv_6
+[BUFFER1] flexes proudly.
+
 #org @sText_FM_Leftovers_1
 [BUFFER1] nibbles on its snack.
 
 #org @sText_FM_Leftovers_2
 [BUFFER1] pats its full belly.
+
+#org @sText_FM_Leftovers_3
+[BUFFER1] licks its lips.
+
+#org @sText_FM_Leftovers_4
+[BUFFER1] is guarding its snack.
+
+#org @sText_FM_Leftovers_5
+[BUFFER1] seems to be chewing on\nsomething.
 
 #org @sText_FM_HeldItem_1
 [BUFFER1] shows off its held item\nto you.
@@ -598,14 +1111,47 @@ Nothing seems out of the ordinary.
 #org @sText_FM_HeldItem_2
 [BUFFER1] is guarding its item\ncarefully.
 
+#org @sText_FM_HeldItem_3
+[BUFFER1] holds its item tightly.
+
+#org @sText_FM_HeldItem_4
+[BUFFER1] checks that its item is\nstill there.
+
+#org @sText_FM_HeldItem_5
+[BUFFER1] seems proud of what\nit's holding.
+
+#org @sText_FM_HeldItem_6
+[BUFFER1] shows you its treasure.
+
 #org @sText_FM_LuxuryBall_1
 [BUFFER1] seems to enjoy its\nfancy Ball.
+
+#org @sText_FM_LuxuryBall_2
+[BUFFER1] feels special in its\nLuxury Ball.
+
+#org @sText_FM_LuxuryBall_3
+[BUFFER1] glances at the Ball\nwith pride.
+
+#org @sText_FM_LuxuryBall_4
+[BUFFER1] is acting very\ndignified.
 
 #org @sText_FM_MetPlace_1
 [BUFFER1] seems to remember\n[BUFFER2] fondly.
 
 #org @sText_FM_MetPlace_2
 [BUFFER1] is thinking back to\n[BUFFER2].
+
+#org @sText_FM_MetPlace_3
+[BUFFER1] is recalling the day at\n[BUFFER2].
+
+#org @sText_FM_MetPlace_4
+[BUFFER1] seems to miss [BUFFER2].
+
+#org @sText_FM_MetPlace_5
+[BUFFER1] remembers when you met\nat [BUFFER2].
+
+#org @sText_FM_MetPlace_6
+[BUFFER1] looks nostalgic about\n[BUFFER2].
 
 #org @sText_FM_Rare_0
 [BUFFER1] gave you a long, tight\nhug!
@@ -622,134 +1168,401 @@ Nothing seems out of the ordinary.
 #org @sText_FM_Rare_4
 [BUFFER1] found a pretty pebble\nand showed you.
 
+#org @sText_FM_Rare_5
+[BUFFER1] jumped into your arms!
+
+#org @sText_FM_Rare_6
+[BUFFER1] rolled around in the\ngrass happily!
+
+#org @sText_FM_Rare_7
+[BUFFER1] found a four-leaf\nclover and showed you.
+
+#org @sText_FM_Rare_8
+[BUFFER1] drew a picture in the\ndirt for you.
+
+#org @sText_FM_Rare_9
+[BUFFER1] sneaked a sweet nap on\nyour bag.
+
+#org @sText_FM_Rare_10
+[BUFFER1] danced around [PLAYER] in\njoy!
+
+#org @sText_FM_Rare_11
+[BUFFER1] gave you a big nuzzle!
+
+#org @sText_FM_Rare_12
+[BUFFER1] brought you a pretty\nfeather.
+
+#org @sText_FM_Rare_13
+[BUFFER1] seems to be smiling for\nno reason.
+
+#org @sText_FM_Rare_14
+[BUFFER1] playfully chased its\nown shadow.
+
+#org @sText_FM_Solo_0
+It's just [PLAYER] and [BUFFER1] on\nthe road.
+
+#org @sText_FM_Solo_1
+[BUFFER1] seems to like having\nyou all to itself.
+
+#org @sText_FM_Solo_2
+[BUFFER1] looks proud to be your\nonly partner.
+
+#org @sText_FM_Solo_3
+[BUFFER1] stays right by your\nside.
+
+#org @sText_FM_Solo_4
+[BUFFER1] seems happy to be your\npartner.
+
+#org @sText_FM_EggInParty_0
+[BUFFER1] glances at the Egg in\nyour party.
+
+#org @sText_FM_EggInParty_1
+[BUFFER1] seems curious about the\nEgg.
+
+#org @sText_FM_EggInParty_2
+[BUFFER1] listens closely to the\nEgg.
+
+#org @sText_FM_EggInParty_3
+[BUFFER1] wonders what's inside\nthe Egg.
+
+#org @sText_FM_EggInParty_4
+[BUFFER1] looks like it wants to\nprotect the Egg.
+
+#org @sText_FM_EggInParty_5
+[BUFFER1] seems to be waiting for\nthe Egg to hatch.
+
+#org @sText_FM_FullParty_0
+[BUFFER1] seems to enjoy the big\nteam.
+
+#org @sText_FM_FullParty_1
+[BUFFER1] has lots of friends in\nthe party.
+
+#org @sText_FM_FullParty_2
+[BUFFER1] feels like part of a\ngreat team.
+
+#org @sText_FM_FullParty_3
+[BUFFER1] is proud of the whole\nparty.
+
+#org @sText_FM_FullParty_4
+[BUFFER1] seems to be counting\nthe team.
+
+#org @sText_FM_BadgesNone_0
+[BUFFER1] is excited for the\nadventure ahead!
+
+#org @sText_FM_BadgesNone_1
+[BUFFER1] is ready for the very\nfirst Gym.
+
+#org @sText_FM_BadgesNone_2
+[BUFFER1] has big dreams for the\njourney.
+
+#org @sText_FM_BadgesNone_3
+[BUFFER1] looks like it just\nstarted the adventure.
+
+#org @sText_FM_BadgesNone_4
+[BUFFER1] can't wait to grow\nstronger.
+
+#org @sText_FM_BadgesFew_0
+[BUFFER1] is getting more\nconfident.
+
+#org @sText_FM_BadgesFew_1
+[BUFFER1] seems proud of the\nBadges you've won.
+
+#org @sText_FM_BadgesFew_2
+[BUFFER1] thinks about the next\nGym.
+
+#org @sText_FM_BadgesFew_3
+[BUFFER1] feels like it's getting\nstronger.
+
+#org @sText_FM_BadgesFew_4
+[BUFFER1] is warming up for more\nbattles.
+
+#org @sText_FM_BadgesMany_0
+[BUFFER1] is ready for tougher\nchallenges.
+
+#org @sText_FM_BadgesMany_1
+[BUFFER1] seems to feel the\nLeague getting closer.
+
+#org @sText_FM_BadgesMany_2
+[BUFFER1] is proud of how far\nyou've come.
+
+#org @sText_FM_BadgesMany_3
+[BUFFER1] has full confidence in\nyou.
+
+#org @sText_FM_BadgesMany_4
+[BUFFER1] looks at your Badge\ncase thoughtfully.
+
+#org @sText_FM_BadgesAll_0
+[BUFFER1] seems ready for the\nPokémon League.
+
+#org @sText_FM_BadgesAll_1
+[BUFFER1] glows with pride at\nyour Badges.
+
+#org @sText_FM_BadgesAll_2
+[BUFFER1] knows you're a real\nTrainer now.
+
+#org @sText_FM_BadgesAll_3
+[BUFFER1] seems eager for a\nrematch with anyone.
+
+#org @sText_FM_BadgesAll_4
+[BUFFER1] feels like a champion\nalready.
+
 #org @sText_FM_Nature_HARDY_0
 [BUFFER1] doesn't mind the long\nwalk.
+
+#org @sText_FM_Nature_HARDY_1
+[BUFFER1] shows a steady, patient\nattitude.
 
 #org @sText_FM_Nature_LONELY_0
 [BUFFER1] seems to enjoy your\ncompany.
 
+#org @sText_FM_Nature_LONELY_1
+[BUFFER1] stays as close to you\nas it can.
+
 #org @sText_FM_Nature_BRAVE_0
 [BUFFER1] marches ahead without\nfear.
+
+#org @sText_FM_Nature_BRAVE_1
+[BUFFER1] puffs out its chest\nbravely.
 
 #org @sText_FM_Nature_ADAMANT_0
 [BUFFER1] is eager for a tough\nbattle.
 
+#org @sText_FM_Nature_ADAMANT_1
+[BUFFER1] stands firm and ready.
+
 #org @sText_FM_Nature_NAUGHTY_0
 [BUFFER1] is plotting some\nmischief.
+
+#org @sText_FM_Nature_NAUGHTY_1
+[BUFFER1] tries to sneak a snack.
 
 #org @sText_FM_Nature_BOLD_0
 [BUFFER1] stands tall and proud.
 
+#org @sText_FM_Nature_BOLD_1
+[BUFFER1] looks around boldly.
+
 #org @sText_FM_Nature_DOCILE_0
 [BUFFER1] follows along\nobediently.
+
+#org @sText_FM_Nature_DOCILE_1
+[BUFFER1] stays quietly by your\nside.
 
 #org @sText_FM_Nature_RELAXED_0
 [BUFFER1] is taking it easy.
 
+#org @sText_FM_Nature_RELAXED_1
+[BUFFER1] strolls at its own\npace.
+
 #org @sText_FM_Nature_IMPISH_0
 [BUFFER1] playfully tugs at your\nsleeve.
+
+#org @sText_FM_Nature_IMPISH_1
+[BUFFER1] hides behind you,\ngiggling.
 
 #org @sText_FM_Nature_LAX_0
 [BUFFER1] is lazily lagging\nbehind.
 
+#org @sText_FM_Nature_LAX_1
+[BUFFER1] sits down for a little\nbreak.
+
 #org @sText_FM_Nature_TIMID_0
 [BUFFER1] flinches at a small\nnoise.
+
+#org @sText_FM_Nature_TIMID_1
+[BUFFER1] hides behind your leg.
 
 #org @sText_FM_Nature_HASTY_0
 [BUFFER1] can't wait to move on.
 
+#org @sText_FM_Nature_HASTY_1
+[BUFFER1] taps the ground\nimpatiently.
+
 #org @sText_FM_Nature_SERIOUS_0
 [BUFFER1] is taking the walk very\nseriously.
+
+#org @sText_FM_Nature_SERIOUS_1
+[BUFFER1] seems deep in thought.
 
 #org @sText_FM_Nature_JOLLY_0
 [BUFFER1] is full of cheer!
 
+#org @sText_FM_Nature_JOLLY_1
+[BUFFER1] is laughing at\nsomething.
+
 #org @sText_FM_Nature_NAIVE_0
 [BUFFER1] is chasing a butterfly.
+
+#org @sText_FM_Nature_NAIVE_1
+[BUFFER1] stares at everything in\nwonder.
 
 #org @sText_FM_Nature_MODEST_0
 [BUFFER1] seems happy to stay in\nthe background.
 
+#org @sText_FM_Nature_MODEST_1
+[BUFFER1] blushes when you praise\nit.
+
 #org @sText_FM_Nature_MILD_0
 [BUFFER1] is gently smiling at\nyou.
+
+#org @sText_FM_Nature_MILD_1
+[BUFFER1] yawns softly.
 
 #org @sText_FM_Nature_QUIET_0
 [BUFFER1] walks calmly beside\nyou.
 
+#org @sText_FM_Nature_QUIET_1
+[BUFFER1] is silently enjoying\nthe walk.
+
 #org @sText_FM_Nature_BASHFUL_0
 [BUFFER1] hides its face when you\nlook.
+
+#org @sText_FM_Nature_BASHFUL_1
+[BUFFER1] glances shyly at you.
 
 #org @sText_FM_Nature_RASH_0
 [BUFFER1] dashes ahead, then runs\nback!
 
+#org @sText_FM_Nature_RASH_1
+[BUFFER1] charges ahead without\nlooking.
+
 #org @sText_FM_Nature_CALM_0
 [BUFFER1] is peacefully taking in\nthe view.
+
+#org @sText_FM_Nature_CALM_1
+[BUFFER1] seems totally at peace.
 
 #org @sText_FM_Nature_GENTLE_0
 [BUFFER1] looks at you kindly.
 
+#org @sText_FM_Nature_GENTLE_1
+[BUFFER1] moves softly beside\nyou.
+
 #org @sText_FM_Nature_SASSY_0
 [BUFFER1] turns its nose up\nplayfully.
+
+#org @sText_FM_Nature_SASSY_1
+[BUFFER1] struts like it owns the\nroad.
 
 #org @sText_FM_Nature_CAREFUL_0
 [BUFFER1] checks every step\nbefore taking it.
 
+#org @sText_FM_Nature_CAREFUL_1
+[BUFFER1] looks both ways before\nmoving.
+
 #org @sText_FM_Nature_QUIRKY_0
 [BUFFER1] is doing something very\nstrange.
+
+#org @sText_FM_Nature_QUIRKY_1
+[BUFFER1] is spinning for no\nreason.
 
 #org @sText_FM_Type_NORMAL_0
 [BUFFER1] seems perfectly\ncontent.
 
+#org @sText_FM_Type_NORMAL_1
+[BUFFER1] is just enjoying the\nstroll.
+
 #org @sText_FM_Type_FIRE_0
 [BUFFER1] radiates a cozy warmth.
+
+#org @sText_FM_Type_FIRE_1
+[BUFFER1] keeps itself warm and\ncozy.
 
 #org @sText_FM_Type_WATER_0
 [BUFFER1] smells faintly of the\nsea.
 
+#org @sText_FM_Type_WATER_1
+[BUFFER1] seems to long for the\nwater.
+
 #org @sText_FM_Type_ELECTRIC_0
 Static crackles around [BUFFER1].
+
+#org @sText_FM_Type_ELECTRIC_1
+[BUFFER1] sparks with excitement.
 
 #org @sText_FM_Type_GRASS_0
 [BUFFER1] rustles like leaves in\nthe wind.
 
+#org @sText_FM_Type_GRASS_1
+[BUFFER1] smells like fresh\nleaves.
+
 #org @sText_FM_Type_ICE_0
 Tiny frost crystals form near\n[BUFFER1].
+
+#org @sText_FM_Type_ICE_1
+[BUFFER1] breathes out a cold\nmist.
 
 #org @sText_FM_Type_FIGHTING_0
 [BUFFER1] throws a few practice\npunches.
 
+#org @sText_FM_Type_FIGHTING_1
+[BUFFER1] shadowboxes as it\nwalks.
+
 #org @sText_FM_Type_FLYING_0
 [BUFFER1] flaps as if wanting to\ntake off.
+
+#org @sText_FM_Type_FLYING_1
+[BUFFER1] flutters at a passing\nbird.
 
 #org @sText_FM_Type_POISON_0
 [BUFFER1] gives off a faint, odd\nsmell.
 
+#org @sText_FM_Type_POISON_1
+[BUFFER1] oozes a bit. Gross but\ncute.
+
 #org @sText_FM_Type_GROUND_0
 [BUFFER1] kicks up a little dust.
+
+#org @sText_FM_Type_GROUND_1
+[BUFFER1] scratches at the dirt.
 
 #org @sText_FM_Type_ROCK_0
 [BUFFER1] clunks along sturdily.
 
+#org @sText_FM_Type_ROCK_1
+[BUFFER1] thumps along heavily.
+
 #org @sText_FM_Type_BUG_0
 [BUFFER1] skitters about\nenergetically.
+
+#org @sText_FM_Type_BUG_1
+[BUFFER1] seems to hear tiny\nbugs.
 
 #org @sText_FM_Type_GHOST_0
 [BUFFER1] stares at something you\ncan't see.
 
+#org @sText_FM_Type_GHOST_1
+[BUFFER1] giggles at nothing.
+
 #org @sText_FM_Type_STEEL_0
 [BUFFER1] gleams in the light.
+
+#org @sText_FM_Type_STEEL_1
+[BUFFER1] clanks quietly as it\nwalks.
 
 #org @sText_FM_Type_PSYCHIC_0
 [BUFFER1] seems to know what\nyou're thinking.
 
+#org @sText_FM_Type_PSYCHIC_1
+[BUFFER1] stares into the\ndistance.
+
 #org @sText_FM_Type_DRAGON_0
 [BUFFER1] carries itself with\ngreat dignity.
+
+#org @sText_FM_Type_DRAGON_1
+[BUFFER1] looks noble and strong.
 
 #org @sText_FM_Type_DARK_0
 [BUFFER1] eyes the shadows\nsuspiciously.
 
+#org @sText_FM_Type_DARK_1
+[BUFFER1] glances around slyly.
+
 #org @sText_FM_Type_FAIRY_0
 [BUFFER1] twirls, leaving a faint\nsparkle.
+
+#org @sText_FM_Type_FAIRY_1
+[BUFFER1] giggles and sparkles.
 
 #org @sText_FM_Egg_HUMAN_LIKE_1
 [BUFFER1] is imitating your pose.
@@ -757,11 +1570,17 @@ Tiny frost crystals form near\n[BUFFER1].
 #org @sText_FM_Egg_HUMAN_LIKE_2
 [BUFFER1] seems to be trying to\ntalk.
 
+#org @sText_FM_Egg_HUMAN_LIKE_3
+[BUFFER1] is acting like a\nperson!
+
 #org @sText_FM_Egg_MONSTER_1
 [BUFFER1] lets out a rumbling\nroar.
 
 #org @sText_FM_Egg_MONSTER_2
 [BUFFER1] swings around happily.
+
+#org @sText_FM_Egg_MONSTER_3
+[BUFFER1] thumps its chest.
 
 #org @sText_FM_Egg_FAIRY_1
 [BUFFER1] hums while skipping.
@@ -769,11 +1588,17 @@ Tiny frost crystals form near\n[BUFFER1].
 #org @sText_FM_Egg_FAIRY_2
 [BUFFER1] twirls around you.
 
+#org @sText_FM_Egg_FAIRY_3
+[BUFFER1] twirls and skips ahead.
+
 #org @sText_FM_Egg_FIELD_0
 [BUFFER1] bounds through the\ngrass.
 
 #org @sText_FM_Egg_FIELD_1
 [BUFFER1] sniffs every bush it\npasses.
+
+#org @sText_FM_Egg_FIELD_2
+[BUFFER1] sniffs a trail.
 
 #org @sText_FM_Egg_WATER_1_0
 [BUFFER1] looks wistfully at the\nwater.
@@ -781,11 +1606,17 @@ Tiny frost crystals form near\n[BUFFER1].
 #org @sText_FM_Egg_WATER_1_1
 [BUFFER1] seems to long for a\nswim.
 
+#org @sText_FM_Egg_WATER_1_2
+[BUFFER1] is dreaming of water.
+
 #org @sText_FM_Egg_WATER_2_0
 [BUFFER1] looks longingly at a\npuddle.
 
 #org @sText_FM_Egg_WATER_2_1
 [BUFFER1] seems to want a dip.
+
+#org @sText_FM_Egg_WATER_2_2
+[BUFFER1] seems to want to\nsplash.
 
 #org @sText_FM_Egg_WATER_3_0
 [BUFFER1] wiggles along happily.
@@ -793,11 +1624,17 @@ Tiny frost crystals form near\n[BUFFER1].
 #org @sText_FM_Egg_WATER_3_1
 [BUFFER1] seems to enjoy the damp\nair.
 
+#org @sText_FM_Egg_WATER_3_2
+[BUFFER1] squirms happily.
+
 #org @sText_FM_Egg_FLYING_0
 [BUFFER1] flutters up and down.
 
 #org @sText_FM_Egg_FLYING_1
 [BUFFER1] keeps looking at the\nsky.
+
+#org @sText_FM_Egg_FLYING_2
+[BUFFER1] flaps its wings once.
 
 #org @sText_FM_Egg_BUG_0
 [BUFFER1] chases a passing\ninsect.
@@ -805,11 +1642,17 @@ Tiny frost crystals form near\n[BUFFER1].
 #org @sText_FM_Egg_BUG_1
 [BUFFER1] is busily scurrying\nabout.
 
+#org @sText_FM_Egg_BUG_2
+[BUFFER1] scampers about.
+
 #org @sText_FM_Egg_GRASS_0
 [BUFFER1] sways gently in the\nbreeze.
 
 #org @sText_FM_Egg_GRASS_1
 [BUFFER1] turns toward the sun.
+
+#org @sText_FM_Egg_GRASS_2
+[BUFFER1] leans toward the light.
 
 #org @sText_FM_Egg_MINERAL_0
 [BUFFER1] clinks along steadily.
@@ -817,17 +1660,26 @@ Tiny frost crystals form near\n[BUFFER1].
 #org @sText_FM_Egg_MINERAL_1
 [BUFFER1] seems very sturdy\ntoday.
 
+#org @sText_FM_Egg_MINERAL_2
+[BUFFER1] is as sturdy as a rock.
+
 #org @sText_FM_Egg_AMORPHOUS_0
 [BUFFER1] wobbles along\ncheerfully.
 
 #org @sText_FM_Egg_AMORPHOUS_1
 [BUFFER1] jiggles in an odd way.
 
+#org @sText_FM_Egg_AMORPHOUS_2
+[BUFFER1] melts into a happy\npuddle.
+
 #org @sText_FM_Egg_DRAGON_0
 [BUFFER1] seems to be dreaming of\nthe sky.
 
 #org @sText_FM_Egg_DRAGON_1
 [BUFFER1] puffs out its chest\nproudly.
+
+#org @sText_FM_Egg_DRAGON_2
+[BUFFER1] roars softly.
 
 #org @sText_FM_Species_0
 [BUFFER1]'s cheeks spark with\njoy!
@@ -924,3 +1776,225 @@ Tiny frost crystals form near\n[BUFFER1].
 
 #org @sText_FM_Species_31
 [BUFFER1] gnaws on a twig.
+
+#org @sText_FM_Species_32
+[BUFFER1] swings its tail, flame\nflickering.
+
+#org @sText_FM_Species_33
+[BUFFER1]'s cannons gleam in the\nlight.
+
+#org @sText_FM_Species_34
+[BUFFER1]'s fluffy tail sways\nproudly.
+
+#org @sText_FM_Species_35
+[BUFFER1]'s big flower is in full\nbloom.
+
+#org @sText_FM_Species_36
+[BUFFER1]'s bud seems about to\nbloom.
+
+#org @sText_FM_Species_37
+[BUFFER1] spreads its wings\nmajestically.
+
+#org @sText_FM_Species_38
+[BUFFER1] zaps a little spark of\njoy.
+
+#org @sText_FM_Species_39
+[BUFFER1] rolls into a ball and\nback.
+
+#org @sText_FM_Species_40
+[BUFFER1] dances under an\nimaginary moon.
+
+#org @sText_FM_Species_41
+[BUFFER1] swishes its tails\nelegantly.
+
+#org @sText_FM_Species_42
+[BUFFER1] puffs up like a\nballoon.
+
+#org @sText_FM_Species_43
+[BUFFER1] flies in lazy circles.
+
+#org @sText_FM_Species_44
+[BUFFER1] wafts a surprising\nsmell.
+
+#org @sText_FM_Species_45
+[BUFFER1] checks its mushrooms.
+
+#org @sText_FM_Species_46
+[BUFFER1] stares with big round\neyes.
+
+#org @sText_FM_Species_47
+[BUFFER1] pops up from the\nground, then hides.
+
+#org @sText_FM_Species_48
+[BUFFER1] shakes its fist at the\nair.
+
+#org @sText_FM_Species_49
+[BUFFER1] is in a bad mood about\nnothing.
+
+#org @sText_FM_Species_50
+[BUFFER1]'s belly swirl looks\nhypnotic.
+
+#org @sText_FM_Species_51
+[BUFFER1] splashes in an\nimaginary puddle.
+
+#org @sText_FM_Species_52
+[BUFFER1] bends a spoon just to\nshow off.
+
+#org @sText_FM_Species_53
+[BUFFER1] does some arm\nexercises.
+
+#org @sText_FM_Species_54
+[BUFFER1] sways like a reed.
+
+#org @sText_FM_Species_55
+[BUFFER1] wobbles happily.
+
+#org @sText_FM_Species_56
+[BUFFER1] prances along proudly.
+
+#org @sText_FM_Species_57
+[BUFFER1] hovers with a soft hum.
+
+#org @sText_FM_Species_58
+[BUFFER1] waves its leek like a\nbaton.
+
+#org @sText_FM_Species_59
+[BUFFER1]'s two heads argue\nquietly.
+
+#org @sText_FM_Species_60
+[BUFFER1] slides along happily.
+
+#org @sText_FM_Species_61
+[BUFFER1] leaves a puddle behind.
+
+#org @sText_FM_Species_62
+[BUFFER1] clamps and unclamps its\nshell.
+
+#org @sText_FM_Species_63
+[BUFFER1] floats around\nplayfully.
+
+#org @sText_FM_Species_64
+[BUFFER1] tries to scare a\npasserby.
+
+#org @sText_FM_Species_65
+[BUFFER1] yawns and sniffs the\nair.
+
+#org @sText_FM_Species_66
+[BUFFER1] clacks its claws.
+
+#org @sText_FM_Species_67
+[BUFFER1] rolls along beside you.
+
+#org @sText_FM_Species_68
+[BUFFER1]'s heads chatter among\nthemselves.
+
+#org @sText_FM_Species_69
+[BUFFER1] clutches its bone\ntightly.
+
+#org @sText_FM_Species_70
+[BUFFER1] stretches its legs.
+
+#org @sText_FM_Species_71
+[BUFFER1] drifts and puffs.
+
+#org @sText_FM_Species_72
+[BUFFER1] charges ahead, then\nstops.
+
+#org @sText_FM_Species_73
+[BUFFER1] seems to want to care\nfor you.
+
+#org @sText_FM_Species_74
+[BUFFER1]'s vines wriggle\nhappily.
+
+#org @sText_FM_Species_75
+[BUFFER1] seems to be protecting\nsomething.
+
+#org @sText_FM_Species_76
+[BUFFER1] blows a tiny bubble.
+
+#org @sText_FM_Species_77
+[BUFFER1] flutters its fins.
+
+#org @sText_FM_Species_78
+[BUFFER1]'s core flashes softly.
+
+#org @sText_FM_Species_79
+[BUFFER1] pantomimes an invisible\nwall.
+
+#org @sText_FM_Species_80
+[BUFFER1] sharpens its scythes.
+
+#org @sText_FM_Species_81
+[BUFFER1] sways in a little\ndance.
+
+#org @sText_FM_Species_82
+[BUFFER1] crackles with\nelectricity.
+
+#org @sText_FM_Species_83
+[BUFFER1] keeps its flame going.
+
+#org @sText_FM_Species_84
+[BUFFER1] clicks its horns.
+
+#org @sText_FM_Species_85
+[BUFFER1] lashes itself with its\ntails.
+
+#org @sText_FM_Species_86
+[BUFFER1] glares, then looks\nsheepish.
+
+#org @sText_FM_Species_87
+[BUFFER1] beeps cheerfully.
+
+#org @sText_FM_Species_88
+[BUFFER1] curls into its shell.
+
+#org @sText_FM_Species_89
+[BUFFER1] seems to remember\nancient seas.
+
+#org @sText_FM_Species_90
+[BUFFER1] screeches into the sky.
+
+#org @sText_FM_Species_91
+[BUFFER1] glitters elegantly.
+
+#org @sText_FM_Species_92
+[BUFFER1] feels electricity in\nthe air.
+
+#org @sText_FM_Species_93
+[BUFFER1] warms the air around\nit.
+
+#org @sText_FM_Species_94
+[BUFFER1] wriggles happily.
+
+#org @sText_FM_Species_95
+[BUFFER1] seems gentle for its\nsize.
+
+#org @sText_FM_Species_96
+[BUFFER1] seems to bring good\nluck.
+
+#org @sText_FM_Species_97
+[BUFFER1]'s wool crackles with\nstatic.
+
+#org @sText_FM_Species_98
+[BUFFER1] seems to be listening\nto the sea.
+
+#org @sText_FM_Species_99
+[BUFFER1] shines with rainbow\nlight.
+
+#org @sText_FM_Species_100
+[BUFFER1] chews a twig\nthoughtfully.
+
+#org @sText_FM_Species_101
+[BUFFER1] splashes in a nearby\npuddle.
+
+#org @sText_FM_Species_102
+[BUFFER1] chirps and fluffs up.
+
+#org @sText_FM_Species_103
+[BUFFER1] looks up at the sky\nwistfully.
+
+#org @sText_FM_Species_104
+[BUFFER1] zigzags around you.
+
+#org @sText_FM_Species_105
+[BUFFER1] seems to sense your\nfeelings.
