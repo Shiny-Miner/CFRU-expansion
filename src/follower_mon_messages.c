@@ -4,6 +4,8 @@
 #include "../include/fieldmap.h"
 #include "../include/field_message_box.h"
 #include "../include/field_weather.h"
+#include "../include/party_menu.h"
+#include "../include/constants/field_effects.h"
 #include "../include/gpu_regs.h"
 #include "../include/item_icon.h"
 #include "../include/item_menu.h"
@@ -31,9 +33,6 @@
 #include "../include/constants/pokedex.h"
 #include "../include/constants/pokemon.h"
 #include "../include/constants/songs.h"
-
-#include "../include/party_menu.h"
-#include "../include/constants/field_effects.h"
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/build_pokemon.h"
@@ -64,7 +63,7 @@
 #define HIGH_IV 25
 #define ITEM_FIND_CHANCE 3
 #define RARE_TEXT_CHANCE 2
-#define SITUATIONAL_CHANCE 65
+#define SITUATIONAL_CHANCE 75
 #define MAX_POOLS 32
 #define EMOTE_NONE 0xFF
 
@@ -158,23 +157,47 @@ static void BuildSituationalPools(struct Pokemon* mon, struct TextPool* pools, u
     u8 type = gBaseStats[species].type1;
 
     if (status & STATUS1_SLEEP)
-        ADD_POOL(sPool_Asleep, FLDEFF_X_ICON, 60);
+    {
+        ADD_POOL(sPool_Asleep, FLDEFF_X_ICON, 100);
+        ADD_POOL(sPool_Asleep, FLDEFF_X_ICON, 100);
+    }
     else if (status & STATUS_PSN_ANY)
-        ADD_POOL(sPool_Poison, FLDEFF_X_ICON, 60);
+    {
+        ADD_POOL(sPool_Poison, FLDEFF_X_ICON, 100);
+        ADD_POOL(sPool_Poison, FLDEFF_X_ICON, 100);
+    }
     else if (status & STATUS1_PARALYSIS)
-        ADD_POOL(sPool_Paralyzed, FLDEFF_X_ICON, 60);
+    {
+        ADD_POOL(sPool_Paralyzed, FLDEFF_X_ICON, 100);
+        ADD_POOL(sPool_Paralyzed, FLDEFF_X_ICON, 100);
+    }
     else if (status & STATUS1_BURN)
-        ADD_POOL(sPool_Burned, FLDEFF_X_ICON, 60);
+    {
+        ADD_POOL(sPool_Burned, FLDEFF_X_ICON, 100);
+        ADD_POOL(sPool_Burned, FLDEFF_X_ICON, 100);
+    }
     else if (status & STATUS1_FREEZE)
-        ADD_POOL(sPool_Frozen, FLDEFF_X_ICON, 60);
+    {
+        ADD_POOL(sPool_Frozen, FLDEFF_X_ICON, 100);
+        ADD_POOL(sPool_Frozen, FLDEFF_X_ICON, 100);
+    }
 
     if (hp != 0 && maxHp != 0 && (hp * 100) / maxHp <= LOW_HP_PERCENT)
-        ADD_POOL(sPool_LowHp, FLDEFF_X_ICON, 50);
+    {
+        ADD_POOL(sPool_LowHp, FLDEFF_X_ICON, 100);
+        ADD_POOL(sPool_LowHp, FLDEFF_X_ICON, 100);
+    }
 
     if (happiness >= HIGH_HAPPINESS)
-        ADD_POOL(sPool_Happy, FLDEFF_SMILEY_FACE_ICON, 60);
+    {
+        ADD_POOL(sPool_Happy, FLDEFF_SMILEY_FACE_ICON, 100);
+        ADD_POOL(sPool_Happy, FLDEFF_SMILEY_FACE_ICON, 100);
+    }
     else if (happiness <= LOW_HAPPINESS)
-        ADD_POOL(sPool_Lonely, FLDEFF_QUESTION_MARK_ICON, 40);
+    {
+        ADD_POOL(sPool_Lonely, FLDEFF_QUESTION_MARK_ICON, 100);
+        ADD_POOL(sPool_Lonely, FLDEFF_QUESTION_MARK_ICON, 100);
+    }
 
     switch (gWeatherPtr->currWeather)
     {
@@ -192,7 +215,7 @@ static void BuildSituationalPools(struct Pokemon* mon, struct TextPool* pools, u
         case WEATHER_FOG_1:
         case WEATHER_FOG_2:
         case WEATHER_FOG_3:
-            ADD_POOL(sPool_Fog, FLDEFF_QUESTION_MARK_ICON, 30);
+            ADD_POOL(sPool_Fog, FLDEFF_QUESTION_MARK_ICON, 60);
             break;
         case WEATHER_SUNNY:
         case WEATHER_DROUGHT:
@@ -223,26 +246,29 @@ static void BuildSituationalPools(struct Pokemon* mon, struct TextPool* pools, u
             ADD_POOL(sPool_Town, EMOTE_NONE, 0);
             break;
         case MAP_TYPE_ROUTE:
-            ADD_POOL(sPool_Route, FLDEFF_QUESTION_MARK_ICON, 20);
+            ADD_POOL(sPool_Route, FLDEFF_QUESTION_MARK_ICON, 50);
             break;
     }
 
     if (GetRandomPartyBuddy(mon) != NULL)
-        ADD_POOL(sPool_Buddy, FLDEFF_SMILEY_FACE_ICON, 30);
+    {
+        ADD_POOL(sPool_Buddy, FLDEFF_SMILEY_FACE_ICON, 70);
+        ADD_POOL(sPool_Buddy, FLDEFF_SMILEY_FACE_ICON, 70);
+    }
 
     if (IsMonShiny(mon))
     {
-        ADD_POOL(sPool_Shiny, FLDEFF_DOUBLE_EXCL_MARK_ICON, 70);
-        ADD_POOL(sPool_Shiny, FLDEFF_DOUBLE_EXCL_MARK_ICON, 70);
+        ADD_POOL(sPool_Shiny, FLDEFF_DOUBLE_EXCL_MARK_ICON, 100);
+        ADD_POOL(sPool_Shiny, FLDEFF_DOUBLE_EXCL_MARK_ICON, 100);
     }
 
     if (level >= HIGH_LEVEL)
         ADD_POOL(sPool_LevelHigh, EMOTE_NONE, 0);
     else if (level <= LOW_LEVEL)
-        ADD_POOL(sPool_LevelLow, FLDEFF_EXCLAMATION_MARK_ICON, 20);
+        ADD_POOL(sPool_LevelLow, FLDEFF_EXCLAMATION_MARK_ICON, 60);
 
     if (GetMonData(mon, MON_DATA_OT_ID, NULL) != GetPlayerTrainerId())
-        ADD_POOL(sPool_OtherTrainer, FLDEFF_QUESTION_MARK_ICON, 30);
+        ADD_POOL(sPool_OtherTrainer, FLDEFF_QUESTION_MARK_ICON, 60);
 
     if (GetMonData(mon, MON_DATA_ATK_IV, NULL) >= HIGH_IV || GetMonData(mon, MON_DATA_DEF_IV, NULL) >= HIGH_IV)
         ADD_POOL(sPool_HighIv, EMOTE_NONE, 0);
@@ -253,10 +279,13 @@ static void BuildSituationalPools(struct Pokemon* mon, struct TextPool* pools, u
         ADD_POOL(sPool_HeldItem, EMOTE_NONE, 0);
 
     if (ballType == ITEM_LUXURY_BALL)
-        ADD_POOL(sPool_LuxuryBall, FLDEFF_SMILEY_FACE_ICON, 40);
+    {
+        ADD_POOL(sPool_LuxuryBall, FLDEFF_SMILEY_FACE_ICON, 80);
+        ADD_POOL(sPool_LuxuryBall, FLDEFF_SMILEY_FACE_ICON, 80);
+    }
 
     if (metLocation != 0)
-        ADD_POOL(sPool_MetPlace, FLDEFF_QUESTION_MARK_ICON, 30);
+        ADD_POOL(sPool_MetPlace, FLDEFF_QUESTION_MARK_ICON, 60);
 
     if (nature < ARRAY_COUNT(sNatureTexts))
         AddPool(pools, &count, sNatureTexts[nature], 2, EMOTE_NONE, 0);
@@ -273,8 +302,8 @@ static void BuildSituationalPools(struct Pokemon* mon, struct TextPool* pools, u
 void ShowAnonymousFollowerMessage(void)
 {
     struct TextPool pools[MAX_POOLS];
-    struct TextPool rarePool = {sPool_Rare, ARRAY_COUNT(sPool_Rare), FLDEFF_SMILEY_FACE_ICON, 80};
-    struct TextPool idlePool = {sPool_Idle, ARRAY_COUNT(sPool_Idle), FLDEFF_QUESTION_MARK_ICON, 10};
+    struct TextPool rarePool = {sPool_Rare, ARRAY_COUNT(sPool_Rare), FLDEFF_SMILEY_FACE_ICON, 100};
+    struct TextPool idlePool = {sPool_Idle, ARRAY_COUNT(sPool_Idle), FLDEFF_QUESTION_MARK_ICON, 25};
     struct TextPool speciesPool;
     const u8* speciesTexts[4];
     const struct TextPool* pool = &idlePool;
@@ -326,7 +355,7 @@ void ShowAnonymousFollowerMessage(void)
             speciesPool.texts = speciesTexts;
             speciesPool.count = speciesCount;
             speciesPool.emote = FLDEFF_EXCLAMATION_MARK_ICON;
-            speciesPool.emoteChance = 25;
+            speciesPool.emoteChance = 60;
             if (count < MAX_POOLS - 1)
             {
                 pools[count++] = speciesPool;
