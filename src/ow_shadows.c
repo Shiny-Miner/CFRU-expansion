@@ -31,9 +31,8 @@ ow_shadows.c
 
 
 
-#define SS_ANNE_GFX_ID 151 //Vanilla FR/LG id of the S.S. Anne sprite
+#define SS_ANNE_GFX_ID 151
 
-//ROM data/functions that are not in BPRE.ld
 #define gFieldEffectObjectTemplatePointers ((const struct SpriteTemplate* const *) 0x83A0010)
 
 typedef void (*GroundEffectFunc)(struct EventObject *, struct Sprite *);
@@ -56,34 +55,33 @@ typedef void (*GroundFlagFunc)(struct EventObject *, u32 *);
 #define GetGroundEffectFlags_Seaweed                      ROMFUNC(0x8067F0C, GroundFlagFunc)
 #define GetGroundEffectFlags_JumpLanding                  ROMFUNC(0x8067F2C, GroundFlagFunc)
 
-//This file's functions:
 static void GetGroundEffectFlags_Shadow(struct EventObject *eventObject, u32 *flags);
 void GroundEffect_Shadow(struct EventObject *eventObject, struct Sprite *sprite);
 
 //Order must match the GROUND_EFFECT_FLAG_* bits
 static const GroundEffectFunc sGroundEffectFuncs[] =
 {
-	ROMFUNC(0x806837C, GroundEffectFunc), // TALL_GRASS_ON_SPAWN
-	ROMFUNC(0x80683C8, GroundEffectFunc), // TALL_GRASS_ON_MOVE
-	ROMFUNC(0x8068414, GroundEffectFunc), // LONG_GRASS_ON_SPAWN
-	ROMFUNC(0x8068460, GroundEffectFunc), // LONG_GRASS_ON_MOVE
-	ROMFUNC(0x80684AC, GroundEffectFunc), // ICE_REFLECTION
-	ROMFUNC(0x80684B8, GroundEffectFunc), // REFLECTION
-	ROMFUNC(0x80684C4, GroundEffectFunc), // SHALLOW_FLOWING_WATER
-	ROMFUNC(0x80684D4, GroundEffectFunc), // SAND
-	ROMFUNC(0x8068500, GroundEffectFunc), // DEEP_SAND
-	ROMFUNC(0x80685D0, GroundEffectFunc), // RIPPLES
-	ROMFUNC(0x80685DC, GroundEffectFunc), // PUDDLE
-	ROMFUNC(0x80685EC, GroundEffectFunc), // SAND_PILE
-	ROMFUNC(0x80685FC, GroundEffectFunc), // LAND_IN_TALL_GRASS
-	ROMFUNC(0x8068654, GroundEffectFunc), // LAND_IN_LONG_GRASS
-	ROMFUNC(0x806867C, GroundEffectFunc), // LAND_IN_SHALLOW_WATER
-	ROMFUNC(0x80686AC, GroundEffectFunc), // LAND_IN_DEEP_WATER
-	ROMFUNC(0x80686DC, GroundEffectFunc), // LAND_ON_NORMAL_GROUND
-	ROMFUNC(0x806870C, GroundEffectFunc), // SHORT_GRASS
-	ROMFUNC(0x806871C, GroundEffectFunc), // HOT_SPRINGS
-	ROMFUNC(0x806872C, GroundEffectFunc), // SEAWEED
-	GroundEffect_Shadow,                  // SHADOW
+	ROMFUNC(0x806837C, GroundEffectFunc),
+	ROMFUNC(0x80683C8, GroundEffectFunc),
+	ROMFUNC(0x8068414, GroundEffectFunc),
+	ROMFUNC(0x8068460, GroundEffectFunc),
+	ROMFUNC(0x80684AC, GroundEffectFunc),
+	ROMFUNC(0x80684B8, GroundEffectFunc),
+	ROMFUNC(0x80684C4, GroundEffectFunc),
+	ROMFUNC(0x80684D4, GroundEffectFunc),
+	ROMFUNC(0x8068500, GroundEffectFunc),
+	ROMFUNC(0x80685D0, GroundEffectFunc),
+	ROMFUNC(0x80685DC, GroundEffectFunc),
+	ROMFUNC(0x80685EC, GroundEffectFunc),
+	ROMFUNC(0x80685FC, GroundEffectFunc),
+	ROMFUNC(0x8068654, GroundEffectFunc),
+	ROMFUNC(0x806867C, GroundEffectFunc),
+	ROMFUNC(0x80686AC, GroundEffectFunc),
+	ROMFUNC(0x80686DC, GroundEffectFunc),
+	ROMFUNC(0x806870C, GroundEffectFunc),
+	ROMFUNC(0x806871C, GroundEffectFunc),
+	ROMFUNC(0x806872C, GroundEffectFunc),
+	GroundEffect_Shadow,
 };
 
 //Hook: replaces the three ROM "GetAllGroundEffectFlags" functions
@@ -146,19 +144,18 @@ void DoFlaggedGroundEffects(struct EventObject *eventObject, struct Sprite *spri
 
 static bool8 IsShadowAllowedForGfx(struct EventObject *eventObject)
 {
-	return GetEventObjectGraphicsId(eventObject) != SS_ANNE_GFX_ID; //Full 16-bit id
+	return GetEventObjectGraphicsId(eventObject) != SS_ANNE_GFX_ID;
 }
 
 static bool8 IsShadowAllowedInWeather(void)
 {
-	//Rain and horizontal fog also use the OBJ blend registers
 	u8 curr = gWeatherPtr->currWeather;
 	u8 next = gWeatherPtr->nextWeather;
 	bool8 currBad = curr == WEATHER_RAIN_LIGHT || curr == WEATHER_FOG_1;
 	bool8 nextBad = next == WEATHER_RAIN_LIGHT || next == WEATHER_FOG_1;
 
 	if (currBad && !gWeatherPtr->weatherChangeComplete)
-		nextBad = TRUE; //Weather still changing
+		nextBad = TRUE;
 
 	return !(currBad && nextBad);
 }
@@ -201,11 +198,6 @@ void SetEventObjectShadowVisibility(struct EventObject *eventObject, bool8 invis
 		shadow->invisible = invisible;
 }
 
-//Makes sure a visible event object has a shadow sprite.
-//Shadows are normally only created by the ground effect triggers (spawn/begin step/finish step).
-//An object that is respawned or revealed outside of those (e.g. the follower after surfing)
-//would otherwise stay shadowless until it happens to take a step - or forever if a stale
-//hasShadow flag is blocking GetGroundEffectFlags_Shadow.
 void EnsureEventObjectShadow(struct EventObject *eventObject)
 {
 	u32 flags = 0;
@@ -219,7 +211,7 @@ void EnsureEventObjectShadow(struct EventObject *eventObject)
 	{
 		eventObject->hasShadow = TRUE;
 		if (!eventObject->invisible)
-			shadow->invisible = FALSE; //Shadow left hidden by HideFollower
+			shadow->invisible = FALSE;
 		return;
 	}
 
@@ -254,12 +246,12 @@ Shadow colour
 	which index the shadow tiles use.
 */
 #define OW_SHADOW_COLOR RGB(4, 4, 8)
-#define OW_SHADOW_PAL_TAG 0x2D00 //Any tag not used by another sprite palette
+#define OW_SHADOW_PAL_TAG 0x2D00
 
 #define SHADOW_PAL_ENTRY OW_SHADOW_COLOR
 static const u16 sShadowPalette[16] =
 {
-	0, //Transparent
+	0,
 	SHADOW_PAL_ENTRY, SHADOW_PAL_ENTRY, SHADOW_PAL_ENTRY, SHADOW_PAL_ENTRY,
 	SHADOW_PAL_ENTRY, SHADOW_PAL_ENTRY, SHADOW_PAL_ENTRY, SHADOW_PAL_ENTRY,
 	SHADOW_PAL_ENTRY, SHADOW_PAL_ENTRY, SHADOW_PAL_ENTRY, SHADOW_PAL_ENTRY,
@@ -272,7 +264,6 @@ static void ApplyShadowColor(struct EventObject *eventObject)
 {
 	u8 i, j, palSlot;
 
-	//FldEff_Shadow doesn't return the sprite id, so find the sprite it just created
 	for (i = MAX_SPRITES; i > 0; --i)
 	{
 		struct Sprite *sprite = &gSprites[i - 1];
@@ -287,11 +278,11 @@ static void ApplyShadowColor(struct EventObject *eventObject)
 		{
 			if (sprite->template == gFieldEffectObjectTemplatePointers[j])
 			{
-				palSlot = LoadSpritePalette(&sShadowSpritePalette); //Returns the existing slot if already loaded
+				palSlot = LoadSpritePalette(&sShadowSpritePalette);
 				if (palSlot != 0xFF)
 				{
-					PalRefDecreaseCount(sprite->oam.paletteNum); //Release the vanilla shadow palette
-					PalRefIncreaseCount(palSlot);                //This shadow sprite now owns the shadow palette
+					PalRefDecreaseCount(sprite->oam.paletteNum);
+					PalRefIncreaseCount(palSlot);
 					sprite->oam.paletteNum = palSlot;
 					sprite->oam.objMode = ST_OAM_OBJ_BLEND;
 					SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
@@ -326,10 +317,6 @@ struct WeatherCallbacks
 #define sWeatherFuncs ((const struct WeatherCallbacks*) 0x83C2BC0)
 #define gWeatherPalStateFuncs ((void (* const *)(void)) 0x83C2CB0)
 
-//A field reload (e.g. the follower being restored after surfing) destroys every shadow sprite
-//but leaves hasShadow set on the objects, and GetGroundEffectFlags_Shadow bails out while it is set.
-//Clear such stale flags (one object per frame) so the ground effects can rebuild the shadow, and
-//rebuild the Pokemon follower's shadow right away instead of waiting for its first step.
 static void HealStaleShadows(void)
 {
 	static u8 sNextObject;
@@ -357,14 +344,12 @@ void Task_WeatherMainHook(u8 taskId)
 		if (!sWeatherFuncs[gWeatherPtr->currWeather].finish()
 		&& gWeatherPtr->palProcessingState != WEATHER_PAL_STATE_SCREEN_FADING_OUT)
 		{
-			//Finished cleaning up previous weather. Now transition to next weather.
 			sWeatherFuncs[gWeatherPtr->nextWeather].initVars();
 			gWeatherPtr->gammaStepFrameCounter = 0;
 			gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_CHANGING_WEATHER;
 			gWeatherPtr->currWeather = gWeatherPtr->nextWeather;
 			gWeatherPtr->weatherChangeComplete = TRUE;
 
-			//Re-check shadows now that the weather has settled
 			for (i = 0; i < EVENT_OBJECTS_COUNT; i++)
 				gEventObjects[i].triggerGroundEffectsOnMove = TRUE;
 		}

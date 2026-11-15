@@ -83,18 +83,18 @@ void __attribute__((long_call)) save_serialize_map(void); //BPRE.ld: 0x80590D8 (
 bool32 __attribute__((long_call)) IsNationalPokedexEnabled(void); //BPRE.ld
 u8* __attribute__((long_call)) GetMapNameGeneric_(u8* dest, u16 mapsec); //BPRE.ld: GetMapName(dest, mapsec, 0)
 
-#define RemoveExtraStartMenuWindows ((void (*)(void))(0x806EF18 | 1)) //Same call every vanilla start menu callback makes
-#define GetNationalDexCount ((u16 (*)(u8))(0x8088E8C | 1))            //Used by vanilla SaveStatToString (SAVE_STAT_POKEDEX)
-#define GetKantoDexCount ((u16 (*)(u8))(0x8088EDC | 1))               //Used by vanilla SaveStatToString (SAVE_STAT_POKEDEX)
-#define gDifferentSaveFileRAM (*(vu8*) 0x2031DB0)                    //gDifferentSaveFile (vanilla save dialog reads/clears it)
+#define RemoveExtraStartMenuWindows ((void (*)(void))(0x806EF18 | 1))
+#define GetNationalDexCount ((u16 (*)(u8))(0x8088E8C | 1))
+#define GetKantoDexCount ((u16 (*)(u8))(0x8088EDC | 1))
+#define gDifferentSaveFileRAM (*(vu8*) 0x2031DB0)
 
-void CB2_ReturnToFieldWithOpenMenuHook(void); //overworld.c - reopens the Start Menu (also handles follower palette)
+void CB2_ReturnToFieldWithOpenMenuHook(void);
 
 /* ---------------------------------------------------------------------------------------------------------------
  * Constants
  * ------------------------------------------------------------------------------------------------------------- */
-#define SE_SAVE_SCREEN_SAVED 0x30 //Vanilla plays PlaySE(48) after "saved the game"
-#define SE_SAVE_SCREEN_ERROR SE_FALSE //Vanilla plays PlaySE(22) on a save error
+#define SE_SAVE_SCREEN_SAVED 0x30
+#define SE_SAVE_SCREEN_ERROR SE_FALSE
 
 #define CH_SPACE 0x00
 #define CH_HYPHEN 0xAE
@@ -104,26 +104,22 @@ void CB2_ReturnToFieldWithOpenMenuHook(void); //overworld.c - reopens the Start 
 #define FONT_ID 2
 #define TILEMAP_STRIDE 32
 
-//Party icons
 #define ICON_CENTER_X 120
 #define ICON_SPACING 38
 #define ICON_Y 56
 #define ICON_NONE 0xFF
 
-//Page dots (tile row/column of the first dot in the background image, dot highlighted in the png)
 #define DOT_ROW 13
 #define DOT_FIRST_COL 8
 #define DOT_COUNT 14
 #define DOT_START_POS 6
 #define DOT_STEP_FRAMES 5
 
-//Timings (frames)
 #define SAVING_MIN_FRAMES 75
 #define SAVING_DOT_FRAMES 14
 #define RESULT_MAX_FRAMES 180
 #define FLOPPY_BLINK_FRAMES 10
 
-//Palette index used by the floppy disk label in the background image
 #define FLOPPY_PAL_INDEX 9
 
 enum
@@ -162,7 +158,7 @@ enum
 
 struct SaveScreen
 {
-	u16 tilemapBuffer[TILEMAP_STRIDE * 32]; //BG1 tilemap (the BG0 windows allocate their own buffer)
+	u16 tilemapBuffer[TILEMAP_STRIDE * 32];
 	u16 dotIdleEntry;
 	u16 dotActiveEntry;
 	u16 timer;
@@ -170,8 +166,8 @@ struct SaveScreen
 	u8 dotPos;
 	s8 dotDir;
 	u8 dotTimer;
-	u8 cursor;     //0 = YES, 1 = NO
-	u8 savingDots; //0..2
+	u8 cursor;
+	u8 savingDots;
 	u8 floppyBright;
 	u8 saveOk;
 };
@@ -193,7 +189,7 @@ static const struct BgTemplate sBgTemplates[] =
 	{
 		.bg = 1,
 		.charBaseIndex = 2,
-		.mapBaseIndex = 19, //Unique background tiles must stay below tile 192 (screen block 19 starts there)
+		.mapBaseIndex = 19,
 		.screenSize = 0,
 		.paletteMode = 0,
 		.priority = 2,
@@ -201,7 +197,6 @@ static const struct BgTemplate sBgTemplates[] =
 	},
 };
 
-//Window baseBlocks are consecutive: 52 + 52 + 52 + 40 + 24 + 104 = 324 tiles (BG0 charblock holds 511)
 #define WIN_DATE_BASE 0
 #define WIN_PLACE_BASE (WIN_DATE_BASE + 26 * 2)
 #define WIN_STATS_BASE (WIN_PLACE_BASE + 26 * 2)
@@ -244,31 +239,30 @@ static const struct WindowTemplate sWindowTemplates[] =
 	DUMMY_WIN_TEMPLATE
 };
 
-//Palette 15 (BG0 text). Index 0 is transparent so the background image shows through the windows
 static const u16 sTextPalette[16] =
 {
 	[0] = RGB(0, 0, 0),
-	[1] = RGB(31, 31, 31), //white text (on the dark panel)
-	[2] = RGB(1, 1, 2),    //near black (shadow on the dark panel / text on light boxes)
-	[3] = RGB(21, 21, 22), //light grey (labels / shadow on light boxes)
+	[1] = RGB(31, 31, 31),
+	[2] = RGB(1, 1, 2),
+	[3] = RGB(21, 21, 22),
 	[4] = RGB(14, 14, 14),
 	[5] = RGB(10, 9, 23),
 	[6] = RGB(31, 31, 31),
-	[7] = RGB(30, 30, 30), //light box fill (YES/NO)
-	[8] = RGB(5, 5, 6),    //box border
+	[7] = RGB(30, 30, 30),
+	[8] = RGB(5, 5, 6),
 };
 
-static const u8 sColorValue[3] = {0, 1, 2}; //bg, text, shadow
+static const u8 sColorValue[3] = {0, 1, 2};
 static const u8 sColorLabel[3] = {0, 3, 2};
 static const u8 sColorBox[3] = {0, 2, 3};
 static const u8 sColorMenu[3] = {7, 2, 3};
 
-static const u8 sCursorArrow[] = {0xEF, 0xFF}; //Right arrow glyph
+static const u8 sCursorArrow[] = {0xEF, 0xFF};
 
-static const u16 sFloppyColors[2] = {RGB(10, 9, 23), RGB(19, 18, 29)}; //dim, bright (png colour 9 = bright)
+static const u16 sFloppyColors[2] = {RGB(10, 9, 23), RGB(19, 18, 29)};
 
-static const s8 sIconDrop[] = {-22, -14, -8, -3, 1, 3, 2, 0, -1, 0}; //Drop-in with a little bounce
-static const s8 sIconBob[8] = {0, 0, -1, -1, -2, -2, -1, -1};          //Idle float
+static const s8 sIconDrop[] = {-22, -14, -8, -3, 1, 3, 2, 0, -1, 0};
+static const s8 sIconBob[8] = {0, 0, -1, -1, -2, -2, -1, -1};
 
 /* ---------------------------------------------------------------------------------------------------------------
  * Forward declarations
@@ -299,12 +293,12 @@ static void SetSaveScreen(u8 taskId, struct SaveScreen* ss)
  * ------------------------------------------------------------------------------------------------------------- */
 bool8 StartMenuSaveScreenCallback(void)
 {
-	if (gPaletteFade->active) //Wait for the fade out the Start Menu started (StartMenu_FadeScreenIfLeavingOverworld)
+	if (gPaletteFade->active)
 		return FALSE;
 
 	PlayRainStoppingSoundEffect();
 	RemoveExtraStartMenuWindows();
-	save_serialize_map(); //Vanilla InitSave(): snapshot of the map view used by "Continue". Needs the field still loaded
+	save_serialize_map();
 	CleanupOverworldWindowsAndTilemaps();
 	SetMainCallback2(CB2_SaveScreenSetup);
 	return TRUE;
@@ -322,7 +316,7 @@ static void CB2_SaveScreenSetup(void)
 	SetHBlankCallback(NULL);
 
 	ss = Calloc(sizeof(struct SaveScreen));
-	if (ss == NULL) //Out of memory: go back to the Start Menu instead of freezing
+	if (ss == NULL)
 	{
 		SetMainCallback2(CB2_ReturnToFieldWithOpenMenuHook);
 		return;
@@ -413,7 +407,6 @@ static void InitVideo(struct SaveScreen* ss)
 	FillBgTilemapBufferRect_Palette0(1, 0, 0, 0, 30, 20);
 }
 
-//Returns TRUE when finished
 static bool8 LoadGfx(u8 taskId)
 {
 	s16* data = gTasks[taskId].data;
@@ -427,7 +420,7 @@ static bool8 LoadGfx(u8 taskId)
 			DecompressAndCopyTileDataToVram(1, saveScreenBgTiles, 0, 0, 0);
 			break;
 		case 2:
-			if (FreeTempTileDataBuffersIfPossible()) //Still copying
+			if (FreeTempTileDataBuffersIfPossible())
 				return FALSE;
 			break;
 		case 3:
@@ -451,7 +444,6 @@ static void PrintText(u8 windowId, u8 x, u8 y, const u8* color, const u8* str)
 	AddTextPrinterParameterized4(windowId, FONT_ID, x, y, 0, 0, color, TEXT_SPEED_FF, str);
 }
 
-//Prints "label value" and returns nothing; value is placed right after the label
 static void PrintLabelAndValue(u8 windowId, u8 x, const u8* label, const u8* value)
 {
 	PrintText(windowId, x, 1, sColorLabel, label);
@@ -510,16 +502,13 @@ static void PrintPanelTexts(void)
 	for (i = 0; i < WIN_COUNT; ++i)
 		FillWindowPixelBuffer(i, PIXEL_FILL(0));
 
-	//Row 1: date and time
 	BuildDateAndClockStrings(buffer, buffer2);
 	PrintText(WIN_DATE, 0, 1, sColorValue, buffer);
 	PrintText(WIN_DATE, 96, 1, sColorValue, buffer2);
 
-	//Row 2: location
 	GetMapNameGeneric_(buffer, gMapHeader.regionMapSectionId);
 	PrintText(WIN_PLACE, 0, 1, sColorValue, buffer);
 
-	//Row 3: badges + Pokedex
 	ConvertIntToDecimalStringN(buffer, CountBadges(), STR_CONV_MODE_LEFT_ALIGN, 1);
 	PrintLabelAndValue(WIN_STATS, 0, gText_SaveScreen_Badges, buffer);
 
@@ -529,7 +518,6 @@ static void PrintPanelTexts(void)
 		PrintLabelAndValue(WIN_STATS, 112, gText_SaveScreen_Pokedex, buffer);
 	}
 
-	//Row 4: play time
 	{
 		u8* ptr = ConvertIntToDecimalStringN(buffer, gSaveBlock2->playTimeHours, STR_CONV_MODE_LEFT_ALIGN, 3);
 		*ptr++ = CH_COLON;
@@ -554,7 +542,7 @@ static void PrintBoxText(const u8* str)
 
 static void DrawYesNo(struct SaveScreen* ss)
 {
-	FillWindowPixelBuffer(WIN_YESNO, PIXEL_FILL(8)); //Border
+	FillWindowPixelBuffer(WIN_YESNO, PIXEL_FILL(8));
 	FillWindowPixelRect(WIN_YESNO, 7, 1, 1, 46, 30);
 	PrintText(WIN_YESNO, 14, 1, sColorMenu, gText_SaveScreen_Yes);
 	PrintText(WIN_YESNO, 14, 15, sColorMenu, gText_SaveScreen_No);
@@ -564,7 +552,7 @@ static void DrawYesNo(struct SaveScreen* ss)
 
 static void HideYesNo(void)
 {
-	FillWindowPixelBuffer(WIN_YESNO, PIXEL_FILL(0)); //Transparent again
+	FillWindowPixelBuffer(WIN_YESNO, PIXEL_FILL(0));
 	CopyWindowToVram(WIN_YESNO, 2);
 }
 
@@ -573,14 +561,13 @@ static void HideYesNo(void)
  * ------------------------------------------------------------------------------------------------------------- */
 static void SpriteCB_SaveScreenIcon(struct Sprite* sprite)
 {
-	//data[0] = intro frame, data[1] = intro delay, data[2] = float phase, data[3] = float counter, data[4] = intro done
-	SpriteCB_PokeIcon(sprite); //Vanilla icon frame animation
+	SpriteCB_PokeIcon(sprite);
 
 	if (sprite->data[4] == 0)
 	{
 		s16 t;
 
-		if (sprite->data[0] < sprite->data[1]) //Waiting for its turn
+		if (sprite->data[0] < sprite->data[1])
 		{
 			++sprite->data[0];
 			sprite->invisible = TRUE;
@@ -622,12 +609,12 @@ static void CreatePartyIcons(struct SaveScreen* ss)
 		return;
 
 	LoadMonIconPalettes();
-	startX = ICON_CENTER_X - (count * ICON_SPACING) / 2 + ICON_SPACING / 2; //Party is centred in the strip
+	startX = ICON_CENTER_X - (count * ICON_SPACING) / 2 + ICON_SPACING / 2;
 
 	for (i = 0; i < PARTY_SIZE; ++i)
 	{
 		u8 spriteId;
-		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL); //Eggs show the egg icon
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
 
 		if (species == SPECIES_NONE)
 			continue;
@@ -638,10 +625,10 @@ static void CreatePartyIcons(struct SaveScreen* ss)
 		if (spriteId >= MAX_SPRITES)
 			continue;
 
-		gSprites[spriteId].oam.priority = 1; //Above the background image (2), below the text layer (0)
+		gSprites[spriteId].oam.priority = 1;
 		gSprites[spriteId].invisible = TRUE;
 		gSprites[spriteId].data[0] = 0;
-		gSprites[spriteId].data[1] = 6 * shown; //Stagger
+		gSprites[spriteId].data[1] = 6 * shown;
 		gSprites[spriteId].data[2] = shown;
 		gSprites[spriteId].data[3] = 0;
 		gSprites[spriteId].data[4] = 0;
@@ -653,7 +640,6 @@ static void CreatePartyIcons(struct SaveScreen* ss)
 /* ---------------------------------------------------------------------------------------------------------------
  * Small animations
  * ------------------------------------------------------------------------------------------------------------- */
-//A highlight sweeps back and forth through the page dots (the tiles are swapped in the BG1 tilemap)
 static void AnimateDots(struct SaveScreen* ss)
 {
 	u16* dots = &ss->tilemapBuffer[DOT_ROW * TILEMAP_STRIDE + DOT_FIRST_COL];
@@ -704,7 +690,7 @@ static void Task_SaveScreenInit(u8 taskId)
 			break;
 		case INIT_GFX:
 			if (!LoadGfx(taskId))
-				return; //Stay in this step
+				return;
 			break;
 		case INIT_TILEMAP:
 			CopyToBgTilemapBuffer(1, saveScreenBgMap, 0, 0);
@@ -844,7 +830,7 @@ static void Task_SaveScreenMain(u8 taskId)
 		case STATE_SAVING:
 			++ss->timer;
 
-			if (ss->timer % SAVING_DOT_FRAMES == 0) //"Saving." -> "Saving.." -> "Saving..."
+			if (ss->timer % SAVING_DOT_FRAMES == 0)
 			{
 				ss->savingDots = (ss->savingDots + 1) % ARRAY_COUNT(sSavingTexts);
 				PrintBoxText(sSavingTexts[ss->savingDots]);
@@ -856,7 +842,7 @@ static void Task_SaveScreenMain(u8 taskId)
 			if (ss->timer < SAVING_MIN_FRAMES)
 				break;
 
-			ss->saveOk = (DoSave() == SAVE_STATUS_OK); //Blocks for a moment, like in the vanilla dialog
+			ss->saveOk = (DoSave() == SAVE_STATUS_OK);
 			SetFloppyBright(ss, TRUE);
 			ss->timer = 0;
 

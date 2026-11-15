@@ -192,7 +192,7 @@ void ShowFollower(void)
 	gEventObjects[gFollowerState.objId].invisible = FALSE;
 #ifdef OW_SHADOWS
 	SetEventObjectShadowVisibility(&gEventObjects[gFollowerState.objId], FALSE);
-	EnsureEventObjectShadow(&gEventObjects[gFollowerState.objId]); //Respawned follower (e.g. after surfing) has no shadow sprite yet
+	EnsureEventObjectShadow(&gEventObjects[gFollowerState.objId]);
 #endif
 }
 
@@ -1911,7 +1911,7 @@ void UpdateAutomaticFollowerMon(void)
 			TurnFollowerMonToPlayer();
 			TryCreateFollowerSparkle();
 #ifdef OW_SHADOWS
-			EnsureEventObjectShadow(&gEventObjects[gFollowerState.objId]); //Respawned after surfing: shadow isn't created by the ground effect triggers until the first step
+			EnsureEventObjectShadow(&gEventObjects[gFollowerState.objId]);
 #endif
 		}
 	}
@@ -1923,7 +1923,7 @@ void UpdateAutomaticFollowerMon(void)
 #ifdef OW_SHADOWS
 	else if (IsFollowerPokemon() && gFollowerState.objId < MAP_OBJECTS_COUNT
 	&& !gEventObjects[gFollowerState.objId].invisible)
-		EnsureEventObjectShadow(&gEventObjects[gFollowerState.objId]); //Self-heal a missing shadow (e.g. after surfing)
+		EnsureEventObjectShadow(&gEventObjects[gFollowerState.objId]);
 #endif
 #endif
 }

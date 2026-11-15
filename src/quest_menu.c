@@ -27,10 +27,10 @@
 #ifdef SIDEQUEST_MENU
 
 #define QUEST_OW_SPRITE_MARKER 0x51E7
-#define COLOR_MENU_TITLE COLOR(White) // Color for the menu title and sidebar texts
-#define COLOR_DESCRIPTION COLOR(White) // Color for the quest description text at the bottom
-#define COLOR_MENU_ITEM COLOR(Black) // Color for normal, unselected quest items in the list
-#define COLOR_MENU_SELECTED_ITEM COLOR(White) // Color for the currently highlighted/selected quest item (including the arrow)
+#define COLOR_MENU_TITLE COLOR(White)
+#define COLOR_DESCRIPTION COLOR(White)
+#define COLOR_MENU_ITEM COLOR(Black)
+#define COLOR_MENU_SELECTED_ITEM COLOR(White)
 #define COLOR_MENU_INFO_COLOR COLOR(Red)
 #define COLOR_MENU_DONE_COLOR COLOR(Green)
 
@@ -40,7 +40,6 @@
 #define BG_MAP_BYTES 0x800
 #define VISIBLE_ITEMS 7
 
-// Quest overworld sprite
 #define GFX_TAG_QUEST_16X16  0xFDF0
 #define GFX_TAG_QUEST_16X32  0xFDF1
 #define GFX_TAG_QUEST_32X32  0xFDF2
@@ -55,7 +54,6 @@ extern const struct SpritePalette *GetQuestOverworldPalette(u16 paletteTag);
 static u8 sQuestOverworldSpriteId = MAX_SPRITES;
 static u16 sQuestOverworldGraphicsId = QUEST_OW_NONE;
 
-// External configuration and resource declarations
 extern u8 gNumPages;
 extern const u16 FLAG_HIDE_QUEST_STATS;
 
@@ -78,28 +76,24 @@ extern const u8 gText_ItemDescriptionNotAvailable[];
 extern const u8 *const sMenuTitles[];
 extern const struct QuestInfo *const gQuestTables[];
 
-// Static string literals for UI rendering elements
 static const u8 sText_Arrow[] = {CHAR_ARROW_RIGHT, EOS};
 static const u8 sText_Space[] = {CHAR_SPACE, EOS};
 
-// Structure holding the runtime states for an individual quest based on flags
 struct QuestStateInfo
 {
-    bool8 isUnlocked; // True if the quest flag meets or exceeds the unlock state
-    bool8 isDone;     // True if the quest flag meets or exceeds the completion state
-    bool8 isRewarded; // True if the quest flag meets or exceeds the reward state
+    bool8 isUnlocked;
+    bool8 isDone;
+    bool8 isRewarded;
 };
 
-// Structure holding aggregate progress statistics for a quest page
 struct PageStats
 {
-    u8 total;     // Total number of quests on the page
-    u8 unlocked;  // Number of unlocked quests
-    u8 completed; // Number of completed quests
-    u8 rewarded;  // Number of quests with claimed rewards
+    u8 total;
+    u8 unlocked;
+    u8 completed;
+    u8 rewarded;
 };
 
-// Forward declarations for internal helper and callback functions
 static u8 GetQuestCountForPage(u8 page);
 static u8 GetQuestCountForCurrentPage(void);
 static u8 BuildSortedQuestIndices(u8 page, u8 *outIndices, struct PageStats *stats);
@@ -121,7 +115,6 @@ static void DestroyQuestOverworldSprite(void);
 static bool8 CreateQuestOverworldSprite(u16 graphicsId);
 static void UpdateQuestOverworldSprite(const struct QuestInfo *quest);
 
-// Evaluates and populates the runtime state of a quest based on variable values
 static void GetQuestStates(const struct QuestInfo *quest,struct QuestStateInfo *outState)
 {
     outState->isUnlocked = FlagGet(quest->unlockFlag);
@@ -129,7 +122,6 @@ static void GetQuestStates(const struct QuestInfo *quest,struct QuestStateInfo *
     outState->isRewarded = FlagGet(quest->rewardFlag);
 }
 
-// Sorts and indexes quests for a given page (active, locked, completed) and computes statistics
 static u8 BuildSortedQuestIndices(u8 page, u8 *outIndices, struct PageStats *stats)
 {
     u8 totalCount = GetQuestCountForPage(page);
@@ -199,7 +191,6 @@ static u8 BuildSortedQuestIndices(u8 page, u8 *outIndices, struct PageStats *sta
     return totalCount;
 }
 
-// Builds sorted indices for menu pages based on completion status and availability
 static u8 BuildSortedPageIndices(u8 *outPages)
 {
     if (gNumPages == 0)
@@ -239,7 +230,6 @@ static u8 BuildSortedPageIndices(u8 *outPages)
     return activeCount + completedCount;
 }
 
-// Counts total valid entries in a specific quest table page until the terminator flag
 static u8 GetQuestCountForPage(u8 page)
 {
     const struct QuestInfo *table = gQuestTables[page];
@@ -258,13 +248,11 @@ static u8 GetQuestCountForPage(u8 page)
     return (u8)count;
 }
 
-// Retrieves the total quest count for the currently active menu page
 static u8 GetQuestCountForCurrentPage(void)
 {
     return GetQuestCountForPage(gMenuStruct->page);
 }
 
-// Finds the sorted index position of a specific page identifier
 static u8 FindSortedPageIndex(const u8 *sortedPages, u8 count, u8 page)
 {
     for (u8 i = 0; i < count; i++)
@@ -276,7 +264,6 @@ static u8 FindSortedPageIndex(const u8 *sortedPages, u8 count, u8 page)
     return 0;
 }
 
-// Returns a pointer to the currently highlighted quest info structure
 static const struct QuestInfo *GetSelectedQuest(const u8 *sortedIndices, u8 total)
 {
     u8 page = gMenuStruct->page;
@@ -287,7 +274,6 @@ static const struct QuestInfo *GetSelectedQuest(const u8 *sortedIndices, u8 tota
     return &gQuestTables[page][sortedIndices[gMenuStruct->selectedItem]];
 }
 
-// VBlank callback handling OAM, sprite copies, and palette transfers
 static void VBlankCB_QuestMenu(void)
 {
     LoadOam();
@@ -295,7 +281,6 @@ static void VBlankCB_QuestMenu(void)
     TransferPlttBuffer();
 }
 
-// Main background callback 2 running tasks, sprites, and palette fades
 static void MainCB2_QuestMenu(void)
 {
     RunTasks();
@@ -304,13 +289,11 @@ static void MainCB2_QuestMenu(void)
     UpdatePaletteFade();
 }
 
-// Clears a specified window's pixel buffer
 static void CleanWindow(u8 windowId)
 {
     FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
 }
 
-// Commits window tilemap changes and copies data to VRAM
 static void CommitWindow(u8 windowId)
 {
     PutWindowTilemap(windowId);
@@ -318,7 +301,6 @@ static void CommitWindow(u8 windowId)
 
 }
 
-// Decompresses and loads background graphics, tiles, and palettes into VRAM
 static void LoadMenuBG(void)
 {
     const struct ImageData *img = &gQuestMenuBGData;
@@ -331,7 +313,6 @@ static void LoadMenuBG(void)
     LoadPalette(img->pal, 0, 0x20);
 }
 
-// Main initialization and state machine callback for setting up the quest menu
 static void CB2_QuestMenu(void)
 {
     switch (gMain.state)
@@ -422,7 +403,6 @@ static void CB2_QuestMenu(void)
     }
 }
 
-// Updates menu selection indices and scrolling positions when navigating up/down
 static void UpdateMenuSelection(bool8 movingDown)
 {
     u8 itemCount = GetQuestCountForCurrentPage();
@@ -480,14 +460,12 @@ static void UpdateMenuSelection(bool8 movingDown)
         PrintMenuGUI();
 }
 
-// Task handling the fade-in completion transition
 static void Task_QuestMenuFadeIn(u8 taskId)
 {
     if (!gPaletteFade->active)
         gTasks[taskId].func = Task_QuestMenuWaitForKeyPress;
 }
 
-// Task handling user input (D-pad selection, page switching via L/R, and confirmation via A/B)
 static void Task_QuestMenuWaitForKeyPress(u8 taskId)
 {
     if (gMain.newKeys & B_BUTTON)
@@ -567,7 +545,6 @@ static void Task_QuestMenuWaitForKeyPress(u8 taskId)
     }
 }
 
-// Task handling cleanup and fading out before returning to the overworld
 static void Task_QuestMenuFadeOut(u8 taskId)
 {
     if (!gPaletteFade->active)
@@ -747,7 +724,6 @@ static void UpdateQuestOverworldSprite(const struct QuestInfo *quest)
     CreateQuestOverworldSprite(quest->graphicsId);
 }
 
-// Renders the list of quest items on the active page window
 static void PrintMenuItems(const u8 *sortedIndices, u8 totalQuests)
 {
     u8 firstVisibleItem = gMenuStruct->firstVisibleItem;
@@ -823,7 +799,6 @@ static void PrintMenuItems(const u8 *sortedIndices, u8 totalQuests)
     CommitWindow(WINDOW_ITEMS);
 }
 
-// Renders the description text for the currently selected quest
 static void PrintMenuItemDescription(const struct QuestInfo *quest)
 {
     CleanWindow(WINDOW_DESCRIPTION);
@@ -840,7 +815,6 @@ static void PrintMenuItemDescription(const struct QuestInfo *quest)
     CommitWindow(WINDOW_DESCRIPTION);
 }
 
-// Renders the title header for the active menu page
 static void PrintMenuTitle(void)
 {
     CleanWindow(WINDOW_TITLE);
@@ -860,7 +834,6 @@ static void PrintMenuTitle(void)
     CommitWindow(WINDOW_TITLE);
 }
 
-// Renders control hints, progress counters, and statistics in the sidebar window
 static void PrintMenuControls(const struct PageStats *stats)
 {
     if (FLAG_HIDE_QUEST_STATS != 0 && FlagGet(FLAG_HIDE_QUEST_STATS))
@@ -906,7 +879,6 @@ static void PrintMenuControls(const struct PageStats *stats)
     CommitWindow(WINDOW_CONTROLS);
 }
 
-// Coordinates rendering of all major GUI components on the screen
 static void PrintMenuGUI(void)
 {
     u8 currentPage = gMenuStruct->page;
@@ -933,7 +905,6 @@ static void PrintMenuGUI(void)
     UpdateQuestOverworldSprite(selectedQuest);
 }
 
-// Public entry point function to enable script context and launch the quest menu interface
 void ShowQuestMenu(void)
 {
     ScriptContext2_Enable();

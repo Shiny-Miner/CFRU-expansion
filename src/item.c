@@ -1259,16 +1259,16 @@ void HandleItemRegistration(u16 item)
 #define sBagBerries (sBagTMHM + NUM_TMSHMS)
 
 #ifdef NEW_BAG_UI_EXPANSION
-	#define BAG_BLOCK2_RAM  0x2024638 //RAM of the removed box 25
+	#define BAG_BLOCK2_RAM  0x2024638
 	#define BAG_BLOCK2_SIZE 0x6CC
 
 	#define sBagMegaStones ((struct ItemSlot*) BAG_BLOCK2_RAM)
 	#define sBagEvoItems (sBagMegaStones + NUM_MEGA_STONES)
 
 	//Number of different items that can be in each pocket. Must be at least the number of items with that pocket in gItemData.
-	#define NUM_REGULAR_ITEMS 480 //Everything that is not in another pocket
-	#define NUM_MEGA_STONES 128 //Items with pocket POCKET_MEGA_STONES (ITEM_TYPE_MEGA_STONE)
-	#define NUM_EVO_ITEMS 64 //Items with pocket POCKET_EVO_ITEMS (ITEM_TYPE_EVOLUTION_STONE / ITEM_TYPE_EVOLUTION_ITEM)
+	#define NUM_REGULAR_ITEMS 480
+	#define NUM_MEGA_STONES 128
+	#define NUM_EVO_ITEMS 64
 #else
 	#define NUM_REGULAR_ITEMS 485
 #endif
@@ -1300,7 +1300,6 @@ struct BagSlots
 };
 
 #ifdef NEW_BAG_UI_EXPANSION
-//This table is only read, never written. It is in the ROM and the vanilla bag functions use it through the repoints in "repoints".
 const struct BagPockets gBagPocketsRom =
 #else
 static const struct BagPockets sBagPocketArrangement =
@@ -1332,7 +1331,6 @@ void SetMemoryForBagStorage(void)
 	#ifndef NEW_BAG_UI_EXPANSION
 	*gBagPockets = sBagPocketArrangement;
 	#endif
-	//With NEW_BAG_UI_EXPANSION the pocket table is a constant in the ROM, nothing to set
 }
 
 extern void* sBagBgTilemapBuffer;

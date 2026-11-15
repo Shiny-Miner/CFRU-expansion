@@ -308,11 +308,9 @@ void Remove_PokemonPic(void)
     }
 }
 
-// Species that should never be shown as the overworld follower.
-// The next eligible party member follows instead.
 static const u16 sFollowerBlacklist[] =
 {
-    SPECIES_NONE,       // terminator
+    SPECIES_NONE,
 };
 
 static bool8 IsSpeciesFollowerBlacklisted(u16 species)

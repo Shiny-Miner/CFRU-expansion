@@ -50,16 +50,13 @@
  *   Var8005     = result of GiveMonToPlayer Var8006 = timer of the message on the bottom strip
  */
 
-//-------------------------------------------------------------------------------------------------
 // Layout (the same numbers used by the graphics generator)
-//-------------------------------------------------------------------------------------------------
 #define CODE_LEN 8
-//Code slots: each one is a block of 3x2 tiles (24x16 px) on BG1; the typed character is swapped in the tile map
-#define SLOT_COL0 3			//Column (in tiles) of the first slot
-#define SLOT_ROW 5			//Row (in tiles)
+#define SLOT_COL0 3
+#define SLOT_ROW 5
 #define SLOT_TILES_W 3
 #define SLOT_PIXEL_W 24
-#define SLOT_VISUAL_X 4			//The plate (16x16) sits 4 px from the block edge
+#define SLOT_VISUAL_X 4
 #define CARET_Y 36
 
 #define KEY_X0 11
@@ -68,23 +65,22 @@
 #define KEY_PY 19
 #define KEY_W 20
 #define KEY_H 17
-#define KEY_COUNT 38		//0-9, A-Z, DEL, OK
+#define KEY_COUNT 38
 #define KEY_DEL 36
 #define KEY_OK 37
 
-#define BOX_X 120		//Center of the gift box
-#define BOX_Y 46		//Top of the gift box (64x64)
+#define BOX_X 120
+#define BOX_Y 46
 #define BURST_Y 78
 #define MON_X 120
 #define MON_Y 72
 
 #define WIN_MAIN 0
 
-//Timings (frames, 60 per second)
 #define T_WAIT 18
 #define T_SHAKE 90
-#define T_OPEN_FLASH 28		//When the white flash starts after the lid flies off
-#define T_MSG 120		//How long the error message stays on screen
+#define T_OPEN_FLASH 28
+#define T_MSG 120
 #define T_REVEAL_CRY 50
 #define T_REVEAL_INPUT 110
 
@@ -98,15 +94,13 @@
 #define MG_TILE_CARET_TAG 0x4D56
 #define MG_PAL_CURSOR_TAG 0x4D57
 #define MG_ITEM_ICON_TAG 0x4D59
-#define ITEM_Y 70			//Center of the item icon on the item page
-#define MG_MON_PAL_SLOT 4	//OBJ palette used by the Pokemon sprite (the others use 0 and 1)
+#define ITEM_Y 70
+#define MG_MON_PAL_SLOT 4
 
 #define NUM_SPARKLES 4
 
-//TRUE = every Pokemon given by the Mystery Gift has IVs 31 in all stats. FALSE = random CFRU IVs.
 #define MG_PERFECT_IVS TRUE
 
-//State (gTasks[].data[])
 #define tState data[0]
 #define tTimer data[1]
 #define tCursor data[2]
@@ -119,11 +113,10 @@
 #define tSprLid data[9]
 #define tSprBurst data[10]
 #define tSprMon data[11]
-#define tBuf1Lo data[12]		//BG1 tile map buffer (the typed characters are swapped in it)
+#define tBuf1Lo data[12]
 #define tBuf1Hi data[13]
-#define tPage data[14]			//0 = Pokemon page, 1 = item page, 2 = could not give the Pokemon
+#define tPage data[14]
 
-//IDs of the 4 sparkles: kept in gStringVar3 (a task only has 16 slots)
 #define SPARK_ID(i) gStringVar3[i]
 
 #define MG_MSG_TIMER Var8006
@@ -143,14 +136,11 @@ enum
 	ST_FLASH_OUT,
 	ST_FLASH_IN,
 	ST_REVEAL,
-	ST_PAGE_FLASH_OUT,		//From the Pokemon page to the item page (gift with Pokemon + item)
+	ST_PAGE_FLASH_OUT,
 	ST_PAGE_FLASH_IN,
 	ST_EXIT_FADE,
 };
 
-//-------------------------------------------------------------------------------------------------
-// Texts (English only; the strings live in strings/mystery_gift.string)
-//-------------------------------------------------------------------------------------------------
 #define MG_DECLARE_TEXT(name) extern const u8 gText_MG_##name[];
 
 MG_DECLARE_TEXT(Title) MG_DECLARE_TEXT(Prompt) MG_DECLARE_TEXT(Hint) MG_DECLARE_TEXT(Invalid)
@@ -180,16 +170,12 @@ static const u8* GetMgText(u8 id)
 	return sMgTexts[id];
 }
 
-//Text colors {background, text, shadow} = indexes into the menu palette 0
 static const u8 sColWhite[3] = {0, 1, 2};
 static const u8 sColPrompt[3] = {0, 13, 3};
 static const u8 sColHint[3] = {0, 10, 3};
 static const u8 sColError[3] = {0, 8, 9};
 
-//-------------------------------------------------------------------------------------------------
-// Graphics (pre-generated data, see src/mystery_gift_gfx.c)
-//-------------------------------------------------------------------------------------------------
-extern const u16 gMgPalBg[];		//32 colors: palette 0 (interface) + palette 1 (background)
+extern const u16 gMgPalBg[];
 extern const u16 gMgPalFx[];
 extern const u16 gMgPalCursor[];
 extern const u32 gMgEntryTiles[];
@@ -197,7 +183,7 @@ extern const u32 gMgEntryTilesSize;
 extern const u32 gMgStageTiles[];
 extern const u32 gMgStageTilesSize;
 extern const u16 gMgEntryMap[];
-extern const u16 gMgSlotGlyphs[];		//[36][6]: letters/numbers of the code slots (3x2 tiles each)
+extern const u16 gMgSlotGlyphs[];
 extern const u16 gMgStageMap[];
 extern const u32 gMgBoxLidTiles[];
 extern const u32 gMgBoxBaseTiles[];
@@ -208,9 +194,9 @@ extern const u32 gMgCaretTiles[];
 
 static const struct BgTemplate sBgTemplates[] =
 {
-	{ .bg = 0, .charBaseIndex = 2, .mapBaseIndex = 30, .screenSize = 0, .paletteMode = 0, .priority = 0, .baseTile = 0 },	//text
-	{ .bg = 1, .charBaseIndex = 0, .mapBaseIndex = 29, .screenSize = 0, .paletteMode = 0, .priority = 1, .baseTile = 0 },	//code screen
-	{ .bg = 2, .charBaseIndex = 1, .mapBaseIndex = 28, .screenSize = 0, .paletteMode = 0, .priority = 2, .baseTile = 0 },	//stage
+	{ .bg = 0, .charBaseIndex = 2, .mapBaseIndex = 30, .screenSize = 0, .paletteMode = 0, .priority = 0, .baseTile = 0 },
+	{ .bg = 1, .charBaseIndex = 0, .mapBaseIndex = 29, .screenSize = 0, .paletteMode = 0, .priority = 1, .baseTile = 0 },
+	{ .bg = 2, .charBaseIndex = 1, .mapBaseIndex = 28, .screenSize = 0, .paletteMode = 0, .priority = 2, .baseTile = 0 },
 };
 
 static const struct WindowTemplate sWindowTemplates[] =
@@ -230,8 +216,8 @@ static const struct OamData sOam8x8Caret = MG_OAM(8x8, 8x8, 0);
 
 static const struct SpriteSheet sSheetLid = {(const u8*) gMgBoxLidTiles, 1024, MG_TILE_LID_TAG};
 static const struct SpriteSheet sSheetBase = {(const u8*) gMgBoxBaseTiles, 1024, MG_TILE_BASE_TAG};
-static const struct SpriteSheet sSheetBurst = {(const u8*) gMgBurstTiles, 2048, MG_TILE_BURST_TAG};			//Burst, frame A (64x64)
-static const struct SpriteSheet sSheetBurst2 = {(const u8*) gMgBurstTiles + 2048, 2048, MG_TILE_BURST2_TAG};	//Burst, frame B
+static const struct SpriteSheet sSheetBurst = {(const u8*) gMgBurstTiles, 2048, MG_TILE_BURST_TAG};
+static const struct SpriteSheet sSheetBurst2 = {(const u8*) gMgBurstTiles + 2048, 2048, MG_TILE_BURST2_TAG};
 static const struct SpriteSheet sSheetSparkle = {(const u8*) gMgSparkleTiles, 128, MG_TILE_SPARK_TAG};
 static const struct SpriteSheet sSheetCursor = {(const u8*) gMgCursorTiles, 512, MG_TILE_CURSOR_TAG};
 static const struct SpriteSheet sSheetCaret = {(const u8*) gMgCaretTiles, 32, MG_TILE_CARET_TAG};
@@ -258,10 +244,6 @@ static const s8 sDropOffsets[] =
 };
 static const s8 sShake[8] = {0, 2, 3, 2, 0, -2, -3, -2};
 
-//-------------------------------------------------------------------------------------------------
-// Utilities
-//-------------------------------------------------------------------------------------------------
-//Sine 0..255 -> -amplitude..+amplitude (CFRU does not export Sin, only gSineTable)
 static s16 MgSin(s16 index, s16 amplitude)
 {
 	return (amplitude * gSineTable[index & 0xFF]) >> 8;
@@ -272,7 +254,7 @@ static void* MgGetPtr(s16 lo, s16 hi)
 	return (void*) ((u32) ((u16) lo) | ((u32) ((u16) hi) << 16));
 }
 
-static u8 MgKeyAscii(u8 key)	//key 0..35
+static u8 MgKeyAscii(u8 key)
 {
 	return (key < 10) ? '0' + key : 'A' + (key - 10);
 }
@@ -317,22 +299,18 @@ static void MgPrintCentered(u8 fontId, s16 centerX, u8 y, const u8* colors, cons
 	AddTextPrinterParameterized3(WIN_MAIN, fontId, x, y, colors, 0, str);
 }
 
-//-------------------------------------------------------------------------------------------------
-// Code entry screen
-//-------------------------------------------------------------------------------------------------
 static void MgPrintBottomLine(const u8* str, const u8* colors)
 {
-	FillWindowPixelRect(WIN_MAIN, PIXEL_FILL(0), 9, 144, 222, 15);	//The whole strip (the font is taller than 12 px)
+	FillWindowPixelRect(WIN_MAIN, PIXEL_FILL(0), 9, 144, 222, 15);
 	MgPrintCentered(0, 120, 143, colors, str);
 	CopyWindowToVram(WIN_MAIN, COPYWIN_GFX);
 }
 
-static u8 MgAsciiToGlyph(u8 ascii)	//'0'-'9' -> 0-9, 'A'-'Z' -> 10-35
+static u8 MgAsciiToGlyph(u8 ascii)
 {
 	return (ascii <= '9') ? ascii - '0' : 10 + (ascii - 'A');
 }
 
-//Shows the typed characters by swapping the slot tiles in the BG1 map; empty slots go back to the original tile
 static void MgDrawSlots(struct Task* task, u8 len)
 {
 	u16* buf = MgGetPtr(task->tBuf1Lo, task->tBuf1Hi);
@@ -361,7 +339,7 @@ static void MgDrawEntryScreen(void)
 	FillWindowPixelBuffer(WIN_MAIN, PIXEL_FILL(0));
 	MgPrintCentered(2, 120, 4, sColWhite, GetMgText(MSG_TITLE));
 	MgPrintCentered(0, 120, 23, sColPrompt, GetMgText(MSG_PROMPT));
-	MgPrintCentered(0, 120, 143, sColHint, GetMgText(MSG_HINT));	//The keys and letters are drawn on BG1
+	MgPrintCentered(0, 120, 143, sColHint, GetMgText(MSG_HINT));
 	PutWindowTilemap(WIN_MAIN);
 	CopyWindowToVram(WIN_MAIN, COPYWIN_BOTH);
 }
@@ -394,7 +372,7 @@ static u8 MgFindCode(u8 len)
 			u8 c = code[j];
 
 			if (c >= 'a' && c <= 'z')
-				c -= 'a' - 'A';	//Accepts lowercase letters in the table
+				c -= 'a' - 'A';
 
 			if (c != gStringVar2[j])
 			{
@@ -410,7 +388,6 @@ static u8 MgFindCode(u8 len)
 	return 0xFF;
 }
 
-//Creates the Pokemon in gEnemyParty[0] (only to show it in the animation). MgGiveRewards is what gives it to the player.
 static void MgBuildGiftMon(u8 id)
 {
 	const struct MysteryGiftEntry* gift = &sMysteryGifts[id];
@@ -419,7 +396,7 @@ static void MgBuildGiftMon(u8 id)
 	u8 nature = gift->nature;
 
 	ZeroMonData(mon);
-	CreateMon(mon, gift->species, gift->level, MG_PERFECT_IVS ? 31 : 32, 0, 0, 0, 0);	//fixedIV < 32: CFRU writes this value to all 6 IVs
+	CreateMon(mon, gift->species, gift->level, MG_PERFECT_IVS ? 31 : 32, 0, 0, 0, 0);
 
 	if (item != ITEM_NONE)
 		SetMonData(mon, MON_DATA_HELD_ITEM, &item);
@@ -427,7 +404,7 @@ static void MgBuildGiftMon(u8 id)
 	if (gift->hiddenAbility)
 		mon->hiddenAbility = TRUE;
 
-	if (gift->moves[0] != MOVE_NONE)	//Custom moves (replace the level-up ones; empty slots stay empty)
+	if (gift->moves[0] != MOVE_NONE)
 	{
 		u32 i;
 
@@ -449,8 +426,6 @@ static void MgBuildGiftMon(u8 id)
 	HealMon(mon);
 }
 
-//Gives everything at once (Pokemon and/or item) and marks the code as claimed.
-//Returns FALSE (without using up the code) if the Pokemon could not be given for lack of room.
 static bool8 MgGiveRewards(void)
 {
 	const struct MysteryGiftEntry* gift = &sMysteryGifts[MG_GIFT_ID];
@@ -461,7 +436,7 @@ static bool8 MgGiveRewards(void)
 		u8 sent = GiveMonToPlayer(mon);
 
 		if (sent > 1)
-			return FALSE;	//No room in the party or the PC: nothing was given, the code is still valid
+			return FALSE;
 
 		SetMonPokedexFlags(mon);
 		MG_SENT_RESULT = sent;
@@ -470,7 +445,7 @@ static bool8 MgGiveRewards(void)
 	if (gift->rewardItem != ITEM_NONE)
 		AddBagItem(gift->rewardItem, gift->rewardQty);
 
-	FlagSet(MYSTERY_GIFT_FLAG_BASE + gift->slot);	//Each code can only be claimed once
+	FlagSet(MYSTERY_GIFT_FLAG_BASE + gift->slot);
 	gSpecialVar_LastResult = 1;
 	return TRUE;
 }
@@ -535,7 +510,6 @@ static void MgUpdateCursorSprites(struct Task* task)
 	cursor->pos1.x = MgKeyCenterX(col);
 	cursor->pos1.y = MgKeyCenterY(row);
 
-	//Blinks between gold and white
 	color = (task->tTimer & 16) ? RGB(31, 31, 31) : RGB(31, 26, 9);
 	LoadPalette(&color, 256 + IndexOfSpritePaletteTag(MG_PAL_CURSOR_TAG) * 16 + 1, 2);
 
@@ -608,21 +582,17 @@ static void MgEntryInput(struct Task* task)
 		}
 		else if (!JOY_NEW(A_BUTTON))
 		{
-			gSpecialVar_LastResult = 0;	//Left without receiving anything
+			gSpecialVar_LastResult = 0;
 			MgBeginExit(task);
 		}
 	}
 	else if (JOY_NEW(START_BUTTON))
 		MgTrySubmit(task);
 
-	//The error message goes away by itself
 	if (MG_MSG_TIMER != 0 && --MG_MSG_TIMER == 0)
 		MgPrintBottomLine(GetMgText(MSG_HINT), sColHint);
 }
 
-//-------------------------------------------------------------------------------------------------
-// Stage / gift animation
-//-------------------------------------------------------------------------------------------------
 static void MgPrintDialog(const u8* line1, const u8* line2)
 {
 	FillWindowPixelBuffer(WIN_MAIN, PIXEL_FILL(0));
@@ -651,7 +621,6 @@ static void MgEnterStage(struct Task* task)
 {
 	u32 i;
 
-	//The code screen leaves the scene
 	HideBg(1);
 	ShowBg(2);
 	DestroySprite(&gSprites[task->tSprCursor]);
@@ -660,7 +629,6 @@ static void MgEnterStage(struct Task* task)
 	FreeSpriteTilesByTag(MG_TILE_CARET_TAG);
 	FreeSpritePaletteByTag(MG_PAL_CURSOR_TAG);
 
-	//The gift (lid and body) starts up high
 	LoadSpriteSheet(&sSheetLid);
 	LoadSpriteSheet(&sSheetBase);
 	LoadSpriteSheet(&sSheetBurst);
@@ -720,7 +688,6 @@ static void MgPrintReceived(void)
 	MgPrintDialog(gStringVar4, GetMgText(MG_SENT_RESULT == 1 ? MSG_SENTPC : MSG_GOODLUCK));
 }
 
-//Item page: the item icon in the center and the text "You received <item> xN!"
 static void MgShowItemPage(struct Task* task)
 {
 	const struct MysteryGiftEntry* gift = &sMysteryGifts[MG_GIFT_ID];
@@ -752,7 +719,6 @@ static void MgShowItemPage(struct Task* task)
 	MgPrintDialog(gStringVar4, GetMgText(MSG_STOREDBAG));
 }
 
-//Frees the sprite on screen (Pokemon or item)
 static void MgFreeShownSprite(struct Task* task)
 {
 	if (task->tSprMon == 0xFF)
@@ -770,7 +736,6 @@ static void MgFreeShownSprite(struct Task* task)
 	task->tSprMon = 0xFF;
 }
 
-//Common part of the exit: restores the game state and returns to the map (the script continues after waitstate)
 static void MgReturnToField(void)
 {
 	ZeroMonData(&gEnemyParty[0]);	//Do not leave the gift Pokemon lying around in memory
@@ -778,7 +743,7 @@ static void MgReturnToField(void)
 	ResetSpriteData();
 	FreeAllSpritePalettes();
 #if MYSTERY_GIFT_MENU_MUSIC != 0
-	PlayNewMapMusic(GetCurrentMapMusic());	//Restores the map music (the game only switches if it differs from the current one)
+	PlayNewMapMusic(GetCurrentMapMusic());
 #endif
 	CB2_ReturnToFieldContinueScriptPlayMapMusic();
 }
@@ -840,7 +805,7 @@ static void Task_MysteryGift(u8 taskId)
 			}
 			break;
 
-		case ST_DROP:	//The gift drops and bounces
+		case ST_DROP:
 			MgSetBoxPos(task, 0, sDropOffsets[t]);
 			if (t == 8 || t == 28)
 				PlaySE(SE_WALL_HIT);
@@ -859,7 +824,7 @@ static void Task_MysteryGift(u8 taskId)
 			}
 			break;
 
-		case ST_SHAKE:	//Shakes more and more, releasing sparkles
+		case ST_SHAKE:
 		{
 			u8 amp = 1 + (t >= 30) + (t >= 60);
 
@@ -885,9 +850,8 @@ static void Task_MysteryGift(u8 taskId)
 
 			if (t + 1 >= T_SHAKE)
 			{
-				//Opens: creates the burst and releases the lid
 				task->tSprBurst = CreateSprite(&sTemplateBurst, BOX_X, BURST_Y, 3);
-				gSprites[task->tSprBurst].data[7] = CreateSprite(&sTemplateBurst2, BOX_X, BURST_Y, 3);	//Frame B is kept in data[7] of A
+				gSprites[task->tSprBurst].data[7] = CreateSprite(&sTemplateBurst2, BOX_X, BURST_Y, 3);
 				MgSetBoxPos(task, 0, 0);
 				PlaySE(SE_SHINY);
 				task->tTimer = 0;
@@ -903,13 +867,13 @@ static void Task_MysteryGift(u8 taskId)
 
 			if (!lid->invisible)
 			{
-				lid->pos1.y -= 6;			//The lid flies upward
+				lid->pos1.y -= 6;
 				lid->pos1.x += 1;
 				if (lid->pos1.y < -20)
 					lid->invisible = TRUE;
 			}
 
-			burst->invisible = (t / 3) & 1;					//Alternates the two burst frames
+			burst->invisible = (t / 3) & 1;
 			gSprites[burst->data[7]].invisible = !burst->invisible;
 			MgUpdateSparklesCircle(t, BOX_X, BURST_Y, 14 + t * 8 / 5, 14 + t * 6 / 5, 9);
 
@@ -924,7 +888,6 @@ static void Task_MysteryGift(u8 taskId)
 		case ST_FLASH_OUT:
 			if (!gPaletteFade->active)
 			{
-				//All white: swaps the gift for the Pokemon and actually gives it
 				DestroySprite(&gSprites[task->tSprLid]);
 				DestroySprite(&gSprites[task->tSprBase]);
 				DestroySprite(&gSprites[gSprites[task->tSprBurst].data[7]]);
@@ -939,7 +902,7 @@ static void Task_MysteryGift(u8 taskId)
 				{
 					static const u8 sEmptyLine[] = {EOS};
 
-					task->tPage = 2;	//Failed: shows the warning and leaves without using up the code
+					task->tPage = 2;
 					task->tSprMon = 0xFF;
 					MgPrintDialog(GetMgText(MSG_NOROOM), sEmptyLine);
 				}
@@ -950,7 +913,7 @@ static void Task_MysteryGift(u8 taskId)
 					MgPrintReceived();
 				}
 				else
-					MgShowItemPage(task);	//Item-only gift
+					MgShowItemPage(task);
 				BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_WHITE);
 				task->tTimer = 0;
 				task->tState = ST_FLASH_IN;
@@ -970,7 +933,7 @@ static void Task_MysteryGift(u8 taskId)
 
 		case ST_REVEAL:
 			if (task->tSprMon != 0xFF)
-				gSprites[task->tSprMon].pos1.y = (task->tPage == 0 ? MON_Y : ITEM_Y) + MgSin((t * 8) & 0xFF, 2);	//Sways gently
+				gSprites[task->tSprMon].pos1.y = (task->tPage == 0 ? MON_Y : ITEM_Y) + MgSin((t * 8) & 0xFF, 2);
 
 			MgUpdateSparklesCircle(t, MON_X, 70, 50, 34, 4);
 
@@ -981,7 +944,7 @@ static void Task_MysteryGift(u8 taskId)
 			{
 				if (task->tPage == 0 && sMysteryGifts[MG_GIFT_ID].rewardItem != ITEM_NONE)
 				{
-					BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_WHITE);	//Gift with Pokemon + item: shows the item
+					BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_WHITE);
 					task->tState = ST_PAGE_FLASH_OUT;
 				}
 				else
@@ -1016,9 +979,6 @@ static void Task_MysteryGift(u8 taskId)
 	}
 }
 
-//-------------------------------------------------------------------------------------------------
-// Start / end of the screen
-//-------------------------------------------------------------------------------------------------
 static void VBlankCB_MysteryGift(void)
 {
 	LoadOam();
@@ -1042,7 +1002,6 @@ static void CB2_MysteryGift(void)
 	u32 i;
 	u8 cursorId, caretId;
 
-	//Clears what the map left behind
 	SetVBlankCallback(NULL);
 	SetHBlankCallback(NULL);
 	SetGpuReg(REG_OFFSET_DISPCNT, 0);
@@ -1080,13 +1039,12 @@ static void CB2_MysteryGift(void)
 	ResetPaletteFade();
 	ResetAllPicSprites();
 
-	//Backgrounds and text window
 	ResetBgsAndClearDma3BusyFlags(0);
 	InitBgsFromTemplates(0, sBgTemplates, NELEMS(sBgTemplates));
 	tm0 = AllocZeroed(BG_SCREEN_SIZE);
 	tm1 = AllocZeroed(BG_SCREEN_SIZE);
 
-	if (tm0 == NULL || tm1 == NULL)		//Out of memory: return to the map without opening the screen (never writes through a null pointer)
+	if (tm0 == NULL || tm1 == NULL)
 	{
 		if (tm0 != NULL)
 			Free(tm0);
@@ -1101,7 +1059,7 @@ static void CB2_MysteryGift(void)
 	SetBgTilemapBuffer(0, tm0);
 	SetBgTilemapBuffer(1, tm1);
 
-	if (!InitWindows(sWindowTemplates))	//Could not get the text window buffer
+	if (!InitWindows(sWindowTemplates))
 	{
 		FreeAllWindowBuffers();
 		Free(tm0);
@@ -1113,7 +1071,6 @@ static void CB2_MysteryGift(void)
 
 	DeactivateAllTextPrinters();
 
-	//Graphics of the two backgrounds (go straight into VRAM, no buffer)
 	LoadBgTiles(1, gMgEntryTiles, gMgEntryTilesSize, 0);
 	for (i = 0; i < 32 * 20; ++i)
 		tm1[i] = gMgEntryMap[i];
@@ -1121,7 +1078,6 @@ static void CB2_MysteryGift(void)
 	LoadBgTiles(2, gMgStageTiles, gMgStageTilesSize, 0);
 	LoadBgTilemap(2, gMgStageMap, 32 * 20 * 2, 0);
 
-	//Palettes: background = 32 colors (2 palettes of 16); objects = sparkles/gift and cursor
 	LoadPalette(gMgPalBg, 0, 64);
 	LoadSpriteSheet(&sSheetCursor);
 	LoadSpriteSheet(&sSheetCaret);
@@ -1133,7 +1089,7 @@ static void CB2_MysteryGift(void)
 	taskId = CreateTask(Task_MysteryGift, 0);
 	gTasks[taskId].tState = ST_FADE_IN;
 	gTasks[taskId].tTimer = 0;
-	gTasks[taskId].tCursor = 10;	//Starts on the letter A
+	gTasks[taskId].tCursor = 10;
 	gTasks[taskId].tLen = 0;
 	gTasks[taskId].tBufLo = (u32) tm0 & 0xFFFF;
 	gTasks[taskId].tBufHi = ((u32) tm0 >> 16) & 0xFFFF;
@@ -1150,14 +1106,12 @@ static void CB2_MysteryGift(void)
 
 	MgDrawEntryScreen();
 
-	//Only BG0 (text) and BG1 (code screen). BG2 (stage) is only turned on during the animation (MgEnterStage): color 0 of the
-	//backgrounds is transparent, so with BG2 on it would show through under the code screen.
 	ShowBg(0);
 	ShowBg(1);
 	SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON | DISPCNT_BG0_ON | DISPCNT_BG1_ON);
 
 #if MYSTERY_GIFT_MENU_MUSIC != 0
-	PlayBGM(MYSTERY_GIFT_MENU_MUSIC);		//Menu music (the map music comes back on exit)
+	PlayBGM(MYSTERY_GIFT_MENU_MUSIC);
 #endif
 	SetVBlankCallback(VBlankCB_MysteryGift);
 	BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
@@ -1173,7 +1127,6 @@ static void Task_MysteryGiftStartFade(u8 taskId)
 	}
 }
 
-//Entry point: callasm MysteryGift_Start  (or special). Then use "waitstate".
 void MysteryGift_Start(void)
 {
 	typedef char MysteryGiftTableTooBig[(NELEMS(sMysteryGifts) <= MYSTERY_GIFT_MAX_CODES) ? 1 : -1] __attribute__((unused));

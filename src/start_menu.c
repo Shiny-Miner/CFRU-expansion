@@ -146,7 +146,7 @@ const struct MenuAction sStartMenuActionTable[] =
 	[STARTMENU_BAG] = {gText_MenuBag, {.u8_void = StartMenuBagCallback}},
 	[STARTMENU_PLAYER] = {gText_MenuPlayer, {.u8_void = StartMenuPlayerCallback}},
 #ifdef BW_SAVING_SCREEN
-	[STARTMENU_SAVE] = {gText_MenuSave, {.u8_void = StartMenuSaveScreenCallback}}, //Gen-5 style save screen call
+	[STARTMENU_SAVE] = {gText_MenuSave, {.u8_void = StartMenuSaveScreenCallback}},
 #else
 	[STARTMENU_SAVE] = {gText_MenuSave, {.u8_void = StartMenuSaveCallback}},
 #endif
@@ -415,7 +415,7 @@ bool8 StartMenuHasOption(u8 option)
      sStartMenuCallback = sStartMenuActionTable[option].func.u8_void;
      StartMenu_FadeScreenIfLeavingOverworld();
 #ifdef BW_SAVING_SCREEN
-     if (option == STARTMENU_SAVE) //The save screen leaves the overworld like any other menu
+     if (option == STARTMENU_SAVE)
      {
          RemoveFollowerBeforeBattle();
          RemoveTimeBox();

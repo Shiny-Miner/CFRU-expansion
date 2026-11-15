@@ -138,8 +138,6 @@
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
 extern u16 gLastUsedBall; //0x203B774
 
-// Bag runtime state. This range was free and has room for the repel value
-// plus the three pocket item counts.
 #define gLastUsedRepel (*(u16*) 0x203B776)
 #define sBagItemAmounts ((u16*) 0x203B778)
 
@@ -159,7 +157,6 @@ extern u16 gLastUsedBall; //0x203B774
 //extern struct Roamer gRoamers[10] //0x203BA30
 //Bag (see src/item.c). Block 1: 0x203BB20 - 0x203C750 (780 slots): regular, key, balls, TM/HM, berries - don't go past 0x203C750!
 //Block 2: 0x2024638 - 0x2024D04 (RAM of the removed PC box 25): Mega Stones pocket, then Evolution Items pocket
-//FREE: whatever is left of block 1 after the pockets (see the sizes in src/item.c)
 
 #define gSelectedOrderFromParty ((u8*) 0x203C750)
 extern bool8 gDontFadeWhite; //0x203C756

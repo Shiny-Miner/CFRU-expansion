@@ -3881,8 +3881,6 @@ static NPCPtr sOverworldTable6[] =
 
 #ifdef SIDEQUEST_MENU
 
-// Returns the overworld palette entry matching an EventObjectGraphicsInfo palette tag.
-// Used by the Quest Menu to reuse the existing character/follower overworld palettes.
 const struct SpritePalette *GetQuestOverworldPalette(u16 paletteTag)
 {
     const struct SpritePalette *table;

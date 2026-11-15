@@ -5,5 +5,4 @@
  * See src/save_screen.c
  */
 
-//Start Menu callback (replaces the vanilla StartMenuSaveCallback in sStartMenuActionTable)
 bool8 StartMenuSaveScreenCallback(void);

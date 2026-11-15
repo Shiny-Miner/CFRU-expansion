@@ -49,7 +49,7 @@ enum
 	DEBUG_SELECTOR_DIGIT,
 	DEBUG_SELECTOR_WINDOW,
 	DEBUG_SELECTOR_ICON,
-	DEBUG_SELECTOR_ICON_SPECIES, //Species whose palette is currently loaded for the icon
+	DEBUG_SELECTOR_ICON_SPECIES,
 };
 
 static void Task_DebugMenuPokemonSelector(u8 taskId);
@@ -66,8 +66,6 @@ static const u8 *const sDebugSelectorStepTexts[] =
 	gText_DebugSelector_Step1000,
 };
 
-//Loads the icon palette for the species, creates the icon, and makes sure the sprite
-//actually points at the palette slot that holds the right colours.
 static u8 DebugMenu_CreateSelectorIcon(u16 species)
 {
 	u8 palTagIndex = GetValidMonIconPalIndex(species);
@@ -108,7 +106,6 @@ static void DebugMenu_DrawPokemonSelector(u8 taskId, bool8 updateIcon)
 
 	if (updateIcon)
 	{
-		//Destroy the old sprite first, then release its palette, then load the new one
 		if (task->data[DEBUG_SELECTOR_ICON] < MAX_SPRITES)
 			DestroyMonIcon(&gSprites[task->data[DEBUG_SELECTOR_ICON]]);
 		SafeFreeMonIconPalette(task->data[DEBUG_SELECTOR_ICON_SPECIES]);

@@ -279,11 +279,10 @@ bool8 StartLButtonFunc(void)
 }
 
 #ifdef FLAG_FAST_FORWARD
-//L + R pressed together toggles overworld fast forward
 bool8 TryToggleFastForward(void)
 {
 	if (gSaveBlock2->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A)
-		return FALSE; //L is A in this mode, so the combo isn't available
+		return FALSE;
 
 	if ((gMain.heldKeysRaw & (L_BUTTON | R_BUTTON)) != (L_BUTTON | R_BUTTON)
 	|| !(gMain.newKeysRaw & (L_BUTTON | R_BUTTON)))
@@ -303,16 +302,10 @@ bool8 TryToggleFastForward(void)
 		ScriptContext1_SetupScript(SystemScript_EnableFastForward);
 	}
 
-	//Consume the combo so the silent toggle in ShouldSkipVBlankWait (fast_forward.c) doesn't flip it back
 	gMain.newKeysRaw &= ~(L_BUTTON | R_BUTTON);
 	return TRUE;
 }
 
-//L and R both have their own field functions (turbo boost / auto-run / second registered item on L,
-//bag / party / DexNav / etc. on R). Pressing L + R together for fast forward used to fire whichever
-//of the two was pressed first, e.g. toggling Surf turbo boost off. So a lone L or R press is only
-//acted on when that button is RELEASED without the other one having joined in.
-//Returns bit 0 = run L's function, bit 1 = run R's function.
 u8 HandleDeferredLRActions(struct FieldInput* input)
 {
 	u8 actions = 0;
@@ -320,20 +313,19 @@ u8 HandleDeferredLRActions(struct FieldInput* input)
 
 	FF_LR_PENDING &= 3;
 
-	//The game only sets these in frames where the player is ready for input
 	if (input->pressedLButton)
 		FF_LR_PENDING |= 1;
-	if (input->pressedRButton && JOY_NEW(R_BUTTON)) //Not when held!
+	if (input->pressedRButton && JOY_NEW(R_BUTTON))
 		FF_LR_PENDING |= 2;
 
 	if ((held & (L_BUTTON | R_BUTTON)) == (L_BUTTON | R_BUTTON))
 	{
-		FF_LR_PENDING = 0; //That's the fast forward combo, neither button acts on its own
+		FF_LR_PENDING = 0;
 		return 0;
 	}
 
 	if (gPlayerAvatar->tileTransitionState == T_TILE_TRANSITION)
-		return 0; //Mid step, stays pending until the player is ready for input again
+		return 0;
 
 	if ((FF_LR_PENDING & 1) && !(held & L_BUTTON))
 	{

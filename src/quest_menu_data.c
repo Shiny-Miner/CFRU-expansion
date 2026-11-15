@@ -6,7 +6,6 @@
 
 #ifdef SIDEQUEST_MENU
 
-// External declarations for quest item names and descriptions
 extern const u8 gText_QuestItem_1[];
 extern const u8 gText_QuestDesc_1[];
 extern const u8 gText_QuestItem_2[];
@@ -31,23 +30,19 @@ extern const u8 gText_QuestDone[];
 extern const u8 gText_QuestGift[];
 extern const u8 EventScript_GiveMons_Special[];
 
-// Array of menu page titles
 const u8 *const sMenuTitles[] = {
     gText_MenuTitle,
     gText_MenuTitle2,
 };
 
-// Pointers to the respective quest tables for each page
 const struct QuestInfo *const gQuestTables[] = {
     gMainQuestTable,
     gSideQuestTable,
 };
 
-// Total number of pages available in the quest menu
 u8 gNumPages = 2;
 const u16 FLAG_HIDE_QUEST_STATS = 0x0021;
 
-// Main quests table using var-based state tracking (unlockState, doneState, rewardState)
 const struct QuestInfo gMainQuestTable[] = {
     {
         .unlockFlag = FLAG_QUEST_1_UNLOCKED,
@@ -85,13 +80,11 @@ const struct QuestInfo gMainQuestTable[] = {
         .description = gText_QuestDesc_4,
         .script = NULL,
     },
-    // Table terminator (marks the end of the main quest list)
     {
         .unlockFlag = SPECIES_TABLES_TERMIN
     },
 };
 
-// Side quests table (currently empty, containing only the table terminator)
 const struct QuestInfo gSideQuestTable[] = {
     {
         .unlockFlag = FLAG_QUEST_2_UNLOCKED,
@@ -107,7 +100,6 @@ const struct QuestInfo gSideQuestTable[] = {
     },
 };
 
-// Text color configurations for UI rendering
 const struct TextColor sWhiteText = { TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GREY };
 const struct TextColor sBlackText = { TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GREY, TEXT_COLOR_LIGHT_GREY };
 const struct TextColor sRedText   = { TEXT_COLOR_TRANSPARENT, TEXT_COLOR_RED,   TEXT_COLOR_LIGHT_RED };
@@ -117,7 +109,6 @@ const struct TextColor sGrayText  = { TEXT_COLOR_TRANSPARENT, TEXT_COLOR_LIGHT_G
 
 // Background layer templates for the menu layout
 const struct BgTemplate sQuestMenuBGTemplates[] = {
-    // Window Text and UI
     {
         .bg = 0,
         .charBaseIndex = 0,
@@ -127,7 +118,6 @@ const struct BgTemplate sQuestMenuBGTemplates[] = {
         .priority = 0,
         .baseTile = 0,
     },
-    // Graphic background
     {
         .bg = 3,
         .charBaseIndex = 1,
@@ -141,7 +131,6 @@ const struct BgTemplate sQuestMenuBGTemplates[] = {
 
 // Window layout templates for UI text boxes and containers
 const struct WindowTemplate sQuestMenuWindowTemplates[] = {
-    // Window 0: Title and page header area
     {
         .bg = 0,
         .tilemapLeft = 21,
@@ -151,7 +140,6 @@ const struct WindowTemplate sQuestMenuWindowTemplates[] = {
         .paletteNum = 15,
         .baseBlock = 0,
     },
-    // Window 1: Quest items list (main content area on the left)
     {
         .bg = 0,
         .tilemapLeft = 1,  
@@ -161,7 +149,6 @@ const struct WindowTemplate sQuestMenuWindowTemplates[] = {
         .paletteNum = 15,
         .baseBlock = 18,
     },
-    // Window 2: Quest description box (bottom text container)
     {
         .bg = 0,
         .tilemapLeft = 2,
@@ -171,7 +158,6 @@ const struct WindowTemplate sQuestMenuWindowTemplates[] = {
         .paletteNum = 15,
         .baseBlock = 270,
     },
-    // Window 3: Sidebar/stats display area (right side)
     {
         .bg = 0,
         .tilemapLeft = 21,    
@@ -181,11 +167,9 @@ const struct WindowTemplate sQuestMenuWindowTemplates[] = {
         .paletteNum = 15,
         .baseBlock = 426,
     },
-    // Terminator template
     DUMMY_WIN_TEMPLATE
 };
 
-// Background graphics assets pointers (tiles, palette, tilemap)
 const struct ImageData gQuestMenuBGData = {
     .tiles = Menu_BGTiles,
     .pal = Menu_BGPal,

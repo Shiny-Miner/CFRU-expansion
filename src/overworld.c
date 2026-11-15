@@ -2869,7 +2869,7 @@ bool8 ProcessNewFieldPlayerInput(struct FieldInput* input)
 		return FALSE; //Can't force close this
 
 	#ifdef FLAG_FAST_FORWARD
-	u8 lrActions = HandleDeferredLRActions(input); //L / R act on release so L + R (fast forward) doesn't also fire them
+	u8 lrActions = HandleDeferredLRActions(input);
 	#else
 	u8 lrActions = (input->pressedLButton ? 1 : 0) | ((input->pressedRButton && JOY_NEW(R_BUTTON)) ? 2 : 0);
 	#endif
@@ -2903,7 +2903,7 @@ bool8 ProcessNewFieldPlayerInput(struct FieldInput* input)
 		return TRUE;
 	}
 
-	if ((lrActions & 2) //Not when held!
+	if ((lrActions & 2)
 	&& StartRButtonFunc())
 	{
 		gInputToStoreInQuestLogMaybe.pressedRButton = TRUE;
