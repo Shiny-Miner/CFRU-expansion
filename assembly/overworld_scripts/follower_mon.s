@@ -14,6 +14,7 @@ EventScript_FollowerMon:
     callasm ShowMysteryGiftMon
     cry 0x8004 0x0
     callasm ShowAnonymousFollowerMessage
+    callasm ShowFollowerEmote
     msgbox gStringVar4 MSG_NORMAL
     callasm Remove_PokemonPic
     release

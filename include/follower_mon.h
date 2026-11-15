@@ -15,5 +15,6 @@ bool8 __attribute__((long_call)) HasLeadFollowerMon(void);
 struct Pokemon* GetFirstValidPartyMon(void);
 struct Pokemon* GetFollowerPartyMon(void);
 void SetFollowerMonSpeciesVar(void);
+void ShowFollowerEmote(void);
 
 #endif

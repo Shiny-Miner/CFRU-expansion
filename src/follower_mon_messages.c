@@ -32,6 +32,9 @@
 #include "../include/constants/pokemon.h"
 #include "../include/constants/songs.h"
 
+#include "../include/party_menu.h"
+#include "../include/constants/field_effects.h"
+
 #include "../include/new/battle_strings.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/catching.h"
@@ -56,87 +59,31 @@
 #define LOW_HAPPINESS 70
 #define HIGH_HAPPINESS 200
 #define LOW_HP_PERCENT 20
-#define ITEM_FIND_CHANCE 3  // 3% chance
+#define HIGH_LEVEL 70
+#define LOW_LEVEL 12
+#define HIGH_IV 25
+#define ITEM_FIND_CHANCE 3
+#define RARE_TEXT_CHANCE 2
+#define SITUATIONAL_CHANCE 65
+#define MAX_POOLS 32
+#define EMOTE_NONE 0xFF
 
-extern const u8 sText_HappyJumping[];
-extern const u8 sText_LooksLonely[];
-extern const u8 sText_TiredButReady[];
-extern const u8 sText_StatusAsleep[];
-extern const u8 sText_StatusParalyzed[];
-extern const u8 sText_StatusPoisoned[];
-extern const u8 sText_StatusBurned[];
-extern const u8 sText_StatusFrozen[];
+#define FM_LAST_TEXT_A (*(vu16*) 0x203E0CA)
+#define FM_LAST_TEXT_B (*(vu16*) 0x203E0CC)
 
-extern const u8 sText_TypeFire[];
-extern const u8 sText_TypeWater[];
-extern const u8 sText_TypeElectric[];
-extern const u8 sText_TypeGrass[];
-extern const u8 sText_TypeIce[];
-extern const u8 sText_TypeFighting[];
-extern const u8 sText_TypeFlying[];
-extern const u8 sText_TypePoison[];
-extern const u8 sText_TypeGround[];
-extern const u8 sText_TypeRock[];
-extern const u8 sText_TypeBug[];
-extern const u8 sText_TypeGhost[];
-extern const u8 sText_TypeSteel[];
-extern const u8 sText_TypePsychic[];
-extern const u8 sText_TypeDragon[];
-extern const u8 sText_TypeDark[];
-extern const u8 sText_TypeFairy[];
-extern const u8 sText_TypeNormal[];
+struct TextPool
+{
+    const u8* const* texts;
+    u8 count;
+    u8 emote;
+    u8 emoteChance;
+};
+
+#include "follower_mon_text_pools.h"
 
 extern const u8 sText_FoundItem[];
-extern const u8 sText_IdleLookingAround[];
-extern const u8 sText_IdleBored[];
-extern const u8 sText_IdleStretching[];
-extern const u8 sText_IdleTailWag[];
-extern const u8 sText_RecallsMetLocation[];
-extern const u8 sText_NatureHardy[];
-extern const u8 sText_NatureLonely[];
-extern const u8 sText_NatureBrave[];
-extern const u8 sText_NatureAdamant[];
-extern const u8 sText_NatureNaughty[];
-
-extern const u8 sText_NatureBold[];
-extern const u8 sText_NatureDocile[];
-extern const u8 sText_NatureRelaxed[];
-extern const u8 sText_NatureImpish[];
-extern const u8 sText_NatureLax[];
-
-extern const u8 sText_NatureTimid[];
-extern const u8 sText_NatureHasty[];
-extern const u8 sText_NatureSerious[];
-extern const u8 sText_NatureJolly[];
-extern const u8 sText_NatureNaive[];
-
-extern const u8 sText_NatureModest[];
-extern const u8 sText_NatureMild[];
-extern const u8 sText_NatureQuiet[];
-extern const u8 sText_NatureBashful[];
-extern const u8 sText_NatureRash[];
-
-extern const u8 sText_NatureCalm[];
-extern const u8 sText_NatureGentle[];
-extern const u8 sText_NatureSassy[];
-extern const u8 sText_NatureCareful[];
-extern const u8 sText_NatureQuirky[];
-
-extern const u8 sText_HoldingFood[];
-extern const u8 sText_ChecksHeldItem[];
-extern const u8 sText_LuxuryBallPride[];
-extern const u8 sText_TryingToStandUpright[];
-extern const u8 sText_StompingAround[];
-extern const u8 sText_SkippingAlong[];
-extern const u8 sText_SeemsDistracted[];
-extern const u8 sText_FlexesMuscles[];
-
-extern const u8 sText_EnjoyingSunlight[];
-extern const u8 sText_NighttimeEnergy[];
-extern const u8 sText_MorningGreeting[];
-
-extern void ShowMysteryGiftMon(void);
 extern struct Pokemon* GetFirstValidPartyMon(void);
+extern struct Pokemon* GetFollowerPartyMon(void);
 extern u32 GetPlayerTrainerId(void);
 
 void ShowFollowerMessage(const u8* message)
@@ -145,184 +92,261 @@ void ShowFollowerMessage(const u8* message)
     ShowFieldMessage(gStringVar4);
 }
 
-void ShowAnonymousFollowerMessage(void)
+static void AddPool(struct TextPool* pools, u8* count, const u8* const* texts, u8 size, u8 emote, u8 emoteChance)
 {
-    struct Pokemon *mon = GetFirstValidPartyMon();
-    if (mon == NULL)
+    if (*count >= MAX_POOLS || size == 0)
         return;
 
-    u8 happiness = GetMonData(mon, MON_DATA_FRIENDSHIP, NULL);
+    pools[*count].texts = texts;
+    pools[*count].count = size;
+    pools[*count].emote = emote;
+    pools[*count].emoteChance = emoteChance;
+    (*count)++;
+}
+
+#define ADD_POOL(arr, emote, chance) AddPool(pools, &count, arr, ARRAY_COUNT(arr), emote, chance)
+
+static const u8* PickText(const struct TextPool* pool)
+{
+    const u8* text = NULL;
+
+    for (u8 tries = 0; tries < 6; tries++)
+    {
+        text = pool->texts[Random() % pool->count];
+        u16 id = (u16) (u32) text;
+        if (id != FM_LAST_TEXT_A && id != FM_LAST_TEXT_B)
+            break;
+    }
+
+    FM_LAST_TEXT_B = FM_LAST_TEXT_A;
+    FM_LAST_TEXT_A = (u16) (u32) text;
+    return text;
+}
+
+static struct Pokemon* GetRandomPartyBuddy(struct Pokemon* follower)
+{
+    struct Pokemon* buddies[PARTY_SIZE];
+    u8 count = 0;
+
+    for (u8 i = 0; i < PARTY_SIZE; ++i)
+    {
+        struct Pokemon* mon = &gPlayerParty[i];
+
+        if (mon != follower
+        && GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
+        && !GetMonData(mon, MON_DATA_IS_EGG, NULL))
+            buddies[count++] = mon;
+    }
+
+    return count == 0 ? NULL : buddies[Random() % count];
+}
+
+static void BuildSituationalPools(struct Pokemon* mon, struct TextPool* pools, u8* outCount)
+{
+    u8 count = 0;
     u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+    u8 happiness = GetMonData(mon, MON_DATA_FRIENDSHIP, NULL);
     u32 hp = GetMonData(mon, MON_DATA_HP, NULL);
     u32 maxHp = GetMonData(mon, MON_DATA_MAX_HP, NULL);
     u32 status = GetMonData(mon, MON_DATA_STATUS, NULL);
-    u8 type1 = gBaseStats[species].type1;
-    u8 metLocation = GetMonData(mon, MON_DATA_MET_LOCATION, NULL);
+    u8 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
     u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
     u8 ballType = GetMonData(mon, MON_DATA_POKEBALL, NULL);
+    u8 metLocation = GetMonData(mon, MON_DATA_MET_LOCATION, NULL);
+    u8 nature = GetNature(mon);
+    u8 eggGroup = gBaseStats[species].eggGroup1;
+    u8 type = gBaseStats[species].type1;
 
-    const u8 *text = NULL;
+    if (status & STATUS1_SLEEP)
+        ADD_POOL(sPool_Asleep, FLDEFF_X_ICON, 60);
+    else if (status & STATUS_PSN_ANY)
+        ADD_POOL(sPool_Poison, FLDEFF_X_ICON, 60);
+    else if (status & STATUS1_PARALYSIS)
+        ADD_POOL(sPool_Paralyzed, FLDEFF_X_ICON, 60);
+    else if (status & STATUS1_BURN)
+        ADD_POOL(sPool_Burned, FLDEFF_X_ICON, 60);
+    else if (status & STATUS1_FREEZE)
+        ADD_POOL(sPool_Frozen, FLDEFF_X_ICON, 60);
 
-    if (((Random() % 100) < ITEM_FIND_CHANCE))
+    if (hp != 0 && maxHp != 0 && (hp * 100) / maxHp <= LOW_HP_PERCENT)
+        ADD_POOL(sPool_LowHp, FLDEFF_X_ICON, 50);
+
+    if (happiness >= HIGH_HAPPINESS)
+        ADD_POOL(sPool_Happy, FLDEFF_SMILEY_FACE_ICON, 60);
+    else if (happiness <= LOW_HAPPINESS)
+        ADD_POOL(sPool_Lonely, FLDEFF_QUESTION_MARK_ICON, 40);
+
+    switch (gWeatherPtr->currWeather)
     {
-        u8 commonItems[] = {ITEM_POTION, ITEM_POKE_BALL, ITEM_ANTIDOTE, ITEM_PARALYZE_HEAL, ITEM_AWAKENING, ITEM_BURN_HEAL, ITEM_ICE_HEAL};
-        u8 item = commonItems[Random() % ARRAY_COUNT(commonItems)];
-    
-        AddBagItem(item, 1);
-        text = sText_FoundItem; 
+        case WEATHER_RAIN_LIGHT:
+        case WEATHER_RAIN_MED:
+        case WEATHER_RAIN_HEAVY:
+            ADD_POOL(sPool_Rain, EMOTE_NONE, 0);
+            break;
+        case WEATHER_SNOW:
+            ADD_POOL(sPool_Snow, EMOTE_NONE, 0);
+            break;
+        case WEATHER_SANDSTORM:
+            ADD_POOL(sPool_Sand, EMOTE_NONE, 0);
+            break;
+        case WEATHER_FOG_1:
+        case WEATHER_FOG_2:
+        case WEATHER_FOG_3:
+            ADD_POOL(sPool_Fog, FLDEFF_QUESTION_MARK_ICON, 30);
+            break;
+        case WEATHER_SUNNY:
+        case WEATHER_DROUGHT:
+            if (IsOnlyDayTime())
+                ADD_POOL(sPool_Sunny, EMOTE_NONE, 0);
+            break;
     }
-    else if (((Random() % 100) < 10) && (happiness >= HIGH_HAPPINESS))
-        text = sText_HappyJumping;
-    else if (((Random() % 100) < 10) && (hp != 0 && ((hp * 100) / maxHp) <= LOW_HP_PERCENT))
-        text = sText_TiredButReady;
-    else if (((Random() % 100) < 10))
+
+    if (IsMorning())
+        ADD_POOL(sPool_Morning, EMOTE_NONE, 0);
+    else if (IsEvening())
+        ADD_POOL(sPool_Evening, EMOTE_NONE, 0);
+    else if (IsNightTime())
+        ADD_POOL(sPool_Night, EMOTE_NONE, 0);
+    else
+        ADD_POOL(sPool_Day, EMOTE_NONE, 0);
+
+    switch (gMapHeader.mapType)
     {
-        if (status & STATUS1_SLEEP)
-            text = sText_StatusAsleep;
-        else if (status & STATUS_PSN_ANY)
-            text = sText_StatusPoisoned;
-        else if (status & STATUS1_PARALYSIS)
-            text = sText_StatusParalyzed;
-        else if (status & STATUS1_BURN)
-            text = sText_StatusBurned;
-        else if (status & STATUS1_FREEZE)
-            text = sText_StatusFrozen;
+        case MAP_TYPE_UNDERGROUND:
+            ADD_POOL(sPool_Cave, EMOTE_NONE, 0);
+            break;
+        case MAP_TYPE_INDOOR:
+            ADD_POOL(sPool_Indoor, EMOTE_NONE, 0);
+            break;
+        case MAP_TYPE_TOWN:
+        case MAP_TYPE_CITY:
+            ADD_POOL(sPool_Town, EMOTE_NONE, 0);
+            break;
+        case MAP_TYPE_ROUTE:
+            ADD_POOL(sPool_Route, FLDEFF_QUESTION_MARK_ICON, 20);
+            break;
     }
-    else if ((Random() % 100) < 10)
+
+    if (GetRandomPartyBuddy(mon) != NULL)
+        ADD_POOL(sPool_Buddy, FLDEFF_SMILEY_FACE_ICON, 30);
+
+    if (IsMonShiny(mon))
     {
-        switch (type1) // type 1 is used only
+        ADD_POOL(sPool_Shiny, FLDEFF_DOUBLE_EXCL_MARK_ICON, 70);
+        ADD_POOL(sPool_Shiny, FLDEFF_DOUBLE_EXCL_MARK_ICON, 70);
+    }
+
+    if (level >= HIGH_LEVEL)
+        ADD_POOL(sPool_LevelHigh, EMOTE_NONE, 0);
+    else if (level <= LOW_LEVEL)
+        ADD_POOL(sPool_LevelLow, FLDEFF_EXCLAMATION_MARK_ICON, 20);
+
+    if (GetMonData(mon, MON_DATA_OT_ID, NULL) != GetPlayerTrainerId())
+        ADD_POOL(sPool_OtherTrainer, FLDEFF_QUESTION_MARK_ICON, 30);
+
+    if (GetMonData(mon, MON_DATA_ATK_IV, NULL) >= HIGH_IV || GetMonData(mon, MON_DATA_DEF_IV, NULL) >= HIGH_IV)
+        ADD_POOL(sPool_HighIv, EMOTE_NONE, 0);
+
+    if (heldItem == ITEM_LEFTOVERS)
+        ADD_POOL(sPool_Leftovers, EMOTE_NONE, 0);
+    else if (heldItem != ITEM_NONE)
+        ADD_POOL(sPool_HeldItem, EMOTE_NONE, 0);
+
+    if (ballType == ITEM_LUXURY_BALL)
+        ADD_POOL(sPool_LuxuryBall, FLDEFF_SMILEY_FACE_ICON, 40);
+
+    if (metLocation != 0)
+        ADD_POOL(sPool_MetPlace, FLDEFF_QUESTION_MARK_ICON, 30);
+
+    if (nature < ARRAY_COUNT(sNatureTexts))
+        AddPool(pools, &count, sNatureTexts[nature], 2, EMOTE_NONE, 0);
+
+    if (type < ARRAY_COUNT(sTypeTexts) && sTypeTexts[type][0] != NULL)
+        AddPool(pools, &count, sTypeTexts[type], 2, EMOTE_NONE, 0);
+
+    if (eggGroup < ARRAY_COUNT(sEggGroupTexts) && sEggGroupTexts[eggGroup].texts != NULL)
+        AddPool(pools, &count, sEggGroupTexts[eggGroup].texts, sEggGroupTexts[eggGroup].count, EMOTE_NONE, 0);
+
+    *outCount = count;
+}
+
+void ShowAnonymousFollowerMessage(void)
+{
+    struct TextPool pools[MAX_POOLS];
+    struct TextPool rarePool = {sPool_Rare, ARRAY_COUNT(sPool_Rare), FLDEFF_SMILEY_FACE_ICON, 80};
+    struct TextPool idlePool = {sPool_Idle, ARRAY_COUNT(sPool_Idle), FLDEFF_QUESTION_MARK_ICON, 10};
+    struct TextPool speciesPool;
+    const u8* speciesTexts[4];
+    const struct TextPool* pool = &idlePool;
+    const u8* text = NULL;
+    u8 count = 0;
+    u8 speciesCount = 0;
+    u8 roll = Random() % 100;
+    struct Pokemon* mon = GetFollowerPartyMon();
+
+    Var8005 = EMOTE_NONE;
+
+    if (mon == NULL)
+    {
+        StringExpandPlaceholders(gStringVar4, sPool_Idle[Random() % ARRAY_COUNT(sPool_Idle)]);
+        return;
+    }
+
+    if (roll < ITEM_FIND_CHANCE)
+    {
+        const u16 commonItems[] = {ITEM_POTION, ITEM_POKE_BALL, ITEM_ANTIDOTE, ITEM_PARALYZE_HEAL, ITEM_AWAKENING, ITEM_BURN_HEAL, ITEM_ICE_HEAL};
+        u16 item = commonItems[Random() % ARRAY_COUNT(commonItems)];
+
+        if (AddBagItem(item, 1))
         {
-            case TYPE_FIRE:     text = sText_TypeFire; break;
-            case TYPE_WATER:    text = sText_TypeWater; break;
-            case TYPE_ELECTRIC: text = sText_TypeElectric; break;
-            case TYPE_GRASS:    text = sText_TypeGrass; break;
-            case TYPE_ICE:      text = sText_TypeIce; break;
-            case TYPE_FIGHTING: text = sText_TypeFighting; break;
-            case TYPE_FLYING:   text = sText_TypeFlying; break;
-            case TYPE_POISON:   text = sText_TypePoison; break;
-            case TYPE_GROUND:   text = sText_TypeGround; break;
-            case TYPE_ROCK:     text = sText_TypeRock; break;
-            case TYPE_BUG:      text = sText_TypeBug; break;
-            case TYPE_GHOST:    text = sText_TypeGhost; break;
-            case TYPE_STEEL:    text = sText_TypeSteel; break;
-            case TYPE_PSYCHIC:  text = sText_TypePsychic; break;
-            case TYPE_DRAGON:   text = sText_TypeDragon; break;
-            case TYPE_DARK:     text = sText_TypeDark; break;
-            case TYPE_FAIRY:    text = sText_TypeFairy; break;
-            case TYPE_NORMAL:
-            default:            text = sText_TypeNormal; break;
+            CopyItemName(item, gStringVar2);
+            Var8005 = FLDEFF_EXCLAMATION_MARK_ICON;
+            StringExpandPlaceholders(gStringVar4, sText_FoundItem);
+            return;
         }
     }
 
-    else if (((Random() % 100) < 10) && (metLocation != 0 && (Random() % 100) < 100))
+    if (roll < ITEM_FIND_CHANCE + RARE_TEXT_CHANCE)
     {
-        GetMapName(gStringVar2, metLocation, 0);
-        text = sText_RecallsMetLocation;
+        pool = &rarePool;
     }
-    else if (((Random() % 100) < 10)) // 10% chance nature-based
+    else if ((Random() % 100) < SITUATIONAL_CHANCE)
     {
-        u8 nature = GetNature(mon);
-        switch (nature)
+        BuildSituationalPools(mon, pools, &count);
+
+        u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+        for (u8 i = 0; i < ARRAY_COUNT(sSpeciesTexts) && speciesCount < ARRAY_COUNT(speciesTexts); ++i)
         {
-            case NATURE_HARDY:   text = sText_NatureHardy; break;
-            case NATURE_LONELY:  text = sText_NatureLonely; break;
-            case NATURE_BRAVE:   text = sText_NatureBrave; break;
-            case NATURE_ADAMANT: text = sText_NatureAdamant; break;
-            case NATURE_NAUGHTY: text = sText_NatureNaughty; break;
-
-            case NATURE_BOLD:    text = sText_NatureBold; break;
-            case NATURE_DOCILE:  text = sText_NatureDocile; break;
-            case NATURE_RELAXED: text = sText_NatureRelaxed; break;
-            case NATURE_IMPISH:  text = sText_NatureImpish; break;
-            case NATURE_LAX:     text = sText_NatureLax; break;
-
-            case NATURE_TIMID:   text = sText_NatureTimid; break;
-            case NATURE_HASTY:   text = sText_NatureHasty; break;
-            case NATURE_SERIOUS: text = sText_NatureSerious; break;
-            case NATURE_JOLLY:   text = sText_NatureJolly; break;
-            case NATURE_NAIVE:   text = sText_NatureNaive; break;
-
-            case NATURE_MODEST:  text = sText_NatureModest; break;
-            case NATURE_MILD:    text = sText_NatureMild; break;
-            case NATURE_QUIET:   text = sText_NatureQuiet; break;
-            case NATURE_BASHFUL: text = sText_NatureBashful; break;
-            case NATURE_RASH:    text = sText_NatureRash; break;
-
-            case NATURE_CALM:    text = sText_NatureCalm; break;
-            case NATURE_GENTLE:  text = sText_NatureGentle; break;
-            case NATURE_SASSY:   text = sText_NatureSassy; break;
-            case NATURE_CAREFUL: text = sText_NatureCareful; break;
-            case NATURE_QUIRKY:  text = sText_NatureQuirky; break;
+            if (sSpeciesTexts[i].species == species)
+                speciesTexts[speciesCount++] = sSpeciesTexts[i].text;
         }
-    }
-    else if ((Random() % 100) < 10 && heldItem == ITEM_LEFTOVERS)
-        text = sText_HoldingFood;
-    else if ((Random() % 100) < 10 && heldItem != ITEM_NONE)
-        text = sText_ChecksHeldItem;
-    else if ((Random() % 100) < 10 && ballType == ITEM_LUXURY_BALL)
-        text = sText_LuxuryBallPride;
-    // Egg Group based behavior (2% chance)
-    else if ((Random() % 100) < 10)
-    {
-        u8 eggGroup = gBaseStats[species].eggGroup1 & 0xFF;
 
-        switch (eggGroup)
+        if (speciesCount != 0)
         {
-            case EGG_GROUP_HUMAN_LIKE:
-                text = sText_TryingToStandUpright;
-                break;
-            case EGG_GROUP_MONSTER:
-                text = sText_StompingAround;
-                break;
-            case EGG_GROUP_FAIRY:
-                text = sText_SkippingAlong;
-                break;
-            default:
-                break; // nothing
+            speciesPool.texts = speciesTexts;
+            speciesPool.count = speciesCount;
+            speciesPool.emote = FLDEFF_EXCLAMATION_MARK_ICON;
+            speciesPool.emoteChance = 25;
+            if (count < MAX_POOLS - 1)
+            {
+                pools[count++] = speciesPool;
+                pools[count++] = speciesPool;
+            }
         }
+
+        if (count != 0)
+            pool = &pools[Random() % count];
     }
 
-    // OT vs Player (1% chance)
-    else if ((Random() % 100) < 10)
-    {
-        u32 otId = GetMonData(mon, MON_DATA_OT_ID, NULL);
-        if (otId != GetPlayerTrainerId())
-        {
-            text = sText_SeemsDistracted;
-        }
-    }
+    text = PickText(pool);
 
-    // High IV flex (2% chance)
-    else if ((Random() % 100) < 10)
-    {
-        u8 atkIV = GetMonData(mon, MON_DATA_ATK_IV, NULL);
-        u8 defIV = GetMonData(mon, MON_DATA_DEF_IV, NULL);
+    if (pool->texts == sPool_Buddy)
+        GetMonNickname(GetRandomPartyBuddy(mon), gStringVar2);
+    else if (pool->texts == sPool_MetPlace)
+        GetMapName(gStringVar2, GetMonData(mon, MON_DATA_MET_LOCATION, NULL), 0);
 
-        if (atkIV >= 25 || defIV >= 25)
-        {
-            text = sText_FlexesMuscles;
-        }
-    }
-
-    if (text == NULL)
-    {
-        u8 rand = Random() % 10;
-        if (rand < 3)
-            text = sText_IdleLookingAround;
-        else if ((Random() % 100) < 10)
-        {
-            if (IsDayTime())
-                text = sText_EnjoyingSunlight;
-            else if (IsNightTime())
-                text = sText_NighttimeEnergy;
-            else if (IsMorning())
-                text = sText_MorningGreeting;
-        }
-        else if (rand < 7)
-            text = sText_IdleBored;
-        else
-            text = sText_IdleTailWag;
-    }
+    if (pool->emote != EMOTE_NONE && (Random() % 100) < pool->emoteChance)
+        Var8005 = pool->emote;
 
     StringExpandPlaceholders(gStringVar4, text);
 }

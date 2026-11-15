@@ -199,6 +199,7 @@ extern u16 gLastDexNavSpecies; //0x203E086
 //extern u8 gPartyPresetTeamIndices[PARTY_SIZE]; //0x203E0C0
 extern u8 gScored3CritsInBattle; //0x203E0C6
 //FREE: 0x203E0C7
+//0x203E0CA - 0x203E0CD: last follower texts (follower_mon_messages.c)
 
 //DON'T GO PAST 0x203E0D4 for BTS!
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

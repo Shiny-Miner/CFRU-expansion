@@ -12,6 +12,8 @@
 #include "../include/new/character_customization.h"
 #include "../include/field_weather.h"
 #include "../include/trainer_pokemon_sprites.h"
+#include "../include/window.h"
+#include "../include/field_effect.h"
 
 
 extern u8 SparkleTiles[];
@@ -288,6 +290,25 @@ bool8 ShowMysteryGiftMon()
 #define tSpecies      data[1]
 #define tSpriteId     data[2]
 #define tWindowId     data[5]
+void ShowFollowerEmote(void)
+{
+#ifdef FOLLOWER_TALK_EMOTES
+    struct EventObject* follower;
+
+    if (Var8005 >= 0xFF || !IsFollowerPokemon())
+        return;
+
+    follower = &gEventObjects[gFollowerState.objId];
+    if (follower->invisible)
+        return;
+
+    gFieldEffectArguments[0] = follower->localId;
+    gFieldEffectArguments[1] = follower->mapNum;
+    gFieldEffectArguments[2] = follower->mapGroup;
+    FieldEffectStart(Var8005);
+#endif
+}
+
 void Remove_PokemonPic(void)
 {
     u8 taskId = FindTaskIdByFunc(Task_ScriptShowMonPic);
