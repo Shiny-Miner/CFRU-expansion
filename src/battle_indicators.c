@@ -182,12 +182,12 @@ static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 #ifndef UNBOUND //MODIFY THIS
 	[B_POSITION_PLAYER_LEFT] =
 	{
-		[TRUE] = {221, 86}, 	//Single Battle
+		[TRUE] = {142, 86}, 	//Single Battle
 		[FALSE] = {144, 70},	//Double Battle
 	},
 	[B_POSITION_OPPONENT_LEFT] =
 	{
-		[TRUE] = {20, 26}, 		//Single Battle
+		[TRUE] = {98, 26}, 		//Single Battle
 		[FALSE] = {97, 14},		//Double Battle
 	},
 	[B_POSITION_PLAYER_RIGHT] =
@@ -1499,10 +1499,10 @@ static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite)
 		{
 			switch (position) {
 				case B_POSITION_PLAYER_LEFT:
-					sprite->pos1.x -= 1;
+					sprite->pos1.x += 1;
 					break;
 				case B_POSITION_OPPONENT_LEFT:
-					sprite->pos1.x += 1;
+					sprite->pos1.x -= 1;
 					break;
 			}
 		}
@@ -1528,12 +1528,12 @@ static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite)
 	{
 		switch (position) {
 			case B_POSITION_PLAYER_LEFT:
-				if (sprite->pos1.x < sTypeIconPositions[position][TRUE].x + 10)
-					sprite->pos1.x += 1;
-				break;
-			case B_POSITION_OPPONENT_LEFT:
 				if (sprite->pos1.x > sTypeIconPositions[position][TRUE].x - 10)
 					sprite->pos1.x -= 1;
+				break;
+			case B_POSITION_OPPONENT_LEFT:
+				if (sprite->pos1.x < sTypeIconPositions[position][TRUE].x + 10)
+					sprite->pos1.x += 1;
 				break;
 		}
 	}
@@ -2192,7 +2192,7 @@ void TryLoadTypeIcons(void)
 
 					if (IS_SINGLE_BATTLE)
 					{
-						if (SIDE(GetBattlerAtPosition(position)) == B_SIDE_PLAYER)
+						if (SIDE(GetBattlerAtPosition(position)) == B_SIDE_OPPONENT)
 							SetSpriteOamFlipBits(sprite, TRUE, FALSE); //Flip horizontally
 					}
 					else //Double Battle
