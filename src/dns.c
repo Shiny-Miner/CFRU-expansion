@@ -75,6 +75,8 @@ static void FadeDayNightPalettes(void)
 				u8 coeff = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].amount;
 				u16 colour = gDNSNightFadingByTime[gClock.hour][gClock.minute / 10].colour;
 				bool8 palFadeActive = gPaletteFade->active || gWeatherPtr->palProcessingState == WEATHER_PAL_STATE_SCREEN_FADING_IN;
+				bool8 colourPending = (gLastRecordedFadeColour & 0x8000) != 0; //Night fade was applied while a fade was running, so it still needs to be finished
+				u16 lastColour = gLastRecordedFadeColour & 0x7FFF;
 
 				if (inOverworld)
 					palsToFade = OW_DNS_PAL_FADE;
@@ -82,7 +84,8 @@ static void FadeDayNightPalettes(void)
 					palsToFade = OW_DNS_PAL_FADE & ~(OBG_SHI(11)); //Used by shop
 
 				if (gLastRecordedFadeCoeff != coeff
-				||  gLastRecordedFadeColour != colour) //Only fade the background if colour should change
+				||  lastColour != colour
+				||  (colourPending && !palFadeActive)) //Only fade the background if colour should change, or if the last fade was left unfinished
 				{
 					bool8 hardFade = gLastRecordedFadeCoeff >= FIRST_COEFF_FLAG; //Reload tileset palettes if necessary
 
@@ -102,7 +105,7 @@ static void FadeDayNightPalettes(void)
 					gWindowsLitUp = FALSE;
 					FadeOverworldBackground(palsToFade, coeff, colour, palFadeActive); //Load/remove the palettes to fade once during the day and night
 					gLastRecordedFadeCoeff = coeff;
-					gLastRecordedFadeColour = colour;
+					gLastRecordedFadeColour = palFadeActive ? (colour | 0x8000) : colour; //Bit 15 marks "applied during a fade"
 
 					//The weather fading needs to be reloaded when the tileset palette is reloaded
 					if (!palFadeActive)
