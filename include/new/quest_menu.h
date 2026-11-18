@@ -1,98 +1,103 @@
 #ifndef GUARD_QUEST_MENU_H
 #define GUARD_QUEST_MENU_H
 
-#include "../bg.h"
 #include "../global.h"
-#include "../window.h"
+#include "../list_menu.h"
 #include "../../src/config.h"
 
-#define QUEST_OW_NONE 0xFFFF
+#define QUEST_COUNT         30
+#define QUEST_1_SUB_COUNT   10
+#define QUEST_2_SUB_COUNT   8
+#define SUB_QUEST_COUNT     (QUEST_1_SUB_COUNT + QUEST_2_SUB_COUNT)
+#define QUEST_ARRAY_COUNT   (SUB_QUEST_COUNT > QUEST_COUNT ? SUB_QUEST_COUNT : QUEST_COUNT)
+
+#define QUEST_STATE_BITS    5
+#define QUEST_STATE_BYTES   ((QUEST_COUNT * QUEST_STATE_BITS + 7) / 8)
+#define SUB_STATE_BYTES     ((SUB_QUEST_COUNT + 7) / 8)
+
+// Script commands, set in Var8000 before: callasm QuestMenu_ScriptCommand+1
+// Var8001 = quest id (parent id for sub quests), Var8002 = sub quest index
+#define QUEST_MENU_OPEN                 0
+#define QUEST_MENU_UNLOCK_QUEST         1
+#define QUEST_MENU_SET_ACTIVE           2
+#define QUEST_MENU_SET_REWARD           3
+#define QUEST_MENU_COMPLETE_QUEST       4
+#define QUEST_MENU_CHECK_UNLOCKED       5
+#define QUEST_MENU_CHECK_INACTIVE       6
+#define QUEST_MENU_CHECK_ACTIVE         7
+#define QUEST_MENU_CHECK_REWARD         8
+#define QUEST_MENU_CHECK_COMPLETE       9
+#define QUEST_MENU_BUFFER_QUEST_NAME    10
+#define QUEST_MENU_COMPLETE_SUBQUEST    11
+#define QUEST_MENU_CHECK_SUBQUEST       12
+#define QUEST_MENU_BUFFER_SUBQUEST_NAME 13
+#define QUEST_MENU_RESET                14
+
+// Icon types for the preview box
+#define QUEST_ICON_OBJECT   1   // sprite = QUEST_OW(table, graphicsId)
+#define QUEST_ICON_ITEM     2   // sprite = item id
+#define QUEST_ICON_PKMN     3   // sprite = species id
+#define QUEST_OW_NONE       0xFFFF
 #define QUEST_OW(table, sprite) ((u16)((((u16)(table)) << 8) | ((u16)(sprite))))
 
-struct QuestInfo
+// List modes. Add QUEST_SORT_AZ for alphabetical, QUEST_SORT_SUBQUEST while inside a sub quest list
+#define QUEST_SORT_DEFAULT      0
+#define QUEST_SORT_INACTIVE     1
+#define QUEST_SORT_ACTIVE       2
+#define QUEST_SORT_REWARD       3
+#define QUEST_SORT_DONE         4
+#define QUEST_SORT_AZ           10
+#define QUEST_SORT_SUBQUEST     100
+
+enum QuestCases
 {
-    u16 unlockFlag;
-    u16 doneFlag;
-    u16 rewardFlag;
-    u16 graphicsId;
+    QUEST_GET_UNLOCKED,
+    QUEST_GET_INACTIVE,
+    QUEST_GET_ACTIVE,
+    QUEST_GET_REWARD,
+    QUEST_GET_COMPLETED,
+    QUEST_GET_FAVORITE,
+    QUEST_SET_UNLOCKED,
+    QUEST_SET_INACTIVE,
+    QUEST_SET_ACTIVE,
+    QUEST_SET_REWARD,
+    QUEST_SET_COMPLETED,
+    QUEST_SET_FAVORITE,
+    QUEST_REMOVE_INACTIVE,
+    QUEST_REMOVE_ACTIVE,
+    QUEST_REMOVE_REWARD,
+    QUEST_REMOVE_FAVORITE,
+};
+
+struct SubQuest
+{
+    u8 id;                  // unique across all sub quests, picks the save bit
     const u8 *name;
-    const u8 *description;
-    const u8 *script;
+    const u8 *desc;
+    const u8 *map;
+    u16 sprite;
+    u8 spriteType;
+    const u8 *type;         // label shown in the state column once completed
 };
 
-extern const struct QuestInfo gMainQuestTable[];
-extern const struct QuestInfo gSideQuestTable[];
-
-extern const u8 gText_MenuTitle[];
-extern const u8 gText_MenuTitle2[];
-
-extern const struct TextColor sWhiteText;
-extern const struct TextColor sBlackText;
-extern const struct TextColor sRedText;
-extern const struct TextColor sBlueText;
-extern const struct TextColor sGreenText;
-extern const struct TextColor sGrayText;
-
-#define COLOR(color) &s##color##Text
-
-// UI layout constants
-#define VISIBLE_ITEMS 7
-#define FONT_SIZE 1
-#define FONT_SIZE_SMALL 0
-
-struct ImageData
+struct SideQuest
 {
-    const u8 *tiles;
-    const u8 *pal;
-    const u16 *tilemap;
+    const u8 *name;
+    const u8 *desc;
+    const u8 *doneDesc;
+    const u8 *map;
+    u16 sprite;
+    u8 spriteType;
+    const struct SubQuest *subQuests;
+    u8 numSubQuests;
 };
 
-extern const struct ImageData gQuestMenuBGData;
-extern const struct BgTemplate sQuestMenuBGTemplates[];
-extern const struct WindowTemplate sQuestMenuWindowTemplates[];
-
-struct MenuStruct 
-{
-    u8 cursorPos;
-    u8 firstVisibleItem;
-    u8 selectedItem;
-    u8 page;
-};
-
-enum MenuStates
-{
-    MENU_STATE_INIT,
-    MENU_STATE_RESET,
-    MENU_STATE_INIT_BGS,
-    MENU_STATE_LOAD_GFX,
-    MENU_STATE_SHOW_BGS,
-    MENU_STATE_INIT_WINDOWS,
-    MENU_STATE_FADE_IN,
-    MENU_STATE_START,
-};
-
-enum MenuBGs
-{
-    BG_TEXT,
-    BG_NIL,
-    BG_NIL_2,
-    BG_BACKGROUND,
-    BG_COUNT,
-};
-
-enum MenuWindows
-{
-    WINDOW_TITLE,
-    WINDOW_ITEMS,
-    WINDOW_DESCRIPTION,
-    WINDOW_CONTROLS,
-    WINDOW_COUNT,
-};
-
-extern const u8 Menu_BGTiles[];
-extern const u8 Menu_BGPal[];
-extern const u16 Menu_BGMap[];
+extern const struct SideQuest gSideQuests[QUEST_COUNT];
 
 void ShowQuestMenu(void);
+void QuestMenu_ScriptCommand(void);
+u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId);
+u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest);
+void QuestMenu_ResetSaveData(void);
 
 #endif // GUARD_QUEST_MENU_H

@@ -266,10 +266,18 @@ EventScript_Pallet_AideGuy:
         setflag 0x828
         additem 0x306 0x1
         msgbox gText_TestScript2 MSG_NORMAL
-    setflag 0xA0E
-    setflag 0xA0F
-    setflag 0xA12
-    setflag 0xA11
+    setvar 0x8000 QUEST_MENU_SET_ACTIVE
+    setvar 0x8001 QUEST_1
+    callasm QuestMenu_ScriptCommand+1
+    setvar 0x8000 QUEST_MENU_SET_ACTIVE
+    setvar 0x8001 QUEST_2
+    callasm QuestMenu_ScriptCommand+1
+    setvar 0x8000 QUEST_MENU_UNLOCK_QUEST
+    setvar 0x8001 QUEST_3
+    callasm QuestMenu_ScriptCommand+1
+    setvar 0x8000 QUEST_MENU_UNLOCK_QUEST
+    setvar 0x8001 QUEST_4
+    callasm QuestMenu_ScriptCommand+1
     callasm ShowQuestMenu+1
     waitstate
     release
@@ -282,10 +290,13 @@ EventScript_GiveMons_Special:
     lock
     faceplayer
     msgbox gText_ChangeTeraTypeNPCAsk MSG_NORMAL
-    setflag 0xA13
-    setflag 0xA14
-    setflag 0xA15
-    setflag 0xA16
+    setvar 0x8000 QUEST_MENU_COMPLETE_QUEST
+    setvar 0x8001 QUEST_1
+    callasm QuestMenu_ScriptCommand+1
+    setvar 0x8000 QUEST_MENU_SET_REWARD
+    setvar 0x8001 QUEST_2
+    callasm QuestMenu_ScriptCommand+1
     callasm ShowQuestMenu+1
+    waitstate
     release
     end

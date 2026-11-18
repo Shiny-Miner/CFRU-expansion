@@ -6,7 +6,7 @@ This fork is made by Tha Code Mining hub to add many corresponding decomps , oth
 - All known bugs fixed (Update Oct 2026!)
 
 - Ability Expansion (Abilties above 255 can be added!)
-- Custom SideQuest Menu added
+- Unbound-style Quest Menu added (see include/new/quest_menu.h)
 - Added Legends ZA Megas in DPE
 - Mystery gifts by Passwords with gift animations
 - A new bag ui with expanded bag pockets

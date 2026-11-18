@@ -1,65 +1,601 @@
 #include "./src/config.h"
 #ifdef SIDEQUEST_MENU
 
-#org @gText_ItemDescriptionNotAvailable
-Description not available[.]
+#org @gText_SideQuestName_1
+Oak's Request
 
-#org @sText_Dash
--------------
+#org @gText_SideQuestDesc_1
+Professor Oak needs your\nhelp with his Pokédex.\nComplete every task!
 
-#org @sText_Slash
-/
+#org @gText_SideQuestDoneDesc_1
+Oak is thrilled with your\nresearch. Thank you!
 
-#org @sText_Percent
-%
+#org @gText_SideQuestMap_1
+Pallet Town
 
-#org @gText_QuestGift
-Info
+#org @gText_SideQuestName_2
+Gym Challenge
 
-#org @gText_QuestDone
+#org @gText_SideQuestDesc_2
+Defeat all eight Gym\nLeaders of Kanto and\nearn every badge.
+
+#org @gText_SideQuestDoneDesc_2
+All eight badges are yours.\nThe League awaits!
+
+#org @gText_SideQuestMap_2
+Kanto
+
+#org @gText_SideQuestName_3
+Parcel Delivery
+
+#org @gText_SideQuestDesc_3
+Pick up the parcel at the\nPoké Mart and bring it\nto Professor Oak.
+
+#org @gText_SideQuestDoneDesc_3
+The parcel reached Oak\nsafely. Nice work!
+
+#org @gText_SideQuestMap_3
+Viridian City
+
+#org @gText_SideQuestName_4
+Fossil Hunter
+
+#org @gText_SideQuestDesc_4
+Search Mt. Moon for an\nancient fossil and show\nit to the scientist.
+
+#org @gText_SideQuestDoneDesc_4
+The fossil has been\nrevived. Amazing!
+
+#org @gText_SideQuestMap_4
+Pewter City
+
+#org @gText_SideQuestName_5
+Ticket to Sea
+
+#org @gText_SideQuestDesc_5
+Get a ticket for the\nS.S. Anne and meet the\ncaptain on board.
+
+#org @gText_SideQuestDoneDesc_5
+You enjoyed the cruise\nand helped the captain.
+
+#org @gText_SideQuestMap_5
+Vermilion City
+
+#org @gText_SideQuestName_6
+Rocket Trouble
+
+#org @gText_SideQuestDesc_6
+Team Rocket hides below\nthe Game Corner.\nStop their plans!
+
+#org @gText_SideQuestDoneDesc_6
+Team Rocket's hideout\nhas been shut down.
+
+#org @gText_SideQuestMap_6
+Celadon City
+
+#org @gText_SideQuestName_7
+Power Plant Rumor
+
+#org @gText_SideQuestDesc_7
+Something is draining the\nPower Plant's energy.\nInvestigate it.
+
+#org @gText_SideQuestDoneDesc_7
+You found the cause: a\nlegendary bird!
+
+#org @gText_SideQuestMap_7
+Route 10
+
+#org @gText_SideQuestName_8
+Eevee's Gift
+
+#org @gText_SideQuestDesc_8
+A kind trainer gives away\na rare Eevee. Prove you\ncan raise it well.
+
+#org @gText_SideQuestDoneDesc_8
+Eevee has a loving\nnew home with you.
+
+#org @gText_SideQuestMap_8
+Celadon City
+
+#org @gText_SideQuestName_9
+Snorlax Blockade
+
+#org @gText_SideQuestDesc_9
+A huge Pokémon sleeps\non the road. Find a way\nto wake it up.
+
+#org @gText_SideQuestDoneDesc_9
+The road is open and\nSnorlax is gone.
+
+#org @gText_SideQuestMap_9
+Route 12
+
+#org @gText_SideQuestName_10
+Lost Teeth
+
+#org @gText_SideQuestDesc_10
+The Warden lost his teeth\nin the Safari Zone.\nFind them for him.
+
+#org @gText_SideQuestDoneDesc_10
+The Warden can speak\nclearly again!
+
+#org @gText_SideQuestMap_10
+Fuchsia City
+
+#org @gText_SideQuestName_11
+Fishing Master
+
+#org @gText_SideQuestDesc_11
+Prove your skill by\nreeling in Magikarp with\nevery rod.
+
+#org @gText_SideQuestDoneDesc_11
+You earned the Super Rod.\nGone fishing!
+
+#org @gText_SideQuestMap_11
+Vermilion City
+
+#org @gText_SideQuestName_12
+Cave of Legends
+
+#org @gText_SideQuestDesc_12
+Rumors tell of a mighty\nPokémon deep inside\nthe cave.
+
+#org @gText_SideQuestDoneDesc_12
+You have faced the\nlegend of Cerulean Cave.
+
+#org @gText_SideQuestMap_12
+Cerulean Cave
+
+#org @gText_SideQuestName_13
+Reserved Quest 13
+
+#org @gText_SideQuestDesc_13
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_13
+Coming soon!
+
+#org @gText_SideQuestMap_13
+Kanto
+
+#org @gText_SideQuestName_14
+Reserved Quest 14
+
+#org @gText_SideQuestDesc_14
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_14
+Coming soon!
+
+#org @gText_SideQuestMap_14
+Kanto
+
+#org @gText_SideQuestName_15
+Reserved Quest 15
+
+#org @gText_SideQuestDesc_15
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_15
+Coming soon!
+
+#org @gText_SideQuestMap_15
+Kanto
+
+#org @gText_SideQuestName_16
+Reserved Quest 16
+
+#org @gText_SideQuestDesc_16
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_16
+Coming soon!
+
+#org @gText_SideQuestMap_16
+Kanto
+
+#org @gText_SideQuestName_17
+Reserved Quest 17
+
+#org @gText_SideQuestDesc_17
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_17
+Coming soon!
+
+#org @gText_SideQuestMap_17
+Kanto
+
+#org @gText_SideQuestName_18
+Reserved Quest 18
+
+#org @gText_SideQuestDesc_18
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_18
+Coming soon!
+
+#org @gText_SideQuestMap_18
+Kanto
+
+#org @gText_SideQuestName_19
+Reserved Quest 19
+
+#org @gText_SideQuestDesc_19
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_19
+Coming soon!
+
+#org @gText_SideQuestMap_19
+Kanto
+
+#org @gText_SideQuestName_20
+Reserved Quest 20
+
+#org @gText_SideQuestDesc_20
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_20
+Coming soon!
+
+#org @gText_SideQuestMap_20
+Kanto
+
+#org @gText_SideQuestName_21
+Reserved Quest 21
+
+#org @gText_SideQuestDesc_21
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_21
+Coming soon!
+
+#org @gText_SideQuestMap_21
+Kanto
+
+#org @gText_SideQuestName_22
+Reserved Quest 22
+
+#org @gText_SideQuestDesc_22
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_22
+Coming soon!
+
+#org @gText_SideQuestMap_22
+Kanto
+
+#org @gText_SideQuestName_23
+Reserved Quest 23
+
+#org @gText_SideQuestDesc_23
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_23
+Coming soon!
+
+#org @gText_SideQuestMap_23
+Kanto
+
+#org @gText_SideQuestName_24
+Reserved Quest 24
+
+#org @gText_SideQuestDesc_24
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_24
+Coming soon!
+
+#org @gText_SideQuestMap_24
+Kanto
+
+#org @gText_SideQuestName_25
+Reserved Quest 25
+
+#org @gText_SideQuestDesc_25
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_25
+Coming soon!
+
+#org @gText_SideQuestMap_25
+Kanto
+
+#org @gText_SideQuestName_26
+Reserved Quest 26
+
+#org @gText_SideQuestDesc_26
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_26
+Coming soon!
+
+#org @gText_SideQuestMap_26
+Kanto
+
+#org @gText_SideQuestName_27
+Reserved Quest 27
+
+#org @gText_SideQuestDesc_27
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_27
+Coming soon!
+
+#org @gText_SideQuestMap_27
+Kanto
+
+#org @gText_SideQuestName_28
+Reserved Quest 28
+
+#org @gText_SideQuestDesc_28
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_28
+Coming soon!
+
+#org @gText_SideQuestMap_28
+Kanto
+
+#org @gText_SideQuestName_29
+Reserved Quest 29
+
+#org @gText_SideQuestDesc_29
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_29
+Coming soon!
+
+#org @gText_SideQuestMap_29
+Kanto
+
+#org @gText_SideQuestName_30
+Reserved Quest 30
+
+#org @gText_SideQuestDesc_30
+Coming soon!
+
+#org @gText_SideQuestDoneDesc_30
+Coming soon!
+
+#org @gText_SideQuestMap_30
+Kanto
+
+#org @gText_SubQuest1_Name1
+Catch Pidgey
+
+#org @gText_SubQuest1_Desc1
+Look for Pidgey in the\ntall grass of Route 1.
+
+#org @gText_SubQuest1_Map1
+Route 1
+
+#org @gText_SubQuest1_Name2
+Catch Rattata
+
+#org @gText_SubQuest1_Desc2
+Rattata hides in the\ngrass near Viridian.
+
+#org @gText_SubQuest1_Map2
+Route 2
+
+#org @gText_SubQuest1_Name3
+Catch Caterpie
+
+#org @gText_SubQuest1_Desc3
+Bug Pokémon thrive in\nViridian Forest.
+
+#org @gText_SubQuest1_Map3
+Viridian Forest
+
+#org @gText_SubQuest1_Name4
+Catch Weedle
+
+#org @gText_SubQuest1_Desc4
+Careful, its sting is\npoisonous!
+
+#org @gText_SubQuest1_Map4
+Viridian Forest
+
+#org @gText_SubQuest1_Name5
+Catch Pikachu
+
+#org @gText_SubQuest1_Desc5
+A rare yellow mouse\nhides among the trees.
+
+#org @gText_SubQuest1_Map5
+Viridian Forest
+
+#org @gText_SubQuest1_Name6
+Catch Nidoran
+
+#org @gText_SubQuest1_Desc6
+Look for it in the tall\ngrass past Pewter City.
+
+#org @gText_SubQuest1_Map6
+Route 3
+
+#org @gText_SubQuest1_Name7
+Catch Zubat
+
+#org @gText_SubQuest1_Desc7
+Zubat flutters around\nin the dark cave.
+
+#org @gText_SubQuest1_Map7
+Mt. Moon
+
+#org @gText_SubQuest1_Name8
+Catch Geodude
+
+#org @gText_SubQuest1_Desc8
+Don't step on the rocks,\nthey might be Geodude!
+
+#org @gText_SubQuest1_Map8
+Mt. Moon
+
+#org @gText_SubQuest1_Name9
+Catch Oddish
+
+#org @gText_SubQuest1_Desc9
+Oddish comes out at\nnight to wander about.
+
+#org @gText_SubQuest1_Map9
+Route 5
+
+#org @gText_SubQuest1_Name10
+Catch Clefairy
+
+#org @gText_SubQuest1_Desc10
+Clefairy dances under\nthe full moon.
+
+#org @gText_SubQuest1_Map10
+Mt. Moon
+
+#org @gText_SubQuest2_Name1
+Beat Brock
+
+#org @gText_SubQuest2_Desc1
+Win a battle against\nBrock for the\nBoulder Badge.
+
+#org @gText_SubQuest2_Map1
+Pewter City
+
+#org @gText_SubQuest2_Name2
+Beat Misty
+
+#org @gText_SubQuest2_Desc2
+Win a battle against\nMisty for the\nCascade Badge.
+
+#org @gText_SubQuest2_Map2
+Cerulean City
+
+#org @gText_SubQuest2_Name3
+Beat Lt. Surge
+
+#org @gText_SubQuest2_Desc3
+Win a battle against\nLt. Surge for the\nThunder Badge.
+
+#org @gText_SubQuest2_Map3
+Vermilion City
+
+#org @gText_SubQuest2_Name4
+Beat Erika
+
+#org @gText_SubQuest2_Desc4
+Win a battle against\nErika for the\nRainbow Badge.
+
+#org @gText_SubQuest2_Map4
+Celadon City
+
+#org @gText_SubQuest2_Name5
+Beat Koga
+
+#org @gText_SubQuest2_Desc5
+Win a battle against\nKoga for the\nSoul Badge.
+
+#org @gText_SubQuest2_Map5
+Fuchsia City
+
+#org @gText_SubQuest2_Name6
+Beat Sabrina
+
+#org @gText_SubQuest2_Desc6
+Win a battle against\nSabrina for the\nMarsh Badge.
+
+#org @gText_SubQuest2_Map6
+Saffron City
+
+#org @gText_SubQuest2_Name7
+Beat Blaine
+
+#org @gText_SubQuest2_Desc7
+Win a battle against\nBlaine for the\nVolcano Badge.
+
+#org @gText_SubQuest2_Map7
+Cinnabar Island
+
+#org @gText_SubQuest2_Name8
+Beat Giovanni
+
+#org @gText_SubQuest2_Desc8
+Win a battle against\nGiovanni for the\nEarth Badge.
+
+#org @gText_SubQuest2_Map8
+Viridian City
+
+#org @gText_QuestUnknown
+??????
+
+#org @gText_QuestStateReward
+Reward
+
+#org @gText_QuestStateDone
 Done
 
-#org @gText_MenuTitle
-Main Quests
+#org @gText_QuestStateActive
+Active
 
-#org @gText_MenuTitle2
-Side Quests
+#org @gText_QuestClose
+Close
 
-#org @gText_LText
-[L_BUTTON] Left
+#org @gText_QuestLocation
+Location: 
 
-#org @gText_RText
-[R_BUTTON] Right
+#org @gText_QuestNotStarted
+Not started yet.
 
-#org @gText_GetText
-[A_BUTTON] Get Info
+#org @gText_QuestReturnForReward
+Return to [BUFFER2]\nto receive your reward!
 
-#org @gText_CloseText
-[B_BUTTON] Close
+#org @gText_QuestNumberDisplay
+[BUFFER1]/[BUFFER2]
 
-// Quest Items
-#org @gText_QuestItem_1
-Get Pokedex
+#org @gText_QuestSubButton
+ [A_BUTTON]
 
-#org @gText_QuestItem_2
-Boulder Badge
+#org @gText_QuestSubSpace
+ 
 
-#org @gText_QuestItem_3
-Cascade Badge
+#org @gText_QuestSubNumberSep
+. 
 
-#org @gText_QuestItem_4
-Thunder Badge
+#org @gText_QuestColorGreen
+[GREEN]
 
-// Quest Descriptions
-#org @gText_QuestDesc_1
-Location : Pallet Town\nBring Brendan a Mudkip.
+#org @gText_QuestHeaderAll
+All Quests
 
-#org @gText_QuestDesc_2
-Quest Description 2
+#org @gText_QuestHeaderInactive
+Inactive Quests
 
-#org @gText_QuestDesc_3
-Quest Description 3
+#org @gText_QuestHeaderActive
+Active Quests
 
-#org @gText_QuestDesc_4
-Quest Description 4
+#org @gText_QuestHeaderReward
+Rewards Available
+
+#org @gText_QuestHeaderDone
+Completed Quests
+
+#org @gText_QuestHeaderSub
+Sub Quests
+
+#org @gText_QuestSortAZ
+[R_BUTTON] A-Z
+
+#org @gText_QuestSortAll
+[R_BUTTON] All
+
+#org @gText_QuestSortInactive
+[R_BUTTON] Inactive
+
+#org @gText_QuestSortActive
+[R_BUTTON] Active
+
+#org @gText_QuestSortReward
+[R_BUTTON] Reward
+
+#org @gText_QuestSortDone
+[R_BUTTON] Done
+
 #endif
