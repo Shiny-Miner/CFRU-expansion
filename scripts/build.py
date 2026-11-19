@@ -77,6 +77,11 @@ TRAINER_DATA_DEPENDENCIES = [
     os.path.normpath(os.path.join(SRC, 'Tables', 'trainers.party')),
     os.path.normpath(os.path.join('scripts', 'trainer_party.py')),
 ]
+BATTLE_TEXTBOX_GRAPHICS = os.path.normpath(os.path.join(GRAPHICS, 'Battle_UI', 'Textbox'))
+BATTLE_TEXTBOX_SOURCE = os.path.normpath(os.path.join(SRC, 'battle_textbox_ui.c'))
+BATTLE_TEXTBOX_DEPENDENCIES = [
+    os.path.normpath(os.path.join(SRC, 'battle_textbox_data.h')),
+]
 
 
 class Master:
@@ -241,6 +246,13 @@ def ProcessC(cFile: str) -> str:
         regenerateObjectFile = any(
             objectMtime <= os.path.getmtime(dependency)
             for dependency in TRAINER_DATA_DEPENDENCIES
+        )
+
+    if not regenerateObjectFile and os.path.normpath(cFile) == BATTLE_TEXTBOX_SOURCE:
+        objectMtime = os.path.getmtime(objectFile)
+        regenerateObjectFile = any(
+            objectMtime <= os.path.getmtime(dependency)
+            for dependency in BATTLE_TEXTBOX_DEPENDENCIES
         )
 
     if regenerateObjectFile is False:
@@ -490,14 +502,16 @@ def RunGlob(globString: str, fn) -> map:
     if sys.version_info > (3, 4):
         try:
             files = glob(os.path.join(directory, globString), recursive=True)
+            files = [f for f in files if os.path.normpath(os.path.dirname(f)) != BATTLE_TEXTBOX_GRAPHICS]
             return map(fn, files)
 
         except TypeError:
             print('Error compiling. Please make sure Python has been updated to the latest version.')
             sys.exit(1)
     else:
-        files = Path(directory).glob(globString)
-        return map(fn, map(str, files))
+        files = [str(f) for f in Path(directory).glob(globString)]
+        files = [f for f in files if os.path.normpath(os.path.dirname(f)) != BATTLE_TEXTBOX_GRAPHICS]
+        return map(fn, files)
 
 
 def main():
@@ -505,6 +519,7 @@ def main():
     startTime = datetime.now()
     # Convert Showdown-style trainer overrides before compiling C sources.
     RunCommand([sys.executable, 'scripts/trainer_party.py', 'build'])
+    RunCommand([sys.executable, 'scripts/battle_textbox.py', 'build'])
     globs = {
             '**/*.s': ProcessAssembly,
             '**/*.c': ProcessC,
